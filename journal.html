@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Электронный журнал</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Общие стили */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+
+        /* Стиль для УЧИТЕЛЯ (тёмно-синий) */
+        body.teacher-mode {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        }
+
+        body.teacher-mode .container {
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: 20px;
+        }
+
+        body.teacher-mode header {
+            background: linear-gradient(135deg, #0f3460, #1a1a2e);
+            color: white;
+            border-bottom: 3px solid #e94560;
+        }
+
+        body.teacher-mode .form-container,
+        body.teacher-mode .grades-table-container {
+            background: #16213e;
+            border: 1px solid #0f3460;
+        }
+
+        body.teacher-mode h2 {
+            color: #e94560;
+        }
+
+        body.teacher-mode table {
+            background: #0f3460;
+        }
+
+        body.teacher-mode th {
+            background: #e94560;
+            color: white;
+        }
+
+        body.teacher-mode td {
+            background: #1a1a2e;
+            color: #eee;
+            border-color: #0f3460;
+        }
+
+        body.teacher-mode .btn-primary {
+            background: #e94560;
+        }
+
+        body.teacher-mode .btn-primary:hover {
+            background: #c73e54;
+        }
+
+        /* Стиль для УЧЕНИКА (светло-зелёный) */
+        body.student-mode {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+        }
+
+        body.student-mode .container {
+            background: rgba(255,255,255,0.9);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        body.student-mode header {
+            background: linear-gradient(135deg, #2e7d32, #1b5e20);
+            color: white;
+            border-radius: 15px;
+        }
+
+        body.student-mode .form-container,
+        body.student-mode .grades-table-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        }
+
+        body.student-mode h2 {
+            color: #2e7d32;
+            border-left: 4px solid #4caf50;
+            padding-left: 15px;
+        }
+
+        body.student-mode table {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        body.student-mode th {
+            background: #4caf50;
+            color: white;
+            font-weight: 600;
+        }
+
+        body.student-mode td {
+            background: white;
+            color: #333;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        body.student-mode td:hover {
+            background: #f1f8e9;
+        }
+
+        body.student-mode .grade-badge {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            border-radius: 15px;
+            padding: 20px 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        h1 {
+            font-size: 28px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .role-badge {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            background: rgba(255,255,255,0.2);
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+
+        .btn-warning {
+            background: #f39c12;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #95a5a6;
+            color: white;
+        }
+
+        .form-container, .grades-table-container {
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+
+        .grade-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .grade-5 { background: #27ae60; color: white; }
+        .grade-4 { background: #3498db; color: white; }
+        .grade-3 { background: #f39c12; color: white; }
+        .grade-2 { background: #e74c3c; color: white; }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .login-form {
+            max-width: 400px;
+            margin: 100px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+
+        .login-form h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .error {
+            background: #e74c3c;
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        .success {
+            background: #27ae60;
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        .student-grades-summary {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 10px;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: bold;
+            color: #2e7d32;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            font-size: 18px;
+        }
+
+        @media (max-width: 768px) {
+            table {
+                font-size: 12px;
+            }
+            th, td {
+                padding: 8px;
+            }
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="app">
+        <!-- Форма входа -->
+        <div id="loginSection" style="display: none;">
+            <div class="login-form">
+                <h2>📚 Вход в электронный журнал</h2>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="loginEmail" placeholder="teacher@journal.ru">
+                </div>
+                <div class="form-group">
+                    <label>Пароль</label>
+                    <input type="password" id="loginPassword" placeholder="123456">
+                </div>
+                <button class="btn btn-primary" style="width: 100%;" onclick="login()">Войти</button>
+                <div id="loginMessage"></div>
+            </div>
+        </div>
+
+        <!-- Основное приложение -->
+        <div id="appContent" style="display: none;"></div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js"></script>
+
+    <script>
+        // ТВОИ ДАННЫЕ FIREBASE
+        const firebaseConfig = {
+            apiKey: "AIzaSyBfoIEyhvlUfIgAvXJwOthT6uzfB4gV0Uo",
+            authDomain: "electronic-journal-5dff1.firebaseapp.com",
+            projectId: "electronic-journal-5dff1",
+            storageBucket: "electronic-journal-5dff1.firebasestorage.app",
+            messagingSenderId: "293962922085",
+            appId: "1:293962922085:web:391c3e453bb2725e392e8c"
+        };
+
+        // Инициализация Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.database();
+
+        let currentUser = null;
+        let currentUserRole = null;
+
+        // Предопределённые пользователи
+        const users = {
+            'teacher@journal.ru': { password: '123456', role: 'teacher', name: 'Учитель' },
+            'student@journal.ru': { password: '123456', role: 'student', name: 'Иванов Иван' },
+            'petrov@journal.ru': { password: '123456', role: 'student', name: 'Петров Петр' },
+            'sidorova@journal.ru': { password: '123456', role: 'student', name: 'Сидорова Анна' }
+        };
+
+        // Вход
+        window.login = async function() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            const messageDiv = document.getElementById('loginMessage');
+
+            const userData = users[email];
+            if (userData && userData.password === password) {
+                currentUser = { email, ...userData };
+                currentUserRole = currentUser.role;
+                
+                messageDiv.innerHTML = '<div class="success">✅ Вход выполнен!</div>';
+                setTimeout(() => {
+                    showMainApp();
+                }, 1000);
+            } else {
+                messageDiv.innerHTML = '<div class="error">❌ Неверный email или пароль</div>';
+            }
+        };
+
+        // Выход
+        window.logout = function() {
+            currentUser = null;
+            currentUserRole = null;
+            document.getElementById('loginSection').style.display = 'block';
+            document.getElementById('appContent').style.display = 'none';
+            document.getElementById('loginEmail').value = '';
+            document.getElementById('loginPassword').value = '';
+            document.getElementById('loginMessage').innerHTML = '';
+        };
+
+        // Показать главное приложение
+        function showMainApp() {
+            document.getElementById('loginSection').style.display = 'none';
+            document.getElementById('appContent').style.display = 'block';
+            
+            // Устанавливаем класс для body в зависимости от роли
+            document.body.className = currentUserRole === 'teacher' ? 'teacher-mode' : 'student-mode';
+            
+            if (currentUserRole === 'teacher') {
+                renderTeacherPanel();
+            } else {
+                renderStudentPanel();
+            }
+        }
+
+        // ========== ПАНЕЛЬ УЧИТЕЛЯ ==========
+        function renderTeacherPanel() {
+            const appContent = document.getElementById('appContent');
+            appContent.innerHTML = `
+                <header>
+                    <h1>📚 Электронный журнал <span class="role-badge">👨‍🏫 Учитель</span></h1>
+                    <div>
+                        <span style="margin-right: 15px;">${currentUser.name}</span>
+                        <button class="btn btn-danger" onclick="logout()">🚪 Выйти</button>
+                    </div>
+                </header>
+
+                <div class="form-container">
+                    <h2>➕ Добавить ученика</h2>
+                    <div class="form-group">
+                        <label>ФИО ученика</label>
+                        <input type="text" id="studentName" placeholder="Иванов Иван Иванович">
+                    </div>
+                    <div class="form-group">
+                        <label>Email ученика</label>
+                        <input type="email" id="studentEmail" placeholder="student@journal.ru">
+                    </div>
+                    <div class="form-group">
+                        <label>Пароль</label>
+                        <input type="text" id="studentPassword" placeholder="123456" value="123456">
+                    </div>
+                    <button class="btn btn-primary" onclick="addStudent()">➕ Добавить ученика</button>
+                </div>
+
+                <div class="form-container">
+                    <h2>📝 Выставить оценку</h2>
+                    <div class="form-group">
+                        <label>Выберите ученика</label>
+                        <select id="gradeStudentSelect"></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Предмет</label>
+                        <select id="subjectSelect">
+                            <option value="Математика">Математика</option>
+                            <option value="Русский язык">Русский язык</option>
+                            <option value="Литература">Литература</option>
+                            <option value="Физика">Физика</option>
+                            <option value="Информатика">Информатика</option>
+                            <option value="История">История</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Оценка (2-5)</label>
+                        <select id="gradeValue">
+                            <option value="5">5 - Отлично</option>
+                            <option value="4">4 - Хорошо</option>
+                            <option value="3">3 - Удовлетворительно</option>
+                            <option value="2">2 - Неудовлетворительно</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary" onclick="addGrade()">📝 Выставить оценку</button>
+                </div>
+
+                <div class="grades-table-container">
+                    <h2>📊 Журнал оценок</h2>
+                    <div id="teacherGradesTable">Загрузка...</div>
+                </div>
+            `;
+            loadStudentsForTeacher();
+            loadAllGrades();
+        }
+
+        // Загрузить учеников для учителя
+        async function loadStudentsForTeacher() {
+            const snapshot = await db.ref('users').once('value');
+            const users = snapshot.val();
+            const select = document.getElementById('gradeStudentSelect');
+            if (select) {
+                select.innerHTML = '<option value="">Выберите ученика</option>';
+                for (let id in users) {
+                    if (users[id].role === 'student') {
+                        select.innerHTML += `<option value="${id}">${users[id].name} (${users[id].email})</option>`;
+                    }
+                }
+            }
+        }
+
+        // Добавить ученика
+        window.addStudent = async function() {
+            const name = document.getElementById('studentName').value;
+            const email = document.getElementById('studentEmail').value;
+            const password = document.getElementById('studentPassword').value;
+
+            if (!name || !email) {
+                alert('Заполните имя и email!');
+                return;
+            }
+
+            const newStudentRef = db.ref('users').push();
+            await newStudentRef.set({
+                name: name,
+                email: email,
+                password: password,
+                role: 'student'
+            });
+
+            alert('✅ Ученик добавлен!');
+            document.getElementById('studentName').value = '';
+            document.getElementById('studentEmail').value = '';
+            loadStudentsForTeacher();
+            loadAllGrades();
+        };
+
+        // Добавить оценку
+        window.addGrade = async function() {
+            const studentId = document.getElementById('gradeStudentSelect').value;
+            const subject = document.getElementById('subjectSelect').value;
+            const grade = parseInt(document.getElementById('gradeValue').value);
+
+            if (!studentId) {
+                alert('Выберите ученика!');
+                return;
+            }
+
+            const gradeRef = db.ref('grades').push();
+            await gradeRef.set({
+                studentId: studentId,
+                subject: subject,
+                grade: grade,
+                date: new Date().toLocaleDateString('ru-RU'),
+                teacher: currentUser.name
+            });
+
+            alert('✅ Оценка выставлена!');
+            loadAllGrades();
+        };
+
+        // Загрузить все оценки для учителя
+        async function loadAllGrades() {
+            const gradesSnapshot = await db.ref('grades').once('value');
+            const usersSnapshot = await db.ref('users').once('value');
+            const grades = gradesSnapshot.val();
+            const users = usersSnapshot.val();
+
+            let html = '<table><tr><th>Ученик</th><th>Предмет</th><th>Оценка</th><th>Дата</th><th>Учитель</th><th>Действия</th></tr>';
+            
+            if (grades) {
+                for (let gradeId in grades) {
+                    const grade = grades[gradeId];
+                    const student = users ? users[grade.studentId] : null;
+                    const studentName = student ? student.name : 'Неизвестно';
+                    
+                    let gradeClass = '';
+                    if (grade.grade === 5) gradeClass = 'grade-5';
+                    else if (grade.grade === 4) gradeClass = 'grade-4';
+                    else if (grade.grade === 3) gradeClass = 'grade-3';
+                    else gradeClass = 'grade-2';
+                    
+                    html += `<tr>
+                        <td>${studentName}</td>
+                        <td>${grade.subject}</td>
+                        <td><span class="grade-badge ${gradeClass}">${grade.grade}</span></td>
+                        <td>${grade.date}</td>
+                        <td>${grade.teacher || 'Учитель'}</td>
+                        <td><button class="btn btn-danger btn-sm" onclick="deleteGrade('${gradeId}')">🗑️</button></td>
+                    </tr>`;
+                }
+            }
+            html += '</table>';
+            document.getElementById('teacherGradesTable').innerHTML = html;
+        }
+
+        window.deleteGrade = async function(gradeId) {
+            if (confirm('Удалить оценку?')) {
+                await db.ref('grades/' + gradeId).remove();
+                loadAllGrades();
+            }
+        };
+
+        // ========== ПАНЕЛЬ УЧЕНИКА (ДРУГОЙ ДИЗАЙН) ==========
+        async function renderStudentPanel() {
+            // Найти ID текущего ученика
+            const usersSnapshot = await db.ref('users').once('value');
+            const users = usersSnapshot.val();
+            let studentId = null;
+            
+            for (let id in users) {
+                if (users[id].email === currentUser.email) {
+                    studentId = id;
+                    currentUser.id = id;
+                    break;
+                }
+            }
+
+            const gradesSnapshot = await db.ref('grades').once('value');
+            const grades = gradesSnapshot.val();
+            
+            let myGrades = [];
+            let subjects = {};
+            
+            if (grades) {
+                for (let id in grades) {
+                    if (grades[id].studentId === studentId) {
+                        myGrades.push(grades[id]);
+                        if (!subjects[grades[id].subject]) {
+                            subjects[grades[id].subject] = [];
+                        }
+                        subjects[grades[id].subject].push(grades[id].grade);
+                    }
+                }
+            }
+            
+            // Вычисление статистики
+            let totalGrades = myGrades.length;
+            let sumGrades = myGrades.reduce((sum, g) => sum + g.grade, 0);
+            let averageGrade = totalGrades > 0 ? (sumGrades / totalGrades).toFixed(2) : 'Нет оценок';
+            
+            const appContent = document.getElementById('appContent');
+            appContent.innerHTML = `
+                <header>
+                    <h1>🎓 Мой дневник <span class="role-badge">🧑‍🎓 Ученик</span></h1>
+                    <div>
+                        <span style="margin-right: 15px;">${currentUser.name}</span>
+                        <button class="btn btn-secondary" onclick="logout()">🚪 Выйти</button>
+                    </div>
+                </header>
+
+                <div class="student-grades-summary">
+                    <div class="stat-card">
+                        <div class="stat-value">${totalGrades}</div>
+                        <div class="stat-label">Всего оценок</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${averageGrade}</div>
+                        <div class="stat-label">Средний балл</div>
+                    </div>
+                </div>
+
+                <div class="grades-table-container">
+                    <h2>📖 Мои оценки</h2>
+                    <div id="studentGradesTable"></div>
+                </div>
+            `;
+            
+            // Таблица с оценками
+            let gradesHtml = '<table><tr><th>Предмет</th><th>Оценки</th><th>Средний балл</th></tr>';
+            
+            for (let subject in subjects) {
+                let gradesList = subjects[subject];
+                let avg = (gradesList.reduce((a,b) => a+b, 0) / gradesList.length).toFixed(2);
+                let gradesBadges = gradesList.map(g => {
+                    let gradeClass = '';
+                    if (g === 5) gradeClass = 'grade-5';
+                    else if (g === 4) gradeClass = 'grade-4';
+                    else if (g === 3) gradeClass = 'grade-3';
+                    else gradeClass = 'grade-2';
+                    return `<span class="grade-badge ${gradeClass}" style="margin: 2px;">${g}</span>`;
+                }).join('');
+                
+                gradesHtml += `<tr>
+                    <td><strong>${subject}</strong></td>
+                    <td>${gradesBadges}</td>
+                    <td><strong>${avg}</strong></td>
+                </tr>`;
+            }
+            
+            if (myGrades.length === 0) {
+                gradesHtml += '<tr><td colspan="3" style="text-align: center;">📭 Пока нет оценок</td></tr>';
+            }
+            
+            gradesHtml += '</table>';
+            document.getElementById('studentGradesTable').innerHTML = gradesHtml;
+        }
+
+        // Инициализация: показываем форму входа
+        document.getElementById('loginSection').style.display = 'block';
+        
+        // Загружаем пользователей в БД при первом запуске
+        async function initDatabase() {
+            const snapshot = await db.ref('users').once('value');
+            if (!snapshot.exists()) {
+                // Создаём тестовых пользователей
+                const teacherRef = db.ref('users').push();
+                await teacherRef.set({
+                    name: 'Учитель',
+                    email: 'teacher@journal.ru',
+                    password: '123456',
+                    role: 'teacher'
+                });
+                
+                const student1Ref = db.ref('users').push();
+                await student1Ref.set({
+                    name: 'Иванов Иван',
+                    email: 'student@journal.ru',
+                    password: '123456',
+                    role: 'student'
+                });
+                
+                const student2Ref = db.ref('users').push();
+                await student2Ref.set({
+                    name: 'Петров Петр',
+                    email: 'petrov@journal.ru',
+                    password: '123456',
+                    role: 'student'
+                });
+                
+                const student3Ref = db.ref('users').push();
+                await student3Ref.set({
+                    name: 'Сидорова Анна',
+                    email: 'sidorova@journal.ru',
+                    password: '123456',
+                    role: 'student'
+                });
+            }
+        }
+        
+        initDatabase();
+    </script>
+</body>
+</html>
