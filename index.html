@@ -341,7 +341,7 @@
 <body>
     <div class="container" id="app">
         <!-- Форма входа -->
-        <div id="loginSection" style="display: none;">
+        <div id="loginSection">
             <div class="login-form">
                 <h2>📚 Вход в электронный журнал</h2>
                 <div class="form-group">
@@ -354,6 +354,12 @@
                 </div>
                 <button class="btn btn-primary" style="width: 100%;" onclick="login()">Войти</button>
                 <div id="loginMessage"></div>
+                <hr style="margin: 20px 0;">
+                <div style="text-align: center; font-size: 12px; color: #666;">
+                    <p><strong>Тестовые аккаунты:</strong></p>
+                    <p>Учитель: teacher@journal.ru / 123456</p>
+                    <p>Ученик: student@journal.ru / 123456</p>
+                </div>
             </div>
         </div>
 
@@ -362,14 +368,14 @@
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js"></script>
 
     <script>
-        // ТВОИ ДАННЫЕ FIREBASE
+        // ТВОИ ДАННЫЕ FIREBASE + ДОБАВЛЕН databaseURL
         const firebaseConfig = {
             apiKey: "AIzaSyBfoIEyhvlUfIgAvXJwOthT6uzfB4gV0Uo",
             authDomain: "electronic-journal-5dff1.firebaseapp.com",
+            databaseURL: "https://electronic-journal-5dff1-default-rtdb.firebaseio.com",
             projectId: "electronic-journal-5dff1",
             storageBucket: "electronic-journal-5dff1.firebasestorage.app",
             messagingSenderId: "293962922085",
@@ -378,13 +384,12 @@
 
         // Инициализация Firebase
         firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
         const db = firebase.database();
 
         let currentUser = null;
         let currentUserRole = null;
 
-        // Предопределённые пользователи
+        // Предопределённые пользователи (локально для проверки)
         const users = {
             'teacher@journal.ru': { password: '123456', role: 'teacher', name: 'Учитель' },
             'student@journal.ru': { password: '123456', role: 'student', name: 'Иванов Иван' },
@@ -406,7 +411,7 @@
                 messageDiv.innerHTML = '<div class="success">✅ Вход выполнен!</div>';
                 setTimeout(() => {
                     showMainApp();
-                }, 1000);
+                }, 500);
             } else {
                 messageDiv.innerHTML = '<div class="error">❌ Неверный email или пароль</div>';
             }
@@ -460,10 +465,6 @@
                         <label>Email ученика</label>
                         <input type="email" id="studentEmail" placeholder="student@journal.ru">
                     </div>
-                    <div class="form-group">
-                        <label>Пароль</label>
-                        <input type="text" id="studentPassword" placeholder="123456" value="123456">
-                    </div>
                     <button class="btn btn-primary" onclick="addStudent()">➕ Добавить ученика</button>
                 </div>
 
@@ -507,16 +508,20 @@
 
         // Загрузить учеников для учителя
         async function loadStudentsForTeacher() {
-            const snapshot = await db.ref('users').once('value');
-            const users = snapshot.val();
-            const select = document.getElementById('gradeStudentSelect');
-            if (select) {
-                select.innerHTML = '<option value="">Выберите ученика</option>';
-                for (let id in users) {
-                    if (users[id].role === 'student') {
-                        select.innerHTML += `<option value="${id}">${users[id].name} (${users[id].email})</option>`;
+            try {
+                const snapshot = await db.ref('students').once('value');
+                const students = snapshot.val();
+                const select = document.getElementById('gradeStudentSelect');
+                if (select) {
+                    select.innerHTML = '<option value="">Выберите ученика</option>';
+                    if (students) {
+                        for (let id in students) {
+                            select.innerHTML += `<option value="${id}">${students[id].name} (${students[id].email})</option>`;
+                        }
                     }
                 }
+            } catch(e) {
+                console.log('Ошибка загрузки учеников:', e);
             }
         }
 
@@ -524,20 +529,22 @@
         window.addStudent = async function() {
             const name = document.getElementById('studentName').value;
             const email = document.getElementById('studentEmail').value;
-            const password = document.getElementById('studentPassword').value;
 
             if (!name || !email) {
                 alert('Заполните имя и email!');
                 return;
             }
 
-            const newStudentRef = db.ref('users').push();
+            // Добавляем в Realtime Database
+            const newStudentRef = db.ref('students').push();
             await newStudentRef.set({
                 name: name,
                 email: email,
-                password: password,
                 role: 'student'
             });
+
+            // Также добавляем в локальный объект users для входа
+            users[email] = { password: '123456', role: 'student', name: name };
 
             alert('✅ Ученик добавлен!');
             document.getElementById('studentName').value = '';
@@ -572,37 +579,44 @@
 
         // Загрузить все оценки для учителя
         async function loadAllGrades() {
-            const gradesSnapshot = await db.ref('grades').once('value');
-            const usersSnapshot = await db.ref('users').once('value');
-            const grades = gradesSnapshot.val();
-            const users = usersSnapshot.val();
+            try {
+                const gradesSnapshot = await db.ref('grades').once('value');
+                const studentsSnapshot = await db.ref('students').once('value');
+                const grades = gradesSnapshot.val();
+                const students = studentsSnapshot.val();
 
-            let html = '<table><tr><th>Ученик</th><th>Предмет</th><th>Оценка</th><th>Дата</th><th>Учитель</th><th>Действия</th></tr>';
-            
-            if (grades) {
-                for (let gradeId in grades) {
-                    const grade = grades[gradeId];
-                    const student = users ? users[grade.studentId] : null;
-                    const studentName = student ? student.name : 'Неизвестно';
-                    
-                    let gradeClass = '';
-                    if (grade.grade === 5) gradeClass = 'grade-5';
-                    else if (grade.grade === 4) gradeClass = 'grade-4';
-                    else if (grade.grade === 3) gradeClass = 'grade-3';
-                    else gradeClass = 'grade-2';
-                    
-                    html += `<tr>
-                        <td>${studentName}</td>
-                        <td>${grade.subject}</td>
-                        <td><span class="grade-badge ${gradeClass}">${grade.grade}</span></td>
-                        <td>${grade.date}</td>
-                        <td>${grade.teacher || 'Учитель'}</td>
-                        <td><button class="btn btn-danger btn-sm" onclick="deleteGrade('${gradeId}')">🗑️</button></td>
-                    </tr>`;
+                let html = '<table> etxek<th>Ученик</th><th>Предмет</th><th>Оценка</th><th>Дата</th><th>Учитель</th><th>Действия</th></tr>';
+                
+                if (grades) {
+                    for (let gradeId in grades) {
+                        const grade = grades[gradeId];
+                        const student = students ? students[grade.studentId] : null;
+                        const studentName = student ? student.name : 'Неизвестно';
+                        
+                        let gradeClass = '';
+                        if (grade.grade === 5) gradeClass = 'grade-5';
+                        else if (grade.grade === 4) gradeClass = 'grade-4';
+                        else if (grade.grade === 3) gradeClass = 'grade-3';
+                        else gradeClass = 'grade-2';
+                        
+                        html += `<tr>
+                            <td>${studentName}</td>
+                            <td>${grade.subject}</td>
+                            <td><span class="grade-badge ${gradeClass}">${grade.grade}</span></td>
+                            <td>${grade.date}</td>
+                            <td>${grade.teacher || 'Учитель'}</td>
+                            <td><button class="btn btn-danger" style="padding: 5px 10px;" onclick="deleteGrade('${gradeId}')">🗑️</button></td>
+                        </tr>`;
+                    }
                 }
+                if (!grades || Object.keys(grades).length === 0) {
+                    html += '<tr><td colspan="6" style="text-align: center;">Нет оценок</td></tr>';
+                }
+                html += '</tr>';
+                document.getElementById('teacherGradesTable').innerHTML = html;
+            } catch(e) {
+                document.getElementById('teacherGradesTable').innerHTML = '<p>Ошибка загрузки оценок</p>';
             }
-            html += '</table>';
-            document.getElementById('teacherGradesTable').innerHTML = html;
         }
 
         window.deleteGrade = async function(gradeId) {
@@ -612,18 +626,20 @@
             }
         };
 
-        // ========== ПАНЕЛЬ УЧЕНИКА (ДРУГОЙ ДИЗАЙН) ==========
+        // ========== ПАНЕЛЬ УЧЕНИКА ==========
         async function renderStudentPanel() {
             // Найти ID текущего ученика
-            const usersSnapshot = await db.ref('users').once('value');
-            const users = usersSnapshot.val();
+            const studentsSnapshot = await db.ref('students').once('value');
+            const students = studentsSnapshot.val();
             let studentId = null;
             
-            for (let id in users) {
-                if (users[id].email === currentUser.email) {
-                    studentId = id;
-                    currentUser.id = id;
-                    break;
+            if (students) {
+                for (let id in students) {
+                    if (students[id].email === currentUser.email) {
+                        studentId = id;
+                        currentUser.id = id;
+                        break;
+                    }
                 }
             }
 
@@ -678,7 +694,7 @@
             `;
             
             // Таблица с оценками
-            let gradesHtml = '<table><tr><th>Предмет</th><th>Оценки</th><th>Средний балл</th></tr>';
+            let gradesHtml = '<table><th>Предмет</th><th>Оценки</th><th>Средний балл</th></tr>';
             
             for (let subject in subjects) {
                 let gradesList = subjects[subject];
@@ -707,43 +723,29 @@
             document.getElementById('studentGradesTable').innerHTML = gradesHtml;
         }
 
-        // Инициализация: показываем форму входа
-        document.getElementById('loginSection').style.display = 'block';
-        
-        // Загружаем пользователей в БД при первом запуске
+        // Инициализация: создаём тестовых учеников в БД
         async function initDatabase() {
-            const snapshot = await db.ref('users').once('value');
+            const snapshot = await db.ref('students').once('value');
             if (!snapshot.exists()) {
-                // Создаём тестовых пользователей
-                const teacherRef = db.ref('users').push();
-                await teacherRef.set({
-                    name: 'Учитель',
-                    email: 'teacher@journal.ru',
-                    password: '123456',
-                    role: 'teacher'
-                });
-                
-                const student1Ref = db.ref('users').push();
+                // Создаём тестовых учеников
+                const student1Ref = db.ref('students').push();
                 await student1Ref.set({
                     name: 'Иванов Иван',
                     email: 'student@journal.ru',
-                    password: '123456',
                     role: 'student'
                 });
                 
-                const student2Ref = db.ref('users').push();
+                const student2Ref = db.ref('students').push();
                 await student2Ref.set({
                     name: 'Петров Петр',
                     email: 'petrov@journal.ru',
-                    password: '123456',
                     role: 'student'
                 });
                 
-                const student3Ref = db.ref('users').push();
+                const student3Ref = db.ref('students').push();
                 await student3Ref.set({
                     name: 'Сидорова Анна',
                     email: 'sidorova@journal.ru',
-                    password: '123456',
                     role: 'student'
                 });
             }
