@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Школьный журнал | Детали оценок | Д/з, ЦДЗ, Индивидуальное</title>
+    <title>Школьный журнал | Детали оценок</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -61,8 +61,6 @@
             margin-right: 6px;
         }
         .status-dot.green { background: #22c55e; }
-        .status-dot.red { background: #ef4444; }
-        .status-dot.yellow { background: #eab308; }
         .controls {
             background: #f8fafc;
             padding: 15px 25px;
@@ -211,10 +209,15 @@
             gap: 6px;
             cursor: pointer;
             transition: 0.2s;
+            border: 2px solid transparent;
         }
         .grade-chip:hover {
             transform: scale(1.05);
             box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            border-color: #0f3b5f;
+        }
+        .grade-chip.clickable {
+            cursor: pointer;
         }
         .grade-chip i { cursor: pointer; color: #92400e; font-size: 0.7rem; }
         .grade-chip i:hover { color: #b91c1c; }
@@ -282,7 +285,7 @@
         .btn-danger { background: #ef4444; color: white; border-color: #ef4444; }
         .btn-danger:hover { background: #dc2626; }
         
-        /* Модальное окно для деталей оценки */
+        /* Модальное окно */
         .modal {
             display: none;
             position: fixed;
@@ -293,8 +296,10 @@
             height: 100%;
             background: rgba(0,0,0,0.5);
             animation: fadeIn 0.3s ease;
+            align-items: center;
+            justify-content: center;
         }
-        .modal.show { display: flex; align-items: center; justify-content: center; }
+        .modal.show { display: flex; }
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
@@ -315,14 +320,15 @@
         }
         .modal-close {
             position: absolute;
-            top: 16px;
-            right: 20px;
-            font-size: 1.5rem;
+            top: 12px;
+            right: 16px;
+            font-size: 1.8rem;
             cursor: pointer;
             color: #94a3b8;
             transition: 0.2s;
             background: none;
             border: none;
+            line-height: 1;
         }
         .modal-close:hover { color: #1e293b; transform: rotate(90deg); }
         .modal-grade {
@@ -340,7 +346,7 @@
             margin: 0 auto 16px;
         }
         .modal-detail {
-            padding: 8px 0;
+            padding: 10px 0;
             display: flex;
             justify-content: space-between;
             border-bottom: 1px solid #f1f5f9;
@@ -377,6 +383,13 @@
             from { transform: translateY(100px); opacity: 0; }
             to { transform: translateY(0); opacity: 1; }
         }
+        .grade-hint {
+            font-size: 0.6rem;
+            color: #94a3b8;
+            margin-top: 4px;
+            width: 100%;
+            text-align: center;
+        }
         @media (max-width: 700px) {
             body { padding: 10px; }
             .controls { flex-direction: column; align-items: stretch; }
@@ -392,7 +405,7 @@
     <i class="fas fa-check-circle"></i> <span id="notifText">Сохранено!</span>
 </div>
 
-<!-- Модальное окно для деталей оценки -->
+<!-- Модальное окно -->
 <div class="modal" id="gradeModal">
     <div class="modal-content">
         <button class="modal-close" id="modalClose">&times;</button>
@@ -428,7 +441,7 @@
         <div>
             <h1><i class="fas fa-chalkboard-user"></i> Школьный журнал</h1>
             <p style="opacity:0.8; font-size:0.85rem; margin-top:4px;">
-                <i class="fas fa-cloud-upload-alt"></i> Firebase • 26 учеников • Д/з, ЦДЗ, Индивидуальное
+                <i class="fas fa-cloud-upload-alt"></i> Firebase • Нажми на оценку для деталей
             </p>
         </div>
         <div class="class-badge"><i class="fas fa-users"></i> 9 "А" класс</div>
@@ -533,7 +546,7 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 console.log('✅ Firebase подключен!');
 
-// ===== ВСЕ 26 УЧЕНИКОВ (АЛФАВИТ) =====
+// ===== ВСЕ УЧЕНИКИ (АЛФАВИТ) =====
 const rawStudents = [
     "Абросимов Олег", "Борисова Анна", "Васильев Дмитрий", "Григорьев Максим",
     "Дмитриева София", "Егоров Иван", "Жукова Екатерина", "Зайцев Алексей",
@@ -682,7 +695,7 @@ function initDB() {
     saveToFirebase(false);
 }
 
-// ===== ОТКРЫТИЕ МОДАЛЬНОГО ОКНА =====
+// ===== МОДАЛЬНОЕ ОКНО =====
 function showGradeDetails(studentId, gradeIdx) {
     const entry = getEntry(studentId);
     const grade = entry.grades[gradeIdx];
@@ -706,7 +719,6 @@ function showGradeDetails(studentId, gradeIdx) {
     document.getElementById('modalDate').textContent = `${parts[2]}.${parts[1]}.${parts[0]}`;
     document.getElementById('modalStudent').textContent = student ? student.name : '—';
     
-    // ЦДЗ статус
     const cdzRow = document.getElementById('modalCdzRow');
     if (entry.taskType === 'cdz') {
         cdzRow.style.display = 'flex';
@@ -722,6 +734,17 @@ function showGradeDetails(studentId, gradeIdx) {
 
 function closeModal() {
     document.getElementById('gradeModal').classList.remove('show');
+}
+
+function getSubjectEmoji(subject) {
+    const map = {
+        'Математика': '📐',
+        'Русский язык': '📖',
+        'Физика': '⚛️',
+        'История': '🏛️',
+        'Литература': '📚'
+    };
+    return map[subject] || '📚';
 }
 
 // ===== РЕНДЕР =====
@@ -819,6 +842,7 @@ function render() {
                 };
             } else {
                 chip.innerHTML = display;
+                chip.classList.add('clickable');
                 chip.onclick = () => {
                     showGradeDetails(student.id, idx);
                 };
@@ -854,10 +878,9 @@ function render() {
             };
             wrap.appendChild(addBtn);
         } else {
-            // Для ученика показываем подсказку
             if (entry.grades.length > 0) {
                 const hint = document.createElement('div');
-                hint.style.cssText = 'font-size:0.6rem;color:#94a3b8;margin-top:4px;width:100%;';
+                hint.className = 'grade-hint';
                 hint.textContent = '👆 нажми на оценку для деталей';
                 wrap.appendChild(hint);
             }
@@ -938,17 +961,6 @@ function render() {
 
     document.getElementById('totalGrades').textContent = total;
     document.getElementById('avgGrade').textContent = total === 0 ? '—' : (sum / total).toFixed(2);
-}
-
-function getSubjectEmoji(subject) {
-    const map = {
-        'Математика': '📐',
-        'Русский язык': '📖',
-        'Физика': '⚛️',
-        'История': '🏛️',
-        'Литература': '📚'
-    };
-    return map[subject] || '📚';
 }
 
 // ===== НАВИГАЦИЯ =====
@@ -1060,7 +1072,7 @@ async function init() {
         }
     };
 
-    // Модальное окно
+    // Модальное окно - ЗАКРЫТИЕ
     document.getElementById('modalClose').onclick = closeModal;
     document.getElementById('gradeModal').onclick = (e) => {
         if (e.target === e.currentTarget) closeModal();
