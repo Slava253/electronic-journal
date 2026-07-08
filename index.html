@@ -2,8 +2,8 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Школьный журнал | Детали оценок</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Школьный журнал</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -41,26 +41,6 @@
             border-radius: 60px;
             font-weight: 600;
         }
-        .status-bar {
-            background: #f8fafc;
-            padding: 8px 20px;
-            font-size: 0.8rem;
-            color: #64748b;
-            border-bottom: 1px solid #e2e8f0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-        .status-dot {
-            display: inline-block;
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            margin-right: 6px;
-        }
-        .status-dot.green { background: #22c55e; }
         .controls {
             background: #f8fafc;
             padding: 15px 25px;
@@ -211,13 +191,10 @@
             transition: 0.2s;
             border: 2px solid transparent;
         }
-        .grade-chip:hover {
+        .grade-chip.clickable:hover {
             transform: scale(1.05);
             box-shadow: 0 2px 8px rgba(0,0,0,0.15);
             border-color: #0f3b5f;
-        }
-        .grade-chip.clickable {
-            cursor: pointer;
         }
         .grade-chip i { cursor: pointer; color: #92400e; font-size: 0.7rem; }
         .grade-chip i:hover { color: #b91c1c; }
@@ -295,15 +272,10 @@
             width: 100%;
             height: 100%;
             background: rgba(0,0,0,0.5);
-            animation: fadeIn 0.3s ease;
             align-items: center;
             justify-content: center;
         }
         .modal.show { display: flex; }
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
         .modal-content {
             background: white;
             border-radius: 24px;
@@ -311,8 +283,8 @@
             max-width: 450px;
             width: 90%;
             box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
-            animation: slideUp 0.3s ease;
             position: relative;
+            animation: slideUp 0.3s ease;
         }
         @keyframes slideUp {
             from { transform: translateY(30px); opacity: 0; }
@@ -325,12 +297,10 @@
             font-size: 1.8rem;
             cursor: pointer;
             color: #94a3b8;
-            transition: 0.2s;
             background: none;
             border: none;
-            line-height: 1;
         }
-        .modal-close:hover { color: #1e293b; transform: rotate(90deg); }
+        .modal-close:hover { color: #1e293b; }
         .modal-grade {
             font-size: 3.5rem;
             font-weight: 800;
@@ -374,7 +344,6 @@
             display: none;
             z-index: 1000;
             box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-            max-width: 90%;
         }
         .notification.show { display: block; animation: slideIn 0.3s ease; }
         .notification.success { background: #22c55e; }
@@ -401,9 +370,7 @@
 </head>
 <body>
 
-<div class="notification" id="notif">
-    <i class="fas fa-check-circle"></i> <span id="notifText">Сохранено!</span>
-</div>
+<div class="notification" id="notif"><i class="fas fa-check-circle"></i> <span id="notifText">Сохранено!</span></div>
 
 <!-- Модальное окно -->
 <div class="modal" id="gradeModal">
@@ -441,18 +408,10 @@
         <div>
             <h1><i class="fas fa-chalkboard-user"></i> Школьный журнал</h1>
             <p style="opacity:0.8; font-size:0.85rem; margin-top:4px;">
-                <i class="fas fa-cloud-upload-alt"></i> Firebase • Нажми на оценку для деталей
+                <i class="fas fa-save"></i> Сохраняется в браузере • Нажми на оценку для деталей
             </p>
         </div>
         <div class="class-badge"><i class="fas fa-users"></i> 9 "А" класс</div>
-    </div>
-
-    <div class="status-bar">
-        <span>
-            <span class="status-dot green" id="statusDot"></span>
-            <span id="statusText">Готово</span>
-        </span>
-        <span id="studentCount">👨‍🎓 Учеников: 26</span>
     </div>
 
     <div class="controls">
@@ -518,34 +477,7 @@
     </div>
 </div>
 
-<script type="importmap">
-{
-    "imports": {
-        "firebase/app": "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js",
-        "firebase/database": "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js"
-    }
-}
-</script>
-
-<script type="module">
-import { initializeApp } from "firebase/app";
-import { getDatabase, ref, set, get, child, onValue } from "firebase/database";
-
-// ===== КОНФИГУРАЦИЯ FIREBASE =====
-const firebaseConfig = {
-    apiKey: "AIzaSyBfoIEyhvlUfIgAvXJwOthT6uzfB4gV0Uo",
-    authDomain: "electronic-journal-5dff1.firebaseapp.com",
-    databaseURL: "https://electronic-journal-5dff1-default-rtdb.firebaseio.com",
-    projectId: "electronic-journal-5dff1",
-    storageBucket: "electronic-journal-5dff1.firebasestorage.app",
-    messagingSenderId: "293962922085",
-    appId: "1:293962922085:web:391c3e453bb2725e392e8c"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-console.log('✅ Firebase подключен!');
-
+<script>
 // ===== ВСЕ УЧЕНИКИ (АЛФАВИТ) =====
 const rawStudents = [
     "Абросимов Олег", "Борисова Анна", "Васильев Дмитрий", "Григорьев Максим",
@@ -569,10 +501,31 @@ let currentSubject = "Математика";
 let currentDate = "";
 let currentMode = "teacher";
 let selectedStudent = 0;
-let isSaving = false;
-let isLoaded = false;
 
-// ===== ФУНКЦИИ =====
+// ===== LOCALSTORAGE =====
+function loadData() {
+    try {
+        const saved = localStorage.getItem('journalData');
+        if (saved) {
+            journal = JSON.parse(saved);
+            return true;
+        }
+    } catch(e) { console.error('Ошибка загрузки:', e); }
+    return false;
+}
+
+function saveData(showNotif = true) {
+    try {
+        localStorage.setItem('journalData', JSON.stringify(journal));
+        if (showNotif) showNotification('✅ Сохранено!');
+        return true;
+    } catch(e) {
+        console.error('Ошибка сохранения:', e);
+        if (showNotif) showNotification('❌ Ошибка сохранения!', true);
+        return false;
+    }
+}
+
 function showNotification(text, isError = false) {
     const el = document.getElementById('notif');
     const textEl = document.getElementById('notifText');
@@ -582,6 +535,7 @@ function showNotification(text, isError = false) {
     el._timeout = setTimeout(() => el.classList.remove('show'), 3000);
 }
 
+// ===== РАБОТА С ДАННЫМИ =====
 function ensureDateExists(subject, date) {
     if (!journal[subject]) journal[subject] = {};
     if (!journal[subject][date]) {
@@ -614,47 +568,6 @@ function getEntry(studentId) {
     return journal[currentSubject][currentDate][studentId];
 }
 
-async function saveToFirebase(showNotif = true) {
-    if (isSaving) return;
-    isSaving = true;
-    try {
-        await set(ref(db, 'journalData'), journal);
-        if (showNotif) showNotification('✅ Сохранено в Firebase!');
-        console.log('✅ Данные сохранены в Firebase');
-    } catch (e) {
-        console.error('❌ Ошибка сохранения:', e);
-        if (showNotif) showNotification('❌ Ошибка сохранения', true);
-    }
-    isSaving = false;
-}
-
-async function loadFromFirebase() {
-    try {
-        const dbRef = ref(db);
-        const snapshot = await get(child(dbRef, 'journalData'));
-        if (snapshot.exists()) {
-            journal = snapshot.val();
-            subjects.forEach(sub => {
-                if (!journal[sub]) journal[sub] = {};
-                Object.keys(journal[sub]).forEach(date => {
-                    Object.keys(journal[sub][date]).forEach(id => {
-                        if (!journal[sub][date][id].cdzGrade) {
-                            journal[sub][date][id].cdzGrade = "";
-                        }
-                    });
-                });
-            });
-            console.log('✅ Данные загружены из Firebase');
-            return true;
-        }
-        console.log('ℹ️ В Firebase нет данных');
-        return false;
-    } catch (e) {
-        console.error('❌ Ошибка загрузки:', e);
-        return false;
-    }
-}
-
 function initDB() {
     subjects.forEach(sub => {
         journal[sub] = {};
@@ -684,15 +597,7 @@ function initDB() {
         if (math[2]) { math[2].taskName = "Индивидуальная работа"; math[2].taskType = "individual"; math[2].grades = ["5","5"]; }
         if (math[3]) { math[3].taskName = "ЦДЗ: Теорема Пифагора"; math[3].taskType = "cdz"; math[3].cdzChecked = true; math[3].cdzGrade = ""; }
     }
-
-    const rus = journal["Русский язык"][today];
-    if (rus) {
-        if (rus[0]) { rus[0].taskName = "Сочинение по картине"; rus[0].taskType = "homework"; rus[0].grades = ["5"]; }
-        if (rus[1]) { rus[1].taskName = "ЦДЗ: Правописание"; rus[1].taskType = "cdz"; rus[1].grades = ["4"]; rus[1].cdzChecked = true; rus[1].cdzGrade = "4"; }
-    }
-
-    console.log('✅ База данных инициализирована');
-    saveToFirebase(false);
+    saveData(false);
 }
 
 // ===== МОДАЛЬНОЕ ОКНО =====
@@ -776,7 +681,7 @@ function render() {
             inp.value = entry.taskName || '';
             inp.onchange = () => {
                 entry.taskName = inp.value;
-                saveToFirebase(false);
+                saveData(false);
             };
             tdTask.appendChild(inp);
         } else {
@@ -784,7 +689,7 @@ function render() {
         }
         tr.appendChild(tdTask);
 
-        // Тип (Д/з, ЦДЗ, Индивидуальное)
+        // Тип
         const tdType = document.createElement('td');
         if (isTeacher) {
             const sel = document.createElement('select');
@@ -808,7 +713,7 @@ function render() {
                     entry.cdzChecked = false;
                     entry.cdzGrade = '';
                 }
-                saveToFirebase(false);
+                saveData(false);
                 render();
             };
             tdType.appendChild(sel);
@@ -837,7 +742,7 @@ function render() {
                 chip.querySelector('i').onclick = (e) => {
                     e.stopPropagation();
                     entry.grades.splice(idx, 1);
-                    saveToFirebase(false);
+                    saveData(false);
                     render();
                 };
             } else {
@@ -869,7 +774,7 @@ function render() {
                     const v = val.trim().toLowerCase();
                     if (v === 'нб' || (parseInt(v) >= 2 && parseInt(v) <= 5)) {
                         entry.grades.push(v);
-                        saveToFirebase(false);
+                        saveData(false);
                         render();
                     } else {
                         alert('Оценка должна быть 2-5 или нб');
@@ -888,7 +793,7 @@ function render() {
         tdGrades.appendChild(wrap);
         tr.appendChild(tdGrades);
 
-        // ЦДЗ проверка
+        // ЦДЗ
         const tdCdz = document.createElement('td');
         if (entry.taskType === 'cdz') {
             if (isTeacher) {
@@ -904,7 +809,7 @@ function render() {
                             entry.cdzChecked = true;
                             entry.cdzGrade = g;
                             entry.grades.push(g);
-                            saveToFirebase(false);
+                            saveData(false);
                             render();
                         }
                     };
@@ -916,7 +821,7 @@ function render() {
                     b2.onclick = () => {
                         entry.cdzChecked = true;
                         entry.cdzGrade = '';
-                        saveToFirebase(false);
+                        saveData(false);
                         render();
                     };
                     div.appendChild(b2);
@@ -940,7 +845,7 @@ function render() {
                                 if (idx !== -1) entry.grades.splice(idx, 1);
                                 entry.cdzGrade = '';
                             }
-                            saveToFirebase(false);
+                            saveData(false);
                             render();
                         }
                     };
@@ -970,7 +875,7 @@ function setDate(date) {
     const parts = date.split('-');
     document.getElementById('dateDisplay').textContent = `${parts[2]}.${parts[1]}.${parts[0]}`;
     ensureDateExists(currentSubject, currentDate);
-    if (isLoaded) render();
+    render();
 }
 
 function changeDate(delta) {
@@ -983,11 +888,10 @@ function changeDate(delta) {
 }
 
 // ===== ЗАПУСК =====
-async function init() {
+function init() {
     console.log('🚀 Запуск приложения...');
-    console.log(`👨‍🎓 Загружено ${students.length} учеников`);
     
-    const hasData = await loadFromFirebase();
+    const hasData = loadData();
     if (!hasData) {
         initDB();
     }
@@ -1002,6 +906,7 @@ async function init() {
     
     ensureDateExists(currentSubject, currentDate);
 
+    // Заполняем список учеников
     const sel = document.getElementById('studentSelect');
     students.forEach(s => {
         const opt = document.createElement('option');
@@ -1013,19 +918,6 @@ async function init() {
         selectedStudent = parseInt(sel.value);
         if (currentMode === 'student') render();
     };
-
-    // Подписка на изменения в Firebase
-    const journalRef = ref(db, 'journalData');
-    onValue(journalRef, (snapshot) => {
-        if (snapshot.exists() && isLoaded) {
-            const newData = snapshot.val();
-            if (JSON.stringify(journal) !== JSON.stringify(newData)) {
-                journal = newData;
-                console.log('🔄 Данные обновлены из Firebase');
-                render();
-            }
-        }
-    });
 
     // События
     document.getElementById('subjectSelect').onchange = (e) => {
@@ -1055,7 +947,7 @@ async function init() {
         };
     });
 
-    document.getElementById('saveBtn').onclick = () => saveToFirebase(true);
+    document.getElementById('saveBtn').onclick = () => saveData(true);
     document.getElementById('resetBtn').onclick = () => {
         if (confirm(`Очистить всё на ${currentDate} по ${currentSubject}?`)) {
             students.forEach(s => {
@@ -1066,13 +958,13 @@ async function init() {
                 e.cdzChecked = false;
                 e.cdzGrade = '';
             });
-            saveToFirebase(false);
+            saveData(false);
             render();
             showNotification('Очищено!');
         }
     };
 
-    // Модальное окно - ЗАКРЫТИЕ
+    // Модальное окно
     document.getElementById('modalClose').onclick = closeModal;
     document.getElementById('gradeModal').onclick = (e) => {
         if (e.target === e.currentTarget) closeModal();
@@ -1081,16 +973,12 @@ async function init() {
         if (e.key === 'Escape') closeModal();
     });
 
-    isLoaded = true;
     render();
-    showNotification('✅ Загружено!');
-    console.log('✅ Приложение запущено успешно!');
+    showNotification('✅ Готово!');
+    console.log('✅ Приложение запущено!');
 }
 
-init().catch(err => {
-    console.error('❌ Ошибка при запуске:', err);
-    showNotification('❌ Ошибка подключения', true);
-});
+document.addEventListener('DOMContentLoaded', init);
 </script>
 </body>
 </html>
