@@ -2,8 +2,8 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Школьный журнал</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Школьный журнал | Firebase</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -41,67 +41,90 @@
             border-radius: 60px;
             font-weight: 600;
         }
+        .status-bar {
+            background: #f8fafc;
+            padding: 8px 20px;
+            font-size: 0.8rem;
+            color: #64748b;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .status-dot {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 6px;
+        }
+        .status-dot.green { background: #22c55e; }
+        .status-dot.red { background: #ef4444; }
+        .status-dot.yellow { background: #eab308; }
         .controls {
             background: #f8fafc;
-            padding: 15px 25px;
+            padding: 12px 25px;
             display: flex;
             flex-wrap: wrap;
-            gap: 12px;
+            gap: 10px;
             border-bottom: 1px solid #e2e8f0;
             align-items: center;
         }
         .control-group {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             flex-wrap: wrap;
             align-items: center;
         }
         .filter-box {
             background: white;
-            padding: 5px 15px;
+            padding: 4px 14px;
             border-radius: 40px;
             border: 1px solid #cbd5e1;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
-        .filter-box label { font-weight: 600; font-size: 0.9rem; }
+        .filter-box label { font-weight: 600; font-size: 0.85rem; }
         select, input[type="date"] {
-            padding: 6px 12px;
+            padding: 5px 10px;
             border-radius: 30px;
             border: none;
             background: #f1f5f9;
             font-family: 'Inter', sans-serif;
             font-weight: 500;
             cursor: pointer;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
         }
         .nav-btn {
             background: none;
             border: none;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             cursor: pointer;
-            padding: 5px 10px;
+            padding: 4px 8px;
             border-radius: 30px;
             color: #1b5a7a;
         }
         .nav-btn:hover { background: #e2e8f0; }
         .mode-group {
             display: flex;
-            gap: 6px;
+            gap: 4px;
             background: white;
-            padding: 4px;
+            padding: 3px;
             border-radius: 60px;
             border: 1px solid #cbd5e1;
         }
         .mode-btn {
-            padding: 6px 16px;
+            padding: 5px 14px;
             border-radius: 40px;
             border: none;
             font-weight: 600;
             cursor: pointer;
             background: transparent;
             transition: 0.2s;
+            font-size: 0.8rem;
         }
         .mode-btn.active {
             background: #0f3b5f;
@@ -109,28 +132,28 @@
         }
         .student-selector {
             background: white;
-            padding: 5px 15px;
+            padding: 4px 14px;
             border-radius: 40px;
             border: 1px solid #cbd5e1;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
         .table-wrap {
             overflow-x: auto;
             padding: 0 0 10px 0;
-            max-height: 70vh;
+            max-height: 65vh;
             overflow-y: auto;
         }
         table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 0.85rem;
-            min-width: 1200px;
+            font-size: 0.8rem;
+            min-width: 1300px;
         }
         th {
             background: #eef2ff;
-            padding: 12px 8px;
+            padding: 10px 6px;
             border-bottom: 2px solid #cbd5e1;
             position: sticky;
             top: 0;
@@ -138,7 +161,7 @@
             z-index: 10;
         }
         td {
-            padding: 10px 6px;
+            padding: 8px 4px;
             border-bottom: 1px solid #e2e8f0;
             text-align: center;
             vertical-align: middle;
@@ -150,22 +173,22 @@
             position: sticky;
             left: 0;
             border-right: 1px solid #e2e8f0;
-            padding-left: 15px;
+            padding-left: 12px;
             z-index: 5;
         }
         .task-input {
-            width: 160px;
-            padding: 6px 10px;
+            width: 140px;
+            padding: 5px 8px;
             border-radius: 30px;
             border: 1px solid #cbd5e1;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             background: #fefce8;
         }
         .badge {
             display: inline-block;
-            padding: 4px 12px;
+            padding: 3px 10px;
             border-radius: 30px;
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             font-weight: 700;
         }
         .badge-homework { background: #dbeafe; color: #1e40af; }
@@ -174,19 +197,19 @@
         .grades-wrap {
             display: flex;
             flex-wrap: wrap;
-            gap: 6px;
+            gap: 4px;
             justify-content: center;
             align-items: center;
         }
         .grade-chip {
             background: #fef9c3;
-            padding: 4px 10px;
+            padding: 3px 8px;
             border-radius: 30px;
             font-weight: 700;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
             cursor: pointer;
             transition: 0.2s;
             border: 2px solid transparent;
@@ -196,14 +219,14 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.15);
             border-color: #0f3b5f;
         }
-        .grade-chip i { cursor: pointer; color: #92400e; font-size: 0.7rem; }
+        .grade-chip i { cursor: pointer; color: #92400e; font-size: 0.6rem; }
         .grade-chip i:hover { color: #b91c1c; }
         .add-grade {
             background: #e2e8f0;
             border: none;
             border-radius: 40px;
-            padding: 3px 10px;
-            font-size: 0.7rem;
+            padding: 2px 8px;
+            font-size: 0.65rem;
             font-weight: 600;
             cursor: pointer;
             transition: 0.2s;
@@ -212,15 +235,15 @@
         .cdz-actions {
             display: flex;
             flex-direction: column;
-            gap: 4px;
+            gap: 3px;
             align-items: center;
         }
         .cdz-btn {
-            padding: 4px 12px;
+            padding: 3px 10px;
             border-radius: 30px;
             border: none;
             font-weight: 600;
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             cursor: pointer;
             width: 100%;
             transition: 0.2s;
@@ -229,32 +252,33 @@
         .cdz-grade:hover { background: #16a34a; }
         .cdz-nograde { background: #eab308; color: white; }
         .cdz-nograde:hover { background: #ca8a04; }
-        .cdz-status { font-size: 0.7rem; font-weight: 600; color: #166534; }
+        .cdz-status { font-size: 0.65rem; font-weight: 600; color: #166534; }
         .footer {
             background: #f1f5f9;
-            padding: 15px 25px;
+            padding: 12px 25px;
             display: flex;
             flex-wrap: wrap;
             justify-content: space-between;
             align-items: center;
             border-top: 1px solid #cbd5e1;
-            gap: 10px;
+            gap: 8px;
         }
         .stat {
             background: white;
-            padding: 6px 18px;
+            padding: 5px 16px;
             border-radius: 60px;
             font-weight: 600;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
         }
         .btn {
-            padding: 6px 18px;
+            padding: 5px 16px;
             border-radius: 40px;
             border: 1px solid #cbd5e1;
             background: white;
             font-weight: 600;
             cursor: pointer;
             transition: 0.2s;
+            font-size: 0.8rem;
         }
         .btn:hover { background: #f1f5f9; }
         .btn-save { background: #22c55e; color: white; border-color: #22c55e; }
@@ -279,12 +303,14 @@
         .modal-content {
             background: white;
             border-radius: 24px;
-            padding: 32px;
-            max-width: 450px;
+            padding: 30px;
+            max-width: 480px;
             width: 90%;
             box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
             position: relative;
             animation: slideUp 0.3s ease;
+            max-height: 90vh;
+            overflow-y: auto;
         }
         @keyframes slideUp {
             from { transform: translateY(30px); opacity: 0; }
@@ -308,15 +334,15 @@
             color: #0f3b5f;
             background: #fef9c3;
             border-radius: 50%;
-            width: 100px;
-            height: 100px;
+            width: 90px;
+            height: 90px;
             display: flex;
             align-items: center;
             justify-content: center;
             margin: 0 auto 16px;
         }
         .modal-detail {
-            padding: 10px 0;
+            padding: 8px 0;
             display: flex;
             justify-content: space-between;
             border-bottom: 1px solid #f1f5f9;
@@ -331,19 +357,66 @@
             background: #eef2ff;
             color: #0f3b5f;
             font-weight: 600;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
         }
+        .modal-comment {
+            margin-top: 12px;
+            padding: 12px;
+            background: #f8fafc;
+            border-radius: 12px;
+            border-left: 4px solid #ffcd3c;
+        }
+        .modal-comment-label {
+            font-weight: 600;
+            color: #64748b;
+            font-size: 0.75rem;
+        }
+        .modal-comment-text {
+            margin-top: 4px;
+            color: #1e293b;
+            font-size: 0.9rem;
+        }
+        .modal-comment-input {
+            width: 100%;
+            padding: 8px 12px;
+            border-radius: 12px;
+            border: 1px solid #cbd5e1;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            margin-top: 4px;
+            resize: vertical;
+            min-height: 60px;
+        }
+        .modal-comment-input:focus {
+            outline: none;
+            border-color: #0f3b5f;
+            box-shadow: 0 0 0 2px rgba(15,59,95,0.1);
+        }
+        .modal-save-comment {
+            margin-top: 8px;
+            padding: 6px 16px;
+            background: #0f3b5f;
+            color: white;
+            border: none;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: 0.2s;
+        }
+        .modal-save-comment:hover { background: #1b5a7a; }
         .notification {
             position: fixed;
             bottom: 20px;
             right: 20px;
-            padding: 12px 24px;
+            padding: 10px 20px;
             border-radius: 12px;
             color: white;
             font-weight: 600;
             display: none;
             z-index: 1000;
             box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            font-size: 0.85rem;
         }
         .notification.show { display: block; animation: slideIn 0.3s ease; }
         .notification.success { background: #22c55e; }
@@ -353,18 +426,26 @@
             to { transform: translateY(0); opacity: 1; }
         }
         .grade-hint {
-            font-size: 0.6rem;
+            font-size: 0.55rem;
             color: #94a3b8;
-            margin-top: 4px;
+            margin-top: 3px;
             width: 100%;
             text-align: center;
+        }
+        .comment-badge {
+            font-size: 0.6rem;
+            color: #0f3b5f;
+            background: #eef2ff;
+            padding: 2px 8px;
+            border-radius: 30px;
+            display: inline-block;
         }
         @media (max-width: 700px) {
             body { padding: 10px; }
             .controls { flex-direction: column; align-items: stretch; }
-            .task-input { width: 120px; }
-            .modal-content { padding: 24px; }
-            .modal-grade { width: 80px; height: 80px; font-size: 2.8rem; }
+            .task-input { width: 100px; }
+            .modal-content { padding: 20px; }
+            .modal-grade { width: 70px; height: 70px; font-size: 2.5rem; }
         }
     </style>
 </head>
@@ -377,7 +458,7 @@
     <div class="modal-content">
         <button class="modal-close" id="modalClose">&times;</button>
         <div class="modal-grade" id="modalGradeValue">5</div>
-        <div style="text-align:center; margin-bottom:16px;">
+        <div style="text-align:center; margin-bottom:12px;">
             <span class="modal-subject-badge" id="modalSubject">📐 Математика</span>
         </div>
         <div class="modal-detail">
@@ -400,6 +481,14 @@
             <span class="modal-label">✅ ЦДЗ проверка</span>
             <span class="modal-value" id="modalCdzStatus">—</span>
         </div>
+        
+        <!-- Комментарий учителя -->
+        <div class="modal-comment">
+            <div class="modal-comment-label"><i class="fas fa-comment"></i> Комментарий учителя</div>
+            <div id="modalCommentDisplay" class="modal-comment-text" style="color:#64748b; font-style:italic;">—</div>
+            <textarea id="modalCommentInput" class="modal-comment-input" placeholder="Напишите комментарий к оценке..."></textarea>
+            <button class="modal-save-comment" id="modalSaveComment"><i class="fas fa-save"></i> Сохранить комментарий</button>
+        </div>
     </div>
 </div>
 
@@ -408,10 +497,18 @@
         <div>
             <h1><i class="fas fa-chalkboard-user"></i> Школьный журнал</h1>
             <p style="opacity:0.8; font-size:0.85rem; margin-top:4px;">
-                <i class="fas fa-save"></i> Сохраняется в браузере • Нажми на оценку для деталей
+                <i class="fas fa-cloud-upload-alt"></i> Firebase • Комментарии к оценкам
             </p>
         </div>
         <div class="class-badge"><i class="fas fa-users"></i> 9 "А" класс</div>
+    </div>
+
+    <div class="status-bar">
+        <span>
+            <span class="status-dot green" id="statusDot"></span>
+            <span id="statusText">Подключено</span>
+        </span>
+        <span id="studentCount">👨‍🎓 Учеников: 26</span>
     </div>
 
     <div class="controls">
@@ -456,11 +553,11 @@
         <table>
             <thead>
                 <tr>
-                    <th style="min-width:150px;">Ученик</th>
-                    <th style="min-width:180px;">📝 Задание</th>
-                    <th style="min-width:160px;">🏷️ Тип</th>
-                    <th style="min-width:180px;">⭐ Оценки</th>
-                    <th style="min-width:160px;">✅ ЦДЗ проверка</th>
+                    <th style="min-width:140px;">Ученик</th>
+                    <th style="min-width:160px;">📝 Задание</th>
+                    <th style="min-width:140px;">🏷️ Тип</th>
+                    <th style="min-width:160px;">⭐ Оценки</th>
+                    <th style="min-width:140px;">✅ ЦДЗ проверка</th>
                 </tr>
             </thead>
             <tbody id="tableBody"></tbody>
@@ -477,7 +574,34 @@
     </div>
 </div>
 
-<script>
+<script type="importmap">
+{
+    "imports": {
+        "firebase/app": "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js",
+        "firebase/database": "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js"
+    }
+}
+</script>
+
+<script type="module">
+import { initializeApp } from "firebase/app";
+import { getDatabase, ref, set, get, child, onValue } from "firebase/database";
+
+// ===== КОНФИГУРАЦИЯ FIREBASE =====
+const firebaseConfig = {
+    apiKey: "AIzaSyBfoIEyhvlUfIgAvXJwOthT6uzfB4gV0Uo",
+    authDomain: "electronic-journal-5dff1.firebaseapp.com",
+    databaseURL: "https://electronic-journal-5dff1-default-rtdb.firebaseio.com",
+    projectId: "electronic-journal-5dff1",
+    storageBucket: "electronic-journal-5dff1.firebasestorage.app",
+    messagingSenderId: "293962922085",
+    appId: "1:293962922085:web:391c3e453bb2725e392e8c"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+console.log('✅ Firebase подключен!');
+
 // ===== ВСЕ УЧЕНИКИ (АЛФАВИТ) =====
 const rawStudents = [
     "Абросимов Олег", "Борисова Анна", "Васильев Дмитрий", "Григорьев Максим",
@@ -501,31 +625,14 @@ let currentSubject = "Математика";
 let currentDate = "";
 let currentMode = "teacher";
 let selectedStudent = 0;
+let isSaving = false;
+let isLoaded = false;
 
-// ===== LOCALSTORAGE =====
-function loadData() {
-    try {
-        const saved = localStorage.getItem('journalData');
-        if (saved) {
-            journal = JSON.parse(saved);
-            return true;
-        }
-    } catch(e) { console.error('Ошибка загрузки:', e); }
-    return false;
-}
+// Текущая оценка для комментария
+let currentCommentStudentId = null;
+let currentCommentGradeIdx = null;
 
-function saveData(showNotif = true) {
-    try {
-        localStorage.setItem('journalData', JSON.stringify(journal));
-        if (showNotif) showNotification('✅ Сохранено!');
-        return true;
-    } catch(e) {
-        console.error('Ошибка сохранения:', e);
-        if (showNotif) showNotification('❌ Ошибка сохранения!', true);
-        return false;
-    }
-}
-
+// ===== ФУНКЦИИ =====
 function showNotification(text, isError = false) {
     const el = document.getElementById('notif');
     const textEl = document.getElementById('notifText');
@@ -535,7 +642,6 @@ function showNotification(text, isError = false) {
     el._timeout = setTimeout(() => el.classList.remove('show'), 3000);
 }
 
-// ===== РАБОТА С ДАННЫМИ =====
 function ensureDateExists(subject, date) {
     if (!journal[subject]) journal[subject] = {};
     if (!journal[subject][date]) {
@@ -546,7 +652,8 @@ function ensureDateExists(subject, date) {
                 taskType: "",
                 grades: [],
                 cdzChecked: false,
-                cdzGrade: ""
+                cdzGrade: "",
+                comments: {} // { "0": "комментарий", "1": "комментарий" }
             };
         });
         return true;
@@ -562,10 +669,58 @@ function getEntry(studentId) {
             taskType: "",
             grades: [],
             cdzChecked: false,
-            cdzGrade: ""
+            cdzGrade: "",
+            comments: {}
         };
     }
+    if (!journal[currentSubject][currentDate][studentId].comments) {
+        journal[currentSubject][currentDate][studentId].comments = {};
+    }
     return journal[currentSubject][currentDate][studentId];
+}
+
+async function saveToFirebase(showNotif = true) {
+    if (isSaving) return;
+    isSaving = true;
+    try {
+        await set(ref(db, 'journalData'), journal);
+        if (showNotif) showNotification('✅ Сохранено в Firebase!');
+        console.log('✅ Данные сохранены в Firebase');
+    } catch (e) {
+        console.error('❌ Ошибка сохранения:', e);
+        if (showNotif) showNotification('❌ Ошибка сохранения', true);
+    }
+    isSaving = false;
+}
+
+async function loadFromFirebase() {
+    try {
+        const dbRef = ref(db);
+        const snapshot = await get(child(dbRef, 'journalData'));
+        if (snapshot.exists()) {
+            journal = snapshot.val();
+            subjects.forEach(sub => {
+                if (!journal[sub]) journal[sub] = {};
+                Object.keys(journal[sub]).forEach(date => {
+                    Object.keys(journal[sub][date]).forEach(id => {
+                        if (!journal[sub][date][id].cdzGrade) {
+                            journal[sub][date][id].cdzGrade = "";
+                        }
+                        if (!journal[sub][date][id].comments) {
+                            journal[sub][date][id].comments = {};
+                        }
+                    });
+                });
+            });
+            console.log('✅ Данные загружены из Firebase');
+            return true;
+        }
+        console.log('ℹ️ В Firebase нет данных');
+        return false;
+    } catch (e) {
+        console.error('❌ Ошибка загрузки:', e);
+        return false;
+    }
 }
 
 function initDB() {
@@ -583,7 +738,8 @@ function initDB() {
                     taskType: "",
                     grades: [],
                     cdzChecked: false,
-                    cdzGrade: ""
+                    cdzGrade: "",
+                    comments: {}
                 };
             });
         }
@@ -592,12 +748,12 @@ function initDB() {
     const today = new Date().toISOString().split('T')[0];
     const math = journal["Математика"][today];
     if (math) {
-        if (math[0]) { math[0].taskName = "Алгебра №345-350"; math[0].taskType = "homework"; math[0].grades = ["5","4"]; }
-        if (math[1]) { math[1].taskName = "ЦДЗ: Квадратные уравнения"; math[1].taskType = "cdz"; math[1].grades = ["4"]; math[1].cdzChecked = true; math[1].cdzGrade = "4"; }
-        if (math[2]) { math[2].taskName = "Индивидуальная работа"; math[2].taskType = "individual"; math[2].grades = ["5","5"]; }
-        if (math[3]) { math[3].taskName = "ЦДЗ: Теорема Пифагора"; math[3].taskType = "cdz"; math[3].cdzChecked = true; math[3].cdzGrade = ""; }
+        if (math[0]) { math[0].taskName = "Алгебра №345-350"; math[0].taskType = "homework"; math[0].grades = ["5","4"]; math[0].comments = { "0": "Отлично! Решил все уравнения верно.", "1": "Хорошо, но есть небольшие ошибки." }; }
+        if (math[1]) { math[1].taskName = "ЦДЗ: Квадратные уравнения"; math[1].taskType = "cdz"; math[1].grades = ["4"]; math[1].cdzChecked = true; math[1].cdzGrade = "4"; math[1].comments = { "0": "ЦДЗ выполнено с одной ошибкой." }; }
+        if (math[2]) { math[2].taskName = "Индивидуальная работа"; math[2].taskType = "individual"; math[2].grades = ["5","5"]; math[2].comments = { "0": "Отличная работа!", "1": "Дополнительно решил сложную задачу." }; }
     }
-    saveData(false);
+    console.log('✅ База данных инициализирована');
+    saveToFirebase(false);
 }
 
 // ===== МОДАЛЬНОЕ ОКНО =====
@@ -608,6 +764,9 @@ function showGradeDetails(studentId, gradeIdx) {
 
     const student = students.find(s => s.id === studentId);
     const modal = document.getElementById('gradeModal');
+    
+    currentCommentStudentId = studentId;
+    currentCommentGradeIdx = gradeIdx;
     
     document.getElementById('modalGradeValue').textContent = grade === 'нб' ? 'н/б' : grade;
     document.getElementById('modalSubject').textContent = getSubjectEmoji(currentSubject) + ' ' + currentSubject;
@@ -634,11 +793,42 @@ function showGradeDetails(studentId, gradeIdx) {
         cdzRow.style.display = 'none';
     }
     
+    // Комментарий
+    const comment = entry.comments ? entry.comments[gradeIdx] : null;
+    const displayEl = document.getElementById('modalCommentDisplay');
+    const inputEl = document.getElementById('modalCommentInput');
+    
+    if (comment) {
+        displayEl.textContent = comment;
+        displayEl.style.color = '#1e293b';
+        displayEl.style.fontStyle = 'normal';
+        inputEl.value = comment;
+    } else {
+        displayEl.textContent = '—';
+        displayEl.style.color = '#64748b';
+        displayEl.style.fontStyle = 'italic';
+        inputEl.value = '';
+    }
+    
     modal.classList.add('show');
 }
 
 function closeModal() {
     document.getElementById('gradeModal').classList.remove('show');
+}
+
+function saveComment() {
+    if (currentCommentStudentId === null || currentCommentGradeIdx === null) return;
+    
+    const entry = getEntry(currentCommentStudentId);
+    const comment = document.getElementById('modalCommentInput').value.trim();
+    
+    if (!entry.comments) entry.comments = {};
+    entry.comments[currentCommentGradeIdx] = comment || '';
+    
+    saveToFirebase(false);
+    render();
+    showNotification('✅ Комментарий сохранён!');
 }
 
 function getSubjectEmoji(subject) {
@@ -681,7 +871,7 @@ function render() {
             inp.value = entry.taskName || '';
             inp.onchange = () => {
                 entry.taskName = inp.value;
-                saveData(false);
+                saveToFirebase(false);
             };
             tdTask.appendChild(inp);
         } else {
@@ -693,11 +883,11 @@ function render() {
         const tdType = document.createElement('td');
         if (isTeacher) {
             const sel = document.createElement('select');
-            sel.style.cssText = 'padding:6px 12px;border-radius:30px;border:1px solid #cbd5e1;background:#fefce8;font-family:inherit;';
+            sel.style.cssText = 'padding:4px 10px;border-radius:30px;border:1px solid #cbd5e1;background:#fefce8;font-family:inherit;font-size:0.75rem;';
             const types = [
                 {val:'', label:'— выберите —'},
                 {val:'homework', label:'📘 Домашнее задание'},
-                {val:'cdz', label:'💻 Цифровое ДЗ (ЦДЗ)'},
+                {val:'cdz', label:'💻 ЦДЗ'},
                 {val:'individual', label:'👤 Индивидуальное'}
             ];
             types.forEach(t => {
@@ -713,7 +903,7 @@ function render() {
                     entry.cdzChecked = false;
                     entry.cdzGrade = '';
                 }
-                saveData(false);
+                saveToFirebase(false);
                 render();
             };
             tdType.appendChild(sel);
@@ -737,16 +927,24 @@ function render() {
             chip.className = 'grade-chip';
             const display = g === 'нб' ? 'н/б' : g;
             
+            const hasComment = entry.comments && entry.comments[idx] && entry.comments[idx].trim();
+            
             if (isTeacher) {
-                chip.innerHTML = `${display} <i class="fas fa-times" data-idx="${idx}"></i>`;
+                chip.innerHTML = `${display} ${hasComment ? '<span class="comment-badge">💬</span>' : ''} <i class="fas fa-times" data-idx="${idx}"></i>`;
                 chip.querySelector('i').onclick = (e) => {
                     e.stopPropagation();
                     entry.grades.splice(idx, 1);
-                    saveData(false);
+                    if (entry.comments && entry.comments[idx]) {
+                        delete entry.comments[idx];
+                    }
+                    saveToFirebase(false);
                     render();
                 };
+                chip.onclick = () => {
+                    showGradeDetails(student.id, idx);
+                };
             } else {
-                chip.innerHTML = display;
+                chip.innerHTML = `${display} ${hasComment ? '<span class="comment-badge">💬</span>' : ''}`;
                 chip.classList.add('clickable');
                 chip.onclick = () => {
                     showGradeDetails(student.id, idx);
@@ -774,7 +972,7 @@ function render() {
                     const v = val.trim().toLowerCase();
                     if (v === 'нб' || (parseInt(v) >= 2 && parseInt(v) <= 5)) {
                         entry.grades.push(v);
-                        saveData(false);
+                        saveToFirebase(false);
                         render();
                     } else {
                         alert('Оценка должна быть 2-5 или нб');
@@ -809,7 +1007,7 @@ function render() {
                             entry.cdzChecked = true;
                             entry.cdzGrade = g;
                             entry.grades.push(g);
-                            saveData(false);
+                            saveToFirebase(false);
                             render();
                         }
                     };
@@ -821,7 +1019,7 @@ function render() {
                     b2.onclick = () => {
                         entry.cdzChecked = true;
                         entry.cdzGrade = '';
-                        saveData(false);
+                        saveToFirebase(false);
                         render();
                     };
                     div.appendChild(b2);
@@ -830,7 +1028,7 @@ function render() {
                     status.className = 'cdz-status';
                     status.innerHTML = entry.cdzGrade ? 
                         `✅ Проверено<br>Оценка: <strong>${entry.cdzGrade}</strong>` :
-                        '✅ Проверено<br><span style="font-size:0.65rem;">(без оценки)</span>';
+                        '✅ Проверено<br><span style="font-size:0.6rem;">(без оценки)</span>';
                     div.appendChild(status);
 
                     const reset = document.createElement('button');
@@ -845,7 +1043,7 @@ function render() {
                                 if (idx !== -1) entry.grades.splice(idx, 1);
                                 entry.cdzGrade = '';
                             }
-                            saveData(false);
+                            saveToFirebase(false);
                             render();
                         }
                     };
@@ -875,7 +1073,7 @@ function setDate(date) {
     const parts = date.split('-');
     document.getElementById('dateDisplay').textContent = `${parts[2]}.${parts[1]}.${parts[0]}`;
     ensureDateExists(currentSubject, currentDate);
-    render();
+    if (isLoaded) render();
 }
 
 function changeDate(delta) {
@@ -888,10 +1086,10 @@ function changeDate(delta) {
 }
 
 // ===== ЗАПУСК =====
-function init() {
+async function init() {
     console.log('🚀 Запуск приложения...');
     
-    const hasData = loadData();
+    const hasData = await loadFromFirebase();
     if (!hasData) {
         initDB();
     }
@@ -906,7 +1104,6 @@ function init() {
     
     ensureDateExists(currentSubject, currentDate);
 
-    // Заполняем список учеников
     const sel = document.getElementById('studentSelect');
     students.forEach(s => {
         const opt = document.createElement('option');
@@ -918,6 +1115,19 @@ function init() {
         selectedStudent = parseInt(sel.value);
         if (currentMode === 'student') render();
     };
+
+    // Подписка на изменения в Firebase
+    const journalRef = ref(db, 'journalData');
+    onValue(journalRef, (snapshot) => {
+        if (snapshot.exists() && isLoaded) {
+            const newData = snapshot.val();
+            if (JSON.stringify(journal) !== JSON.stringify(newData)) {
+                journal = newData;
+                console.log('🔄 Данные обновлены из Firebase');
+                render();
+            }
+        }
+    });
 
     // События
     document.getElementById('subjectSelect').onchange = (e) => {
@@ -947,7 +1157,7 @@ function init() {
         };
     });
 
-    document.getElementById('saveBtn').onclick = () => saveData(true);
+    document.getElementById('saveBtn').onclick = () => saveToFirebase(true);
     document.getElementById('resetBtn').onclick = () => {
         if (confirm(`Очистить всё на ${currentDate} по ${currentSubject}?`)) {
             students.forEach(s => {
@@ -957,8 +1167,9 @@ function init() {
                 e.grades = [];
                 e.cdzChecked = false;
                 e.cdzGrade = '';
+                e.comments = {};
             });
-            saveData(false);
+            saveToFirebase(false);
             render();
             showNotification('Очищено!');
         }
@@ -972,13 +1183,18 @@ function init() {
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') closeModal();
     });
+    document.getElementById('modalSaveComment').onclick = saveComment;
 
+    isLoaded = true;
     render();
-    showNotification('✅ Готово!');
-    console.log('✅ Приложение запущено!');
+    showNotification('✅ Загружено из Firebase!');
+    console.log('✅ Приложение запущено успешно!');
 }
 
-document.addEventListener('DOMContentLoaded', init);
+init().catch(err => {
+    console.error('❌ Ошибка при запуске:', err);
+    showNotification('❌ Ошибка подключения к Firebase', true);
+});
 </script>
 </body>
 </html>
