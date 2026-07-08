@@ -2,8 +2,10 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Электронный журнал</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Школьный журнал | Firebase | Облачное сохранение</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -11,747 +13,1100 @@
             box-sizing: border-box;
         }
 
-        /* Общие стили */
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            min-height: 100vh;
-            padding: 20px;
-            transition: all 0.3s;
+            background: linear-gradient(145deg, #e9f0f5 0%, #d9e2ec 100%);
+            font-family: 'Inter', sans-serif;
+            padding: 2rem 1.5rem;
+            color: #1e293b;
         }
 
-        /* Стиль для УЧИТЕЛЯ (тёмно-синий) */
-        body.teacher-mode {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-        }
-
-        body.teacher-mode .container {
-            background: rgba(255,255,255,0.05);
-            border-radius: 20px;
-            padding: 20px;
-        }
-
-        body.teacher-mode header {
-            background: linear-gradient(135deg, #0f3460, #1a1a2e);
-            color: white;
-            border-bottom: 3px solid #e94560;
-        }
-
-        body.teacher-mode .form-container,
-        body.teacher-mode .grades-table-container {
-            background: #16213e;
-            border: 1px solid #0f3460;
-        }
-
-        body.teacher-mode h2 {
-            color: #e94560;
-        }
-
-        body.teacher-mode table {
-            background: #0f3460;
-        }
-
-        body.teacher-mode th {
-            background: #e94560;
-            color: white;
-        }
-
-        body.teacher-mode td {
-            background: #1a1a2e;
-            color: #eee;
-            border-color: #0f3460;
-        }
-
-        body.teacher-mode .btn-primary {
-            background: #e94560;
-        }
-
-        body.teacher-mode .btn-primary:hover {
-            background: #c73e54;
-        }
-
-        /* Стиль для УЧЕНИКА (светло-зелёный) */
-        body.student-mode {
-            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
-        }
-
-        body.student-mode .container {
-            background: rgba(255,255,255,0.9);
-            border-radius: 20px;
-            padding: 20px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
-        }
-
-        body.student-mode header {
-            background: linear-gradient(135deg, #2e7d32, #1b5e20);
-            color: white;
-            border-radius: 15px;
-        }
-
-        body.student-mode .form-container,
-        body.student-mode .grades-table-container {
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-        }
-
-        body.student-mode h2 {
-            color: #2e7d32;
-            border-left: 4px solid #4caf50;
-            padding-left: 15px;
-        }
-
-        body.student-mode table {
-            background: white;
-            border-radius: 10px;
+        .journal-container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 2rem;
+            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.25), 0 1px 3px rgba(0, 0, 0, 0.05);
             overflow: hidden;
         }
 
-        body.student-mode th {
-            background: #4caf50;
+        .journal-header {
+            background: #0f3b5f;
+            background: linear-gradient(135deg, #0f3b5f 0%, #1b5a7a 100%);
+            padding: 1.75rem 2rem;
             color: white;
-            font-weight: 600;
-        }
-
-        body.student-mode td {
-            background: white;
-            color: #333;
-            border-bottom: 1px solid #e0e0e0;
-        }
-
-        body.student-mode td:hover {
-            background: #f1f8e9;
-        }
-
-        body.student-mode .grade-badge {
-            background: #e8f5e9;
-            color: #2e7d32;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        header {
-            border-radius: 15px;
-            padding: 20px 30px;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
             display: flex;
+            flex-wrap: wrap;
             justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
-            gap: 15px;
+            border-bottom: 4px solid #ffcd3c;
         }
 
-        h1 {
-            font-size: 28px;
+        .title-section h1 {
+            font-weight: 700;
+            font-size: 1.9rem;
+            letter-spacing: -0.3px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .title-section h1 i {
+            font-size: 2rem;
+            color: #ffcd3c;
+        }
+
+        .title-section p {
+            font-size: 0.9rem;
+            opacity: 0.85;
+            margin-top: 6px;
+            font-weight: 500;
+        }
+
+        .class-info {
+            background: rgba(255,255,255,0.15);
+            padding: 0.6rem 1.3rem;
+            border-radius: 60px;
+            backdrop-filter: blur(4px);
+            font-weight: 600;
+            font-size: 1.2rem;
+        }
+
+        .class-info i {
+            margin-right: 8px;
+            color: #ffcd3c;
+        }
+
+        .control-panel {
+            background: #f8fafc;
+            padding: 1rem 2rem;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .subject-selector {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: white;
+            padding: 0.3rem 1rem 0.3rem 1.2rem;
+            border-radius: 40px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            border: 1px solid #cbd5e1;
+        }
+
+        .subject-selector label {
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        select {
+            background: #f1f5f9;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 30px;
+            font-weight: 500;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            cursor: pointer;
+            outline: none;
+        }
+
+        select:hover {
+            background: #e2e8f0;
+        }
+
+        .date-selector {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: white;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            border: 1px solid #cbd5e1;
+        }
+
+        .date-nav {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .week-btn {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: #1b5a7a;
+            width: 28px;
+            height: 28px;
+            border-radius: 30px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .week-btn:hover {
+            background: #e2e8f0;
+            color: #0f3b5f;
+        }
+
+        #dateRange {
+            font-weight: 600;
+            background: #f1f5f9;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            min-width: 150px;
+            text-align: center;
+            font-size: 0.85rem;
+        }
+
+        .mode-switch {
+            display: flex;
+            gap: 10px;
+            background: white;
+            padding: 0.2rem;
+            border-radius: 60px;
+            border: 1px solid #cbd5e1;
+        }
+
+        .mode-btn {
+            padding: 0.4rem 1.2rem;
+            border-radius: 40px;
+            border: none;
+            background: transparent;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .mode-btn.active {
+            background: #0f3b5f;
+            color: white;
+        }
+
+        .student-picker {
+            background: white;
+            padding: 0.2rem 1rem;
+            border-radius: 40px;
+            border: 1px solid #cbd5e1;
             display: flex;
             align-items: center;
             gap: 10px;
         }
 
-        .role-badge {
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: bold;
-            background: rgba(255,255,255,0.2);
+        .legend {
+            display: flex;
+            gap: 18px;
+            font-size: 0.75rem;
+            background: #ffffffaa;
+            padding: 0.3rem 1rem;
+            border-radius: 50px;
         }
 
-        .btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 600;
-            transition: all 0.3s;
+        .table-wrapper {
+            overflow-x: auto;
+            padding: 0 0 1rem 0;
+            max-height: 65vh;
+            overflow-y: auto;
         }
 
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
-
-        .btn-danger {
-            background: #e74c3c;
-            color: white;
-        }
-
-        .btn-danger:hover {
-            background: #c0392b;
-        }
-
-        .btn-success {
-            background: #27ae60;
-            color: white;
-        }
-
-        .btn-warning {
-            background: #f39c12;
-            color: white;
-        }
-
-        .btn-secondary {
-            background: #95a5a6;
-            color: white;
-        }
-
-        .form-container, .grades-table-container {
-            border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 30px;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 600;
-        }
-
-        input, select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 14px;
-        }
-
-        input:focus, select:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        table {
+        .journal-table {
             width: 100%;
             border-collapse: collapse;
+            font-size: 0.85rem;
+            min-width: 1300px;
         }
 
-        th, td {
-            padding: 12px;
+        .journal-table th {
+            background: #eef2ff;
+            color: #1e293b;
+            font-weight: 700;
+            padding: 1rem 0.8rem;
+            border-bottom: 2px solid #cbd5e1;
+            text-align: center;
+            position: sticky;
+            top: 0;
+        }
+
+        .journal-table td {
+            padding: 0.8rem 0.5rem;
+            border-bottom: 1px solid #e2e8f0;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .student-name {
+            font-weight: 600;
             text-align: left;
-        }
-
-        .grade-badge {
-            display: inline-block;
-            padding: 5px 10px;
-            border-radius: 8px;
-            font-weight: bold;
-            font-size: 14px;
-        }
-
-        .grade-5 { background: #27ae60; color: white; }
-        .grade-4 { background: #3498db; color: white; }
-        .grade-3 { background: #f39c12; color: white; }
-        .grade-2 { background: #e74c3c; color: white; }
-
-        .action-buttons {
-            display: flex;
-            gap: 10px;
-        }
-
-        .login-form {
-            max-width: 400px;
-            margin: 100px auto;
+            background-color: #fefce8;
+            position: sticky;
+            left: 0;
             background: white;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            border-right: 1px solid #e2e8f0;
         }
 
-        .login-form h2 {
-            text-align: center;
-            margin-bottom: 20px;
+        .task-input {
+            width: 180px;
+            padding: 6px 12px;
+            border-radius: 30px;
+            border: 1px solid #cbd5e1;
+            background: #fefce8;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.8rem;
         }
 
-        .error {
-            background: #e74c3c;
-            color: white;
-            padding: 10px;
-            border-radius: 8px;
-            margin-top: 10px;
-            text-align: center;
+        .type-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            font-weight: 700;
         }
+        .badge-homework { background: #dbeafe; color: #1e40af; }
+        .badge-cdz { background: #ffedd5; color: #b45309; }
+        .badge-individual { background: #dcfce7; color: #166534; }
 
-        .success {
-            background: #27ae60;
-            color: white;
-            padding: 10px;
-            border-radius: 8px;
-            margin-top: 10px;
-            text-align: center;
-        }
-
-        .student-grades-summary {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
+        .grades-list {
             display: flex;
-            justify-content: space-around;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 8px;
+            align-items: center;
+            justify-content: center;
+        }
+        .grade-chip {
+            background: #fef9c3;
+            padding: 4px 12px;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        .grade-chip i {
+            cursor: pointer;
+            font-size: 0.7rem;
+            color: #92400e;
+            transition: 0.1s;
+        }
+        .grade-chip i:hover {
+            color: #b91c1c;
+            transform: scale(1.1);
+        }
+        .add-grade-btn {
+            background: #e2e8f0;
+            border: none;
+            border-radius: 40px;
+            padding: 4px 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .add-grade-btn:hover {
+            background: #ffcd3c;
         }
 
-        .stat-card {
-            text-align: center;
-            padding: 10px;
+        .cdz-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            align-items: center;
+        }
+        .cdz-btn {
+            padding: 4px 14px;
+            border-radius: 30px;
+            border: none;
+            font-weight: 600;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: 0.2s;
+            width: 100%;
+            white-space: nowrap;
+        }
+        .cdz-btn-grade {
+            background: #22c55e;
+            color: white;
+        }
+        .cdz-btn-grade:hover {
+            background: #16a34a;
+            transform: scale(1.02);
+        }
+        .cdz-btn-nograde {
+            background: #eab308;
+            color: white;
+        }
+        .cdz-btn-nograde:hover {
+            background: #ca8a04;
+            transform: scale(1.02);
+        }
+        .cdz-status {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #166534;
         }
 
-        .stat-value {
-            font-size: 28px;
-            font-weight: bold;
-            color: #2e7d32;
+        .footer-stat {
+            background: #f1f5f9;
+            padding: 1rem 2rem;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #cbd5e1;
+            font-size: 0.9rem;
         }
 
-        .stat-label {
-            font-size: 12px;
-            color: #666;
+        .stat-badge {
+            background: #ffffffcc;
+            backdrop-filter: blur(2px);
+            padding: 0.4rem 1rem;
+            border-radius: 60px;
+            font-weight: 500;
         }
 
-        .loading {
-            text-align: center;
-            padding: 20px;
-            font-size: 18px;
+        .btn-reset {
+            background: white;
+            border: 1px solid #cbd5e1;
+            padding: 0.4rem 1.2rem;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.15s;
+            color: #1e293b;
         }
 
-        @media (max-width: 768px) {
-            table {
-                font-size: 12px;
-            }
-            th, td {
-                padding: 8px;
-            }
-            .action-buttons {
-                flex-direction: column;
-            }
+        .btn-reset:hover {
+            background: #fee2e2;
+            border-color: #f97316;
+            color: #b91c1c;
+        }
+
+        .save-notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #22c55e;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            display: none;
+            z-index: 1000;
+        }
+        .save-notification.show {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+        .save-notification.error {
+            background: #ef4444;
+        }
+        @keyframes slideIn {
+            from { transform: translateY(100px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @media (max-width: 700px) {
+            body { padding: 1rem; }
+            .control-panel { flex-direction: column; align-items: stretch; }
+            .task-input { width: 130px; }
         }
     </style>
 </head>
 <body>
-    <div class="container" id="app">
-        <!-- Форма входа -->
-        <div id="loginSection">
-            <div class="login-form">
-                <h2>📚 Вход в электронный журнал</h2>
-                <div class="form-group">
-                    <label>Email</label>
-                    <input type="email" id="loginEmail" placeholder="teacher@journal.ru">
-                </div>
-                <div class="form-group">
-                    <label>Пароль</label>
-                    <input type="password" id="loginPassword" placeholder="123456">
-                </div>
-                <button class="btn btn-primary" style="width: 100%;" onclick="login()">Войти</button>
-                <div id="loginMessage"></div>
-                <hr style="margin: 20px 0;">
-                <div style="text-align: center; font-size: 12px; color: #666;">
-                    <p><strong>Тестовые аккаунты:</strong></p>
-                    <p>Учитель: teacher@journal.ru / 123456</p>
-                    <p>Ученик: student@journal.ru / 123456</p>
-                </div>
+    <div class="save-notification" id="saveNotification">
+        <i class="fas fa-check-circle"></i> <span id="notificationText">Данные сохранены!</span>
+    </div>
+
+    <div class="journal-container">
+        <div class="journal-header">
+            <div class="title-section">
+                <h1><i class="fas fa-chalkboard-user"></i> Электронный школьный журнал</h1>
+                <p><i class="fas fa-cloud-upload-alt"></i> Облачное сохранение (Firebase) • ЦДЗ с оценкой/без оценки</p>
+            </div>
+            <div class="class-info">
+                <i class="fas fa-users"></i> 9 "А" класс
             </div>
         </div>
 
-        <!-- Основное приложение -->
-        <div id="appContent" style="display: none;"></div>
+        <div class="control-panel">
+            <div class="subject-selector">
+                <label><i class="fas fa-book-open"></i> Предмет:</label>
+                <select id="subjectSelect">
+                    <option value="Математика">📐 Математика</option>
+                    <option value="Русский язык">📖 Русский язык</option>
+                    <option value="Физика">⚛️ Физика</option>
+                    <option value="История">🏛️ История</option>
+                    <option value="Литература">📚 Литература</option>
+                </select>
+            </div>
+
+            <div class="date-selector">
+                <label><i class="fas fa-calendar-day"></i> Дата урока:</label>
+                <input type="date" id="datePicker" value="2025-11-25">
+                <div class="date-nav">
+                    <button class="week-btn" id="prevDateBtn"><i class="fas fa-chevron-left"></i></button>
+                    <span id="dateRange">25.11.2025</span>
+                    <button class="week-btn" id="nextDateBtn"><i class="fas fa-chevron-right"></i></button>
+                </div>
+            </div>
+
+            <div class="mode-switch">
+                <button class="mode-btn active" data-mode="teacher">👨‍🏫 Учитель</button>
+                <button class="mode-btn" data-mode="student">🧑‍🎓 Ученик</button>
+            </div>
+
+            <div class="student-picker" id="studentPickerDiv">
+                <label><i class="fas fa-user"></i> Ученик:</label>
+                <select id="studentSelect"></select>
+            </div>
+
+            <div class="legend">
+                <span><i class="fas fa-cloud-upload-alt" style="color:#22c55e;"></i> облако</span>
+                <span><i class="fas fa-check-circle" style="color:#22c55e;"></i> ЦДЗ проверка</span>
+            </div>
+        </div>
+
+        <div class="table-wrapper">
+            <table class="journal-table">
+                <thead>
+                    <tr><th>Ученик</th><th>📝 Задание</th><th>🏷️ Тип</th><th>⭐ Оценки</th><th>✅ ЦДЗ проверка</th></tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+        </div>
+
+        <div class="footer-stat">
+            <div class="stat-badge"><i class="fas fa-star"></i> Всего оценок: <span id="totalGradesCount">0</span></div>
+            <div class="stat-badge"><i class="fas fa-chart-line"></i> Средний балл: <span id="classAverage">—</span></div>
+            <div style="display:flex; gap:10px;">
+                <button class="btn-reset" id="saveBtn" style="background:#22c55e; color:white; border-color:#22c55e;"><i class="fas fa-save"></i> Сохранить</button>
+                <button class="btn-reset" id="resetBtn"><i class="fas fa-undo-alt"></i> Очистить</button>
+            </div>
+        </div>
     </div>
 
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js"></script>
+    <!-- Firebase SDK -->
+    <script type="importmap">
+        {
+            "imports": {
+                "firebase/app": "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js",
+                "firebase/database": "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js"
+            }
+        }
+    </script>
 
-    <script>
-        // ТВОИ ДАННЫЕ FIREBASE + ДОБАВЛЕН databaseURL
+    <script type="module">
+        import { initializeApp } from "firebase/app";
+        import { getDatabase, ref, set, get, child, push, update, onValue } from "firebase/database";
+
+        // ---------- КОНФИГУРАЦИЯ FIREBASE ----------
         const firebaseConfig = {
-            apiKey: "AIzaSyBfoIEyhvlUfIgAvXJwOthT6uzfB4gV0Uo",
-            authDomain: "electronic-journal-5dff1.firebaseapp.com",
-            databaseURL: "https://electronic-journal-5dff1-default-rtdb.firebaseio.com",
-            projectId: "electronic-journal-5dff1",
-            storageBucket: "electronic-journal-5dff1.firebasestorage.app",
-            messagingSenderId: "293962922085",
-            appId: "1:293962922085:web:391c3e453bb2725e392e8c"
+            apiKey: "AIzaSyBoj5xaDZRyLkf7r0Ui6Xku3-f6jnCdFvU",
+            authDomain: "school-a90e4.firebaseapp.com",
+            projectId: "school-a90e4",
+            storageBucket: "school-a90e4.firebasestorage.app",
+            messagingSenderId: "106891336718",
+            appId: "1:106891336718:web:19a3425219138192aa305f"
         };
 
-        // Инициализация Firebase
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
 
-        let currentUser = null;
-        let currentUserRole = null;
+        // ---------- УЧЕНИКИ (АЛФАВИТ ПО ФАМИЛИИ ОТ А ДО Я) ----------
+        const rawStudents = [
+            "Абросимов Олег", "Борисова Анна", "Васильев Дмитрий", "Григорьев Максим",
+            "Дмитриева София", "Егоров Иван", "Жукова Екатерина", "Зайцев Алексей",
+            "Иванова Мария", "Козлов Сергей", "Лебедева Варвара", "Морозова Елизавета",
+            "Новиков Даниил", "Орлова Наталья", "Петров Иван", "Романова Ольга",
+            "Соколова Полина", "Тарасов Глеб", "Устинова Анастасия", "Федоров Артём",
+            "Харитонов Денис", "Цветкова Алина", "Чернов Владимир", "Шестакова Ксения",
+            "Щукин Павел", "Яковлева Яна"
+        ];
+        
+        const students = [...rawStudents].sort((a,b) => {
+            const famA = a.split(' ')[0];
+            const famB = b.split(' ')[0];
+            return famA.localeCompare(famB);
+        }).map((name, idx) => ({ id: idx, name }));
 
-        // Предопределённые пользователи (локально для проверки)
-        const users = {
-            'teacher@journal.ru': { password: '123456', role: 'teacher', name: 'Учитель' },
-            'student@journal.ru': { password: '123456', role: 'student', name: 'Иванов Иван' },
-            'petrov@journal.ru': { password: '123456', role: 'student', name: 'Петров Петр' },
-            'sidorova@journal.ru': { password: '123456', role: 'student', name: 'Сидорова Анна' }
-        };
+        const subjectsList = ["Математика", "Русский язык", "Физика", "История", "Литература"];
+        
+        // ---------- СОСТОЯНИЕ ----------
+        let journal = {};
+        let currentSubject = "Математика";
+        let currentDate = "2025-11-25";
+        let currentMode = "teacher";
+        let selectedStudentId = 0;
+        let isSaving = false;
+        let isLoaded = false;
 
-        // Вход
-        window.login = async function() {
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
-            const messageDiv = document.getElementById('loginMessage');
-
-            const userData = users[email];
-            if (userData && userData.password === password) {
-                currentUser = { email, ...userData };
-                currentUserRole = currentUser.role;
-                
-                messageDiv.innerHTML = '<div class="success">✅ Вход выполнен!</div>';
-                setTimeout(() => {
-                    showMainApp();
-                }, 500);
-            } else {
-                messageDiv.innerHTML = '<div class="error">❌ Неверный email или пароль</div>';
-            }
-        };
-
-        // Выход
-        window.logout = function() {
-            currentUser = null;
-            currentUserRole = null;
-            document.getElementById('loginSection').style.display = 'block';
-            document.getElementById('appContent').style.display = 'none';
-            document.getElementById('loginEmail').value = '';
-            document.getElementById('loginPassword').value = '';
-            document.getElementById('loginMessage').innerHTML = '';
-        };
-
-        // Показать главное приложение
-        function showMainApp() {
-            document.getElementById('loginSection').style.display = 'none';
-            document.getElementById('appContent').style.display = 'block';
-            
-            // Устанавливаем класс для body в зависимости от роли
-            document.body.className = currentUserRole === 'teacher' ? 'teacher-mode' : 'student-mode';
-            
-            if (currentUserRole === 'teacher') {
-                renderTeacherPanel();
-            } else {
-                renderStudentPanel();
-            }
+        // ---------- РАБОТА С FIREBASE ----------
+        function getJournalRef() {
+            return ref(database, 'journalData');
         }
 
-        // ========== ПАНЕЛЬ УЧИТЕЛЯ ==========
-        function renderTeacherPanel() {
-            const appContent = document.getElementById('appContent');
-            appContent.innerHTML = `
-                <header>
-                    <h1>📚 Электронный журнал <span class="role-badge">👨‍🏫 Учитель</span></h1>
-                    <div>
-                        <span style="margin-right: 15px;">${currentUser.name}</span>
-                        <button class="btn btn-danger" onclick="logout()">🚪 Выйти</button>
-                    </div>
-                </header>
-
-                <div class="form-container">
-                    <h2>➕ Добавить ученика</h2>
-                    <div class="form-group">
-                        <label>ФИО ученика</label>
-                        <input type="text" id="studentName" placeholder="Иванов Иван Иванович">
-                    </div>
-                    <div class="form-group">
-                        <label>Email ученика</label>
-                        <input type="email" id="studentEmail" placeholder="student@journal.ru">
-                    </div>
-                    <button class="btn btn-primary" onclick="addStudent()">➕ Добавить ученика</button>
-                </div>
-
-                <div class="form-container">
-                    <h2>📝 Выставить оценку</h2>
-                    <div class="form-group">
-                        <label>Выберите ученика</label>
-                        <select id="gradeStudentSelect"></select>
-                    </div>
-                    <div class="form-group">
-                        <label>Предмет</label>
-                        <select id="subjectSelect">
-                            <option value="Математика">Математика</option>
-                            <option value="Русский язык">Русский язык</option>
-                            <option value="Литература">Литература</option>
-                            <option value="Физика">Физика</option>
-                            <option value="Информатика">Информатика</option>
-                            <option value="История">История</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Оценка (2-5)</label>
-                        <select id="gradeValue">
-                            <option value="5">5 - Отлично</option>
-                            <option value="4">4 - Хорошо</option>
-                            <option value="3">3 - Удовлетворительно</option>
-                            <option value="2">2 - Неудовлетворительно</option>
-                        </select>
-                    </div>
-                    <button class="btn btn-primary" onclick="addGrade()">📝 Выставить оценку</button>
-                </div>
-
-                <div class="grades-table-container">
-                    <h2>📊 Журнал оценок</h2>
-                    <div id="teacherGradesTable">Загрузка...</div>
-                </div>
-            `;
-            loadStudentsForTeacher();
-            loadAllGrades();
-        }
-
-        // Загрузить учеников для учителя
-        async function loadStudentsForTeacher() {
+        // Загрузка данных из Firebase
+        async function loadFromFirebase() {
             try {
-                const snapshot = await db.ref('students').once('value');
-                const students = snapshot.val();
-                const select = document.getElementById('gradeStudentSelect');
-                if (select) {
-                    select.innerHTML = '<option value="">Выберите ученика</option>';
-                    if (students) {
-                        for (let id in students) {
-                            select.innerHTML += `<option value="${id}">${students[id].name} (${students[id].email})</option>`;
+                const dbRef = ref(database);
+                const snapshot = await get(child(dbRef, 'journalData'));
+                if (snapshot.exists()) {
+                    journal = snapshot.val();
+                    // Проверяем структуру и добавляем недостающие поля
+                    for (let sub of subjectsList) {
+                        if (!journal[sub]) journal[sub] = {};
+                        for (let date in journal[sub]) {
+                            for (let studentId in journal[sub][date]) {
+                                if (!journal[sub][date][studentId].cdzGrade) {
+                                    journal[sub][date][studentId].cdzGrade = "";
+                                }
+                            }
+                        }
+                    }
+                    console.log('Данные загружены из Firebase');
+                    return true;
+                } else {
+                    console.log('В Firebase нет данных, создаём новую базу');
+                    return false;
+                }
+            } catch (error) {
+                console.error('Ошибка загрузки из Firebase:', error);
+                return false;
+            }
+        }
+
+        // Сохранение в Firebase
+        async function saveToFirebase(showNotification = true) {
+            if (isSaving) return;
+            isSaving = true;
+            try {
+                await set(getJournalRef(), journal);
+                console.log('Данные сохранены в Firebase');
+                if (showNotification) {
+                    showNotification('Данные сохранены в облаке!', false);
+                }
+            } catch (error) {
+                console.error('Ошибка сохранения в Firebase:', error);
+                showNotification('Ошибка сохранения!', true);
+            } finally {
+                isSaving = false;
+            }
+        }
+
+        // Подписка на изменения в Firebase (реальное время)
+        function subscribeToFirebase() {
+            const journalRef = getJournalRef();
+            onValue(journalRef, (snapshot) => {
+                if (snapshot.exists()) {
+                    const newData = snapshot.val();
+                    // Проверяем, изменились ли данные (чтобы избежать циклического обновления)
+                    if (JSON.stringify(journal) !== JSON.stringify(newData)) {
+                        journal = newData;
+                        // Проверяем структуру
+                        for (let sub of subjectsList) {
+                            if (!journal[sub]) journal[sub] = {};
+                            for (let date in journal[sub]) {
+                                for (let studentId in journal[sub][date]) {
+                                    if (!journal[sub][date][studentId].cdzGrade) {
+                                        journal[sub][date][studentId].cdzGrade = "";
+                                    }
+                                }
+                            }
+                        }
+                        console.log('Данные обновлены из Firebase (реальное время)');
+                        renderTable();
+                    }
+                }
+            }, (error) => {
+                console.error('Ошибка подписки на изменения:', error);
+            });
+        }
+
+        // ---------- УВЕДОМЛЕНИЯ ----------
+        function showNotification(text, isError = false) {
+            const notif = document.getElementById('saveNotification');
+            const textSpan = document.getElementById('notificationText');
+            textSpan.textContent = text;
+            notif.className = 'save-notification show' + (isError ? ' error' : '');
+            setTimeout(() => {
+                notif.classList.remove('show');
+            }, 3000);
+        }
+
+        // ---------- ИНИЦИАЛИЗАЦИЯ БД ----------
+        function initDB() {
+            // Создаём пустую структуру
+            for (let sub of subjectsList) {
+                journal[sub] = {};
+                // Добавляем несколько дат для демо
+                const demoDates = ["2025-11-25", "2025-11-26", "2025-11-27"];
+                for (let dt of demoDates) {
+                    journal[sub][dt] = {};
+                    for (let s of students) {
+                        journal[sub][dt][s.id] = {
+                            taskName: "",
+                            taskType: "",
+                            grades: [],
+                            cdzChecked: false,
+                            cdzGrade: ""
+                        };
+                    }
+                }
+            }
+            
+            // Демо данные
+            let demo = journal["Математика"]["2025-11-25"];
+            if(demo && demo[0]) { demo[0].taskName = "Алгебра: №345-350"; demo[0].taskType = "homework"; demo[0].grades = ["5","4"]; }
+            if(demo && demo[1]) { demo[1].taskName = "ЦДЗ: Квадратные уравнения"; demo[1].taskType = "cdz"; demo[1].grades = ["4"]; demo[1].cdzChecked = true; demo[1].cdzGrade = "4"; }
+            if(demo && demo[2]) { demo[2].taskName = "Индивидуальная работа"; demo[2].taskType = "individual"; demo[2].grades = ["5","5","4"]; }
+            if(demo && demo[3]) { demo[3].taskName = "ЦДЗ: Теорема Пифагора"; demo[3].taskType = "cdz"; demo[3].cdzChecked = true; demo[3].cdzGrade = ""; }
+            
+            saveToFirebase(false);
+        }
+
+        // ---------- ОСНОВНАЯ ЛОГИКА ----------
+        function getEntry(studentId) {
+            if(!journal[currentSubject]) journal[currentSubject] = {};
+            if(!journal[currentSubject][currentDate]) {
+                journal[currentSubject][currentDate] = {};
+                for (let s of students) {
+                    journal[currentSubject][currentDate][s.id] = {
+                        taskName: "",
+                        taskType: "",
+                        grades: [],
+                        cdzChecked: false,
+                        cdzGrade: ""
+                    };
+                }
+                saveToFirebase(false);
+            }
+            if(!journal[currentSubject][currentDate][studentId]) {
+                journal[currentSubject][currentDate][studentId] = {
+                    taskName: "",
+                    taskType: "",
+                    grades: [],
+                    cdzChecked: false,
+                    cdzGrade: ""
+                };
+            }
+            return journal[currentSubject][currentDate][studentId];
+        }
+
+        function calcStats() {
+            let totalGrades = 0;
+            let sum = 0;
+            for(let s of students) {
+                let entry = getEntry(s.id);
+                for(let g of entry.grades) {
+                    if(g !== "нб") {
+                        let num = parseInt(g);
+                        if(!isNaN(num) && num >= 2 && num <= 5) {
+                            sum += num;
+                            totalGrades++;
                         }
                     }
                 }
-            } catch(e) {
-                console.log('Ошибка загрузки учеников:', e);
+            }
+            document.getElementById("totalGradesCount").innerText = totalGrades;
+            document.getElementById("classAverage").innerText = totalGrades === 0 ? "—" : (sum / totalGrades).toFixed(2);
+        }
+
+        function addGrade(studentId, gradeValue) {
+            let entry = getEntry(studentId);
+            if(gradeValue && (gradeValue === "нб" || (Number(gradeValue) >= 2 && Number(gradeValue) <= 5))) {
+                entry.grades.push(gradeValue);
+                renderTable();
+                calcStats();
+                saveToFirebase(false);
+            } else {
+                alert("Оценка должна быть от 2 до 5 или 'нб'");
             }
         }
 
-        // Добавить ученика
-        window.addStudent = async function() {
-            const name = document.getElementById('studentName').value;
-            const email = document.getElementById('studentEmail').value;
+        function removeGrade(studentId, idx) {
+            let entry = getEntry(studentId);
+            entry.grades.splice(idx, 1);
+            renderTable();
+            calcStats();
+            saveToFirebase(false);
+        }
 
-            if (!name || !email) {
-                alert('Заполните имя и email!');
+        function checkCDZWithGrade(studentId) {
+            let entry = getEntry(studentId);
+            if(entry.taskType !== "cdz") {
+                alert("Это задание не является ЦДЗ! Установите тип 'Цифровое ДЗ (ЦДЗ)'");
                 return;
             }
-
-            // Добавляем в Realtime Database
-            const newStudentRef = db.ref('students').push();
-            await newStudentRef.set({
-                name: name,
-                email: email,
-                role: 'student'
-            });
-
-            // Также добавляем в локальный объект users для входа
-            users[email] = { password: '123456', role: 'student', name: name };
-
-            alert('✅ Ученик добавлен!');
-            document.getElementById('studentName').value = '';
-            document.getElementById('studentEmail').value = '';
-            loadStudentsForTeacher();
-            loadAllGrades();
-        };
-
-        // Добавить оценку
-        window.addGrade = async function() {
-            const studentId = document.getElementById('gradeStudentSelect').value;
-            const subject = document.getElementById('subjectSelect').value;
-            const grade = parseInt(document.getElementById('gradeValue').value);
-
-            if (!studentId) {
-                alert('Выберите ученика!');
+            if(entry.cdzChecked) {
+                alert("ЦДЗ уже проверено!");
                 return;
             }
+            let grade = prompt("Введите оценку за ЦДЗ (2, 3, 4, 5):");
+            if(grade === null) return;
+            grade = grade.trim();
+            let num = Number(grade);
+            if(!isNaN(num) && Number.isInteger(num) && num >= 2 && num <= 5) {
+                entry.cdzChecked = true;
+                entry.cdzGrade = num.toString();
+                entry.grades.push(num.toString());
+                renderTable();
+                calcStats();
+                saveToFirebase(false);
+            } else {
+                alert("Оценка должна быть числом от 2 до 5!");
+            }
+        }
 
-            const gradeRef = db.ref('grades').push();
-            await gradeRef.set({
-                studentId: studentId,
-                subject: subject,
-                grade: grade,
-                date: new Date().toLocaleDateString('ru-RU'),
-                teacher: currentUser.name
-            });
+        function checkCDZWithoutGrade(studentId) {
+            let entry = getEntry(studentId);
+            if(entry.taskType !== "cdz") {
+                alert("Это задание не является ЦДЗ! Установите тип 'Цифровое ДЗ (ЦДЗ)'");
+                return;
+            }
+            if(entry.cdzChecked) {
+                alert("ЦДЗ уже проверено!");
+                return;
+            }
+            entry.cdzChecked = true;
+            entry.cdzGrade = "";
+            renderTable();
+            calcStats();
+            saveToFirebase(false);
+        }
 
-            alert('✅ Оценка выставлена!');
-            loadAllGrades();
-        };
+        function resetCDZCheck(studentId) {
+            let entry = getEntry(studentId);
+            if(confirm("Сбросить проверку ЦДЗ?")) {
+                entry.cdzChecked = false;
+                if(entry.cdzGrade) {
+                    const idx = entry.grades.indexOf(entry.cdzGrade);
+                    if(idx !== -1) entry.grades.splice(idx, 1);
+                    entry.cdzGrade = "";
+                }
+                renderTable();
+                calcStats();
+                saveToFirebase(false);
+            }
+        }
 
-        // Загрузить все оценки для учителя
-        async function loadAllGrades() {
-            try {
-                const gradesSnapshot = await db.ref('grades').once('value');
-                const studentsSnapshot = await db.ref('students').once('value');
-                const grades = gradesSnapshot.val();
-                const students = studentsSnapshot.val();
+        function getStudentAvg(studentId) {
+            let entry = getEntry(studentId);
+            let numeric = entry.grades.filter(g => g !== "нб").map(g => parseInt(g)).filter(n => !isNaN(n) && n >= 2 && n <= 5);
+            if(numeric.length === 0) return "—";
+            return (numeric.reduce((a,b) => a+b, 0) / numeric.length).toFixed(1);
+        }
 
-                let html = '<table> etxek<th>Ученик</th><th>Предмет</th><th>Оценка</th><th>Дата</th><th>Учитель</th><th>Действия</th></tr>';
+        function renderTable() {
+            const tbody = document.getElementById("tableBody");
+            tbody.innerHTML = "";
+            const isTeacher = (currentMode === "teacher");
+            const filtered = isTeacher ? students : students.filter(s => s.id === selectedStudentId);
+            
+            for(let student of filtered) {
+                const entry = getEntry(student.id);
+                const tr = document.createElement("tr");
                 
-                if (grades) {
-                    for (let gradeId in grades) {
-                        const grade = grades[gradeId];
-                        const student = students ? students[grade.studentId] : null;
-                        const studentName = student ? student.name : 'Неизвестно';
-                        
-                        let gradeClass = '';
-                        if (grade.grade === 5) gradeClass = 'grade-5';
-                        else if (grade.grade === 4) gradeClass = 'grade-4';
-                        else if (grade.grade === 3) gradeClass = 'grade-3';
-                        else gradeClass = 'grade-2';
-                        
-                        html += `<tr>
-                            <td>${studentName}</td>
-                            <td>${grade.subject}</td>
-                            <td><span class="grade-badge ${gradeClass}">${grade.grade}</span></td>
-                            <td>${grade.date}</td>
-                            <td>${grade.teacher || 'Учитель'}</td>
-                            <td><button class="btn btn-danger" style="padding: 5px 10px;" onclick="deleteGrade('${gradeId}')">🗑️</button></td>
-                        </tr>`;
-                    }
+                // Имя
+                const tdName = document.createElement("td");
+                tdName.className = "student-name";
+                tdName.innerHTML = `<i class="fas fa-user-graduate"></i> ${student.name}`;
+                tr.appendChild(tdName);
+                
+                // Задание
+                const tdTask = document.createElement("td");
+                if(isTeacher) {
+                    const inp = document.createElement("input");
+                    inp.type = "text";
+                    inp.className = "task-input";
+                    inp.placeholder = "Название работы / задание...";
+                    inp.value = entry.taskName || "";
+                    inp.addEventListener("change", (e) => {
+                        entry.taskName = e.target.value;
+                        calcStats();
+                        saveToFirebase(false);
+                    });
+                    tdTask.appendChild(inp);
+                } else {
+                    tdTask.innerHTML = entry.taskName ? `<span style="background:#eef2ff; padding:6px 14px; border-radius:40px;">📌 ${escapeHtml(entry.taskName)}</span>` : "<span style='color:#94a3b8;'>— не задано —</span>";
                 }
-                if (!grades || Object.keys(grades).length === 0) {
-                    html += '<tr><td colspan="6" style="text-align: center;">Нет оценок</td></tr>';
-                }
-                html += '</tr>';
-                document.getElementById('teacherGradesTable').innerHTML = html;
-            } catch(e) {
-                document.getElementById('teacherGradesTable').innerHTML = '<p>Ошибка загрузки оценок</p>';
-            }
-        }
-
-        window.deleteGrade = async function(gradeId) {
-            if (confirm('Удалить оценку?')) {
-                await db.ref('grades/' + gradeId).remove();
-                loadAllGrades();
-            }
-        };
-
-        // ========== ПАНЕЛЬ УЧЕНИКА ==========
-        async function renderStudentPanel() {
-            // Найти ID текущего ученика
-            const studentsSnapshot = await db.ref('students').once('value');
-            const students = studentsSnapshot.val();
-            let studentId = null;
-            
-            if (students) {
-                for (let id in students) {
-                    if (students[id].email === currentUser.email) {
-                        studentId = id;
-                        currentUser.id = id;
-                        break;
-                    }
-                }
-            }
-
-            const gradesSnapshot = await db.ref('grades').once('value');
-            const grades = gradesSnapshot.val();
-            
-            let myGrades = [];
-            let subjects = {};
-            
-            if (grades) {
-                for (let id in grades) {
-                    if (grades[id].studentId === studentId) {
-                        myGrades.push(grades[id]);
-                        if (!subjects[grades[id].subject]) {
-                            subjects[grades[id].subject] = [];
+                tr.appendChild(tdTask);
+                
+                // Тип задания
+                const tdType = document.createElement("td");
+                if(isTeacher) {
+                    const sel = document.createElement("select");
+                    sel.style.padding = "6px 12px";
+                    sel.style.borderRadius = "30px";
+                    sel.style.border = "1px solid #cbd5e1";
+                    sel.style.background = "#fefce8";
+                    const types = [
+                        {val: "", label: "— выберите —"},
+                        {val: "homework", label: "📘 Домашнее задание"},
+                        {val: "cdz", label: "💻 Цифровое ДЗ (ЦДЗ)"},
+                        {val: "individual", label: "👤 Индивидуальное"}
+                    ];
+                    types.forEach(t => {
+                        const opt = document.createElement("option");
+                        opt.value = t.val;
+                        opt.textContent = t.label;
+                        if(entry.taskType === t.val) opt.selected = true;
+                        sel.appendChild(opt);
+                    });
+                    sel.addEventListener("change", (e) => {
+                        entry.taskType = e.target.value;
+                        if(entry.taskType !== "cdz") {
+                            entry.cdzChecked = false;
+                            entry.cdzGrade = "";
                         }
-                        subjects[grades[id].subject].push(grades[id].grade);
-                    }
+                        renderTable();
+                        calcStats();
+                        saveToFirebase(false);
+                    });
+                    tdType.appendChild(sel);
+                } else {
+                    let typeText = "", typeClass = "";
+                    if(entry.taskType === "homework") { typeText = "📘 Д/з"; typeClass = "badge-homework"; }
+                    else if(entry.taskType === "cdz") { typeText = "💻 ЦДЗ"; typeClass = "badge-cdz"; }
+                    else if(entry.taskType === "individual") { typeText = "👤 Индив."; typeClass = "badge-individual"; }
+                    else typeText = "—";
+                    tdType.innerHTML = `<span class="type-badge ${typeClass}">${typeText}</span>`;
                 }
-            }
-            
-            // Вычисление статистики
-            let totalGrades = myGrades.length;
-            let sumGrades = myGrades.reduce((sum, g) => sum + g.grade, 0);
-            let averageGrade = totalGrades > 0 ? (sumGrades / totalGrades).toFixed(2) : 'Нет оценок';
-            
-            const appContent = document.getElementById('appContent');
-            appContent.innerHTML = `
-                <header>
-                    <h1>🎓 Мой дневник <span class="role-badge">🧑‍🎓 Ученик</span></h1>
-                    <div>
-                        <span style="margin-right: 15px;">${currentUser.name}</span>
-                        <button class="btn btn-secondary" onclick="logout()">🚪 Выйти</button>
-                    </div>
-                </header>
-
-                <div class="student-grades-summary">
-                    <div class="stat-card">
-                        <div class="stat-value">${totalGrades}</div>
-                        <div class="stat-label">Всего оценок</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value">${averageGrade}</div>
-                        <div class="stat-label">Средний балл</div>
-                    </div>
-                </div>
-
-                <div class="grades-table-container">
-                    <h2>📖 Мои оценки</h2>
-                    <div id="studentGradesTable"></div>
-                </div>
-            `;
-            
-            // Таблица с оценками
-            let gradesHtml = '<table><th>Предмет</th><th>Оценки</th><th>Средний балл</th></tr>';
-            
-            for (let subject in subjects) {
-                let gradesList = subjects[subject];
-                let avg = (gradesList.reduce((a,b) => a+b, 0) / gradesList.length).toFixed(2);
-                let gradesBadges = gradesList.map(g => {
-                    let gradeClass = '';
-                    if (g === 5) gradeClass = 'grade-5';
-                    else if (g === 4) gradeClass = 'grade-4';
-                    else if (g === 3) gradeClass = 'grade-3';
-                    else gradeClass = 'grade-2';
-                    return `<span class="grade-badge ${gradeClass}" style="margin: 2px;">${g}</span>`;
-                }).join('');
+                tr.appendChild(tdType);
                 
-                gradesHtml += `<tr>
-                    <td><strong>${subject}</strong></td>
-                    <td>${gradesBadges}</td>
-                    <td><strong>${avg}</strong></td>
-                </tr>`;
+                // Оценки
+                const tdGrades = document.createElement("td");
+                const gradesContainer = document.createElement("div");
+                gradesContainer.className = "grades-list";
+                
+                entry.grades.forEach((grade, idx) => {
+                    const chip = document.createElement("div");
+                    chip.className = "grade-chip";
+                    let displayGrade = grade === "нб" ? "н/б" : grade;
+                    chip.innerHTML = `${displayGrade} ${isTeacher ? `<i class="fas fa-trash-alt" data-student="${student.id}" data-idx="${idx}"></i>` : ""}`;
+                    if(isTeacher) {
+                        const delIcon = chip.querySelector("i");
+                        if(delIcon) {
+                            delIcon.addEventListener("click", (e) => {
+                                e.stopPropagation();
+                                removeGrade(student.id, idx);
+                            });
+                        }
+                    }
+                    gradesContainer.appendChild(chip);
+                });
+                
+                if(isTeacher) {
+                    const addBtn = document.createElement("button");
+                    addBtn.className = "add-grade-btn";
+                    addBtn.innerHTML = '<i class="fas fa-plus"></i> Оценка';
+                    addBtn.addEventListener("click", () => {
+                        let newGrade = prompt("Введите оценку: 2,3,4,5 или 'нб' (н/б)");
+                        if(newGrade !== null) {
+                            newGrade = newGrade.trim().toLowerCase();
+                            let valid = false;
+                            if(newGrade === "нб") valid = true;
+                            else {
+                                let num = Number(newGrade);
+                                if(!isNaN(num) && Number.isInteger(num) && num >= 2 && num <= 5) {
+                                    newGrade = num.toString();
+                                    valid = true;
+                                }
+                            }
+                            if(valid) addGrade(student.id, newGrade);
+                            else alert("Оценка должна быть от 2 до 5 или 'нб'");
+                        }
+                    });
+                    gradesContainer.appendChild(addBtn);
+                } else {
+                    const avgSpan = document.createElement("div");
+                    avgSpan.style.fontSize = "0.7rem";
+                    avgSpan.style.marginTop = "6px";
+                    avgSpan.style.fontWeight = "600";
+                    avgSpan.style.color = "#0f3b5f";
+                    let avgVal = getStudentAvg(student.id);
+                    avgSpan.innerHTML = `<i class="fas fa-chart-line"></i> средняя: ${avgVal}`;
+                    gradesContainer.appendChild(avgSpan);
+                }
+                tdGrades.appendChild(gradesContainer);
+                tr.appendChild(tdGrades);
+                
+                // ЦДЗ проверка
+                const tdCheck = document.createElement("td");
+                if(entry.taskType === "cdz") {
+                    if(isTeacher) {
+                        const actionsDiv = document.createElement("div");
+                        actionsDiv.className = "cdz-actions";
+                        
+                        if(!entry.cdzChecked) {
+                            const btnGrade = document.createElement("button");
+                            btnGrade.className = "cdz-btn cdz-btn-grade";
+                            btnGrade.innerHTML = '<i class="fas fa-check"></i> Проверить + оценка';
+                            btnGrade.addEventListener("click", () => checkCDZWithGrade(student.id));
+                            actionsDiv.appendChild(btnGrade);
+                            
+                            const btnNoGrade = document.createElement("button");
+                            btnNoGrade.className = "cdz-btn cdz-btn-nograde";
+                            btnNoGrade.innerHTML = '<i class="fas fa-eye"></i> Проверить без оценки';
+                            btnNoGrade.addEventListener("click", () => checkCDZWithoutGrade(student.id));
+                            actionsDiv.appendChild(btnNoGrade);
+                        } else {
+                            const checkedDiv = document.createElement("div");
+                            checkedDiv.className = "cdz-status";
+                            if(entry.cdzGrade) {
+                                checkedDiv.innerHTML = `✅ Проверено<br>Оценка: <strong>${entry.cdzGrade}</strong>`;
+                            } else {
+                                checkedDiv.innerHTML = `✅ Проверено<br><span style="font-size:0.65rem;">(без оценки)</span>`;
+                            }
+                            actionsDiv.appendChild(checkedDiv);
+                            
+                            const resetBtn = document.createElement("button");
+                            resetBtn.className = "cdz-btn";
+                            resetBtn.style.background = "#fef2f2";
+                            resetBtn.style.color = "#991b1b";
+                            resetBtn.style.border = "1px solid #fca5a5";
+                            resetBtn.innerHTML = '<i class="fas fa-undo"></i> Сбросить проверку';
+                            resetBtn.addEventListener("click", () => resetCDZCheck(student.id));
+                            actionsDiv.appendChild(resetBtn);
+                        }
+                        tdCheck.appendChild(actionsDiv);
+                    } else {
+                        if(entry.cdzChecked) {
+                            if(entry.cdzGrade) {
+                                tdCheck.innerHTML = `✅ Проверено<br>Оценка: <strong>${entry.cdzGrade}</strong>`;
+                            } else {
+                                tdCheck.innerHTML = `✅ Проверено<br><span style="font-size:0.7rem;">(без оценки)</span>`;
+                            }
+                        } else {
+                            tdCheck.innerHTML = "⏳ Ожидает проверки";
+                        }
+                    }
+                } else {
+                    tdCheck.innerHTML = "—";
+                }
+                tr.appendChild(tdCheck);
+                tbody.appendChild(tr);
             }
-            
-            if (myGrades.length === 0) {
-                gradesHtml += '<tr><td colspan="3" style="text-align: center;">📭 Пока нет оценок</td></tr>';
-            }
-            
-            gradesHtml += '</table>';
-            document.getElementById('studentGradesTable').innerHTML = gradesHtml;
+            calcStats();
         }
 
-        // Инициализация: создаём тестовых учеников в БД
-        async function initDatabase() {
-            const snapshot = await db.ref('students').once('value');
-            if (!snapshot.exists()) {
-                // Создаём тестовых учеников
-                const student1Ref = db.ref('students').push();
-                await student1Ref.set({
-                    name: 'Иванов Иван',
-                    email: 'student@journal.ru',
-                    role: 'student'
-                });
-                
-                const student2Ref = db.ref('students').push();
-                await student2Ref.set({
-                    name: 'Петров Петр',
-                    email: 'petrov@journal.ru',
-                    role: 'student'
-                });
-                
-                const student3Ref = db.ref('students').push();
-                await student3Ref.set({
-                    name: 'Сидорова Анна',
-                    email: 'sidorova@journal.ru',
-                    role: 'student'
-                });
+        // Управление датой
+        function setDate(newDate) {
+            currentDate = newDate;
+            document.getElementById("datePicker").value = currentDate;
+            const [y,m,d] = currentDate.split('-');
+            document.getElementById("dateRange").innerHTML = `<i class="far fa-calendar-alt"></i> ${d}.${m}.${y}`;
+            renderTable();
+        }
+
+        function changeDate(delta) {
+            let d = new Date(currentDate);
+            d.setDate(d.getDate() + delta);
+            let year = d.getFullYear();
+            let month = String(d.getMonth() + 1).padStart(2, '0');
+            let day = String(d.getDate()).padStart(2, '0');
+            setDate(`${year}-${month}-${day}`);
+        }
+
+        function resetCurrent() {
+            if(confirm(`Очистить всё на ${currentDate} по предмету "${currentSubject}"?`)) {
+                for(let s of students) {
+                    let e = getEntry(s.id);
+                    e.taskName = "";
+                    e.taskType = "";
+                    e.grades = [];
+                    e.cdzChecked = false;
+                    e.cdzGrade = "";
+                }
+                renderTable();
+                saveToFirebase(false);
             }
+        }
+
+        function setMode(mode) {
+            currentMode = mode;
+            document.querySelectorAll(".mode-btn").forEach(btn => {
+                if(btn.getAttribute("data-mode") === mode) btn.classList.add("active");
+                else btn.classList.remove("active");
+            });
+            const pickerDiv = document.getElementById("studentPickerDiv");
+            if(mode === "teacher") {
+                pickerDiv.style.opacity = "0.5";
+                pickerDiv.style.pointerEvents = "none";
+            } else {
+                pickerDiv.style.opacity = "1";
+                pickerDiv.style.pointerEvents = "auto";
+            }
+            renderTable();
+        }
+
+        function updateStudentSelect() {
+            const sel = document.getElementById("studentSelect");
+            sel.innerHTML = "";
+            students.forEach(s => {
+                const opt = document.createElement("option");
+                opt.value = s.id;
+                opt.textContent = s.name;
+                if(s.id === selectedStudentId) opt.selected = true;
+                sel.appendChild(opt);
+            });
+            sel.onchange = (e) => {
+                selectedStudentId = parseInt(e.target.value);
+                if(currentMode === "student") renderTable();
+            };
+        }
+
+        function escapeHtml(str) {
+            if(!str) return "";
+            return str.replace(/[&<>]/g, m => m === '&' ? '&amp;' : (m === '<' ? '&lt;' : '&gt;'));
+        }
+
+        // ---------- ЗАПУСК ----------
+        async function init() {
+            // Загружаем данные из Firebase
+            const hasData = await loadFromFirebase();
+            if (!hasData) {
+                initDB();
+            }
+            
+            updateStudentSelect();
+            selectedStudentId = students[0].id;
+            currentSubject = "Математика";
+            currentDate = "2025-11-25";
+            document.getElementById("subjectSelect").value = currentSubject;
+            document.getElementById("datePicker").value = currentDate;
+            document.getElementById("dateRange").innerHTML = '<i class="far fa-calendar-alt"></i> 25.11.2025';
+            
+            // Подписываемся на изменения в реальном времени
+            subscribeToFirebase();
+            
+            document.getElementById("subjectSelect").addEventListener("change", (e) => { 
+                currentSubject = e.target.value; 
+                renderTable(); 
+            });
+            document.getElementById("datePicker").addEventListener("change", (e) => setDate(e.target.value));
+            document.getElementById("prevDateBtn").addEventListener("click", () => changeDate(-1));
+            document.getElementById("nextDateBtn").addEventListener("click", () => changeDate(1));
+            document.getElementById("resetBtn").addEventListener("click", resetCurrent);
+            document.getElementById("saveBtn").addEventListener("click", () => {
+                saveToFirebase(true);
+            });
+            document.querySelectorAll(".mode-btn").forEach(btn => {
+                btn.addEventListener("click", () => setMode(btn.getAttribute("data-mode")));
+            });
+            
+            setMode("teacher");
+            renderTable();
+            showNotification('Данные загружены из облака!', false);
         }
         
-        initDatabase();
+        init();
     </script>
 </body>
 </html>
