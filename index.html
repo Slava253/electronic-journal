@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Школьный журнал | Firebase | Облачное сохранение</title>
+    <title>Школьный журнал | Firebase + GitHub</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
@@ -412,6 +412,28 @@
             to { transform: translateY(0); opacity: 1; }
         }
 
+        /* GitHub badge */
+        .github-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #24292e;
+            color: white;
+            padding: 6px 16px;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            text-decoration: none;
+            transition: 0.2s;
+            margin-left: 10px;
+        }
+        .github-badge:hover {
+            background: #2f363d;
+            transform: scale(1.02);
+        }
+        .github-badge i {
+            font-size: 1.1rem;
+        }
+
         @media (max-width: 700px) {
             body { padding: 1rem; }
             .control-panel { flex-direction: column; align-items: stretch; }
@@ -427,7 +449,13 @@
     <div class="journal-container">
         <div class="journal-header">
             <div class="title-section">
-                <h1><i class="fas fa-chalkboard-user"></i> Электронный школьный журнал</h1>
+                <h1>
+                    <i class="fas fa-chalkboard-user"></i> 
+                    Электронный школьный журнал
+                    <a href="#" class="github-badge" id="githubLink" target="_blank">
+                        <i class="fab fa-github"></i> GitHub
+                    </a>
+                </h1>
                 <p><i class="fas fa-cloud-upload-alt"></i> Облачное сохранение (Firebase) • ЦДЗ с оценкой/без оценки</p>
             </div>
             <div class="class-info">
@@ -504,7 +532,7 @@
 
     <script type="module">
         import { initializeApp } from "firebase/app";
-        import { getDatabase, ref, set, get, child, push, update, onValue } from "firebase/database";
+        import { getDatabase, ref, set, get, child, onValue } from "firebase/database";
 
         // ---------- КОНФИГУРАЦИЯ FIREBASE ----------
         const firebaseConfig = {
@@ -545,21 +573,18 @@
         let currentMode = "teacher";
         let selectedStudentId = 0;
         let isSaving = false;
-        let isLoaded = false;
 
         // ---------- РАБОТА С FIREBASE ----------
         function getJournalRef() {
             return ref(database, 'journalData');
         }
 
-        // Загрузка данных из Firebase
         async function loadFromFirebase() {
             try {
                 const dbRef = ref(database);
                 const snapshot = await get(child(dbRef, 'journalData'));
                 if (snapshot.exists()) {
                     journal = snapshot.val();
-                    // Проверяем структуру и добавляем недостающие поля
                     for (let sub of subjectsList) {
                         if (!journal[sub]) journal[sub] = {};
                         for (let date in journal[sub]) {
@@ -582,7 +607,6 @@
             }
         }
 
-        // Сохранение в Firebase
         async function saveToFirebase(showNotification = true) {
             if (isSaving) return;
             isSaving = true;
@@ -600,16 +624,13 @@
             }
         }
 
-        // Подписка на изменения в Firebase (реальное время)
         function subscribeToFirebase() {
             const journalRef = getJournalRef();
             onValue(journalRef, (snapshot) => {
                 if (snapshot.exists()) {
                     const newData = snapshot.val();
-                    // Проверяем, изменились ли данные (чтобы избежать циклического обновления)
                     if (JSON.stringify(journal) !== JSON.stringify(newData)) {
                         journal = newData;
-                        // Проверяем структуру
                         for (let sub of subjectsList) {
                             if (!journal[sub]) journal[sub] = {};
                             for (let date in journal[sub]) {
@@ -642,10 +663,8 @@
 
         // ---------- ИНИЦИАЛИЗАЦИЯ БД ----------
         function initDB() {
-            // Создаём пустую структуру
             for (let sub of subjectsList) {
                 journal[sub] = {};
-                // Добавляем несколько дат для демо
                 const demoDates = ["2025-11-25", "2025-11-26", "2025-11-27"];
                 for (let dt of demoDates) {
                     journal[sub][dt] = {};
@@ -661,7 +680,6 @@
                 }
             }
             
-            // Демо данные
             let demo = journal["Математика"]["2025-11-25"];
             if(demo && demo[0]) { demo[0].taskName = "Алгебра: №345-350"; demo[0].taskType = "homework"; demo[0].grades = ["5","4"]; }
             if(demo && demo[1]) { demo[1].taskName = "ЦДЗ: Квадратные уравнения"; demo[1].taskType = "cdz"; demo[1].grades = ["4"]; demo[1].cdzChecked = true; demo[1].cdzGrade = "4"; }
@@ -813,13 +831,11 @@
                 const entry = getEntry(student.id);
                 const tr = document.createElement("tr");
                 
-                // Имя
                 const tdName = document.createElement("td");
                 tdName.className = "student-name";
                 tdName.innerHTML = `<i class="fas fa-user-graduate"></i> ${student.name}`;
                 tr.appendChild(tdName);
                 
-                // Задание
                 const tdTask = document.createElement("td");
                 if(isTeacher) {
                     const inp = document.createElement("input");
@@ -838,7 +854,6 @@
                 }
                 tr.appendChild(tdTask);
                 
-                // Тип задания
                 const tdType = document.createElement("td");
                 if(isTeacher) {
                     const sel = document.createElement("select");
@@ -880,7 +895,6 @@
                 }
                 tr.appendChild(tdType);
                 
-                // Оценки
                 const tdGrades = document.createElement("td");
                 const gradesContainer = document.createElement("div");
                 gradesContainer.className = "grades-list";
@@ -937,7 +951,6 @@
                 tdGrades.appendChild(gradesContainer);
                 tr.appendChild(tdGrades);
                 
-                // ЦДЗ проверка
                 const tdCheck = document.createElement("td");
                 if(entry.taskType === "cdz") {
                     if(isTeacher) {
@@ -1069,7 +1082,6 @@
 
         // ---------- ЗАПУСК ----------
         async function init() {
-            // Загружаем данные из Firebase
             const hasData = await loadFromFirebase();
             if (!hasData) {
                 initDB();
@@ -1083,7 +1095,6 @@
             document.getElementById("datePicker").value = currentDate;
             document.getElementById("dateRange").innerHTML = '<i class="far fa-calendar-alt"></i> 25.11.2025';
             
-            // Подписываемся на изменения в реальном времени
             subscribeToFirebase();
             
             document.getElementById("subjectSelect").addEventListener("change", (e) => { 
@@ -1103,6 +1114,11 @@
             
             setMode("teacher");
             renderTable();
+            
+            // Ссылка на GitHub (замените на вашу)
+            const githubLink = document.getElementById('githubLink');
+            githubLink.href = 'https://github.com/yourusername/school-journal';
+            
             showNotification('Данные загружены из облака!', false);
         }
         
