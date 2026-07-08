@@ -2,16 +2,12 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Школьный журнал | Firebase</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             background: linear-gradient(145deg, #e9f0f5 0%, #d9e2ec 100%);
             font-family: 'Inter', sans-serif;
@@ -123,7 +119,7 @@
         .table-wrap {
             overflow-x: auto;
             padding: 0 0 10px 0;
-            max-height: 65vh;
+            max-height: 70vh;
             overflow-y: auto;
         }
         table {
@@ -300,7 +296,7 @@
         <div>
             <h1><i class="fas fa-chalkboard-user"></i> Школьный журнал</h1>
             <p style="opacity:0.8; font-size:0.85rem; margin-top:4px;">
-                <i class="fas fa-cloud-upload-alt"></i> Firebase Cloud • ЦДЗ с/без оценки
+                <i class="fas fa-cloud-upload-alt"></i> Облачная синхронизация • Работает на всех устройствах
             </p>
         </div>
         <div class="class-badge"><i class="fas fa-users"></i> 9 "А" класс</div>
@@ -356,7 +352,7 @@
                 </tr>
             </thead>
             <tbody id="tableBody">
-                <tr><td colspan="5" class="loading"><i class="fas fa-spinner fa-spin"></i> Загрузка...</td></tr>
+                <tr><td colspan="5" class="loading"><i class="fas fa-spinner fa-spin"></i> Загрузка данных...</td></tr>
             </tbody>
         </table>
     </div>
@@ -423,8 +419,8 @@ let currentSubject = "Математика";
 let currentDate = "";
 let currentMode = "teacher";
 let selectedStudent = 0;
-let isLoading = false;
-let isInitialized = false;
+let isSaving = false;
+let isLoaded = false;
 
 // ===== ФУНКЦИИ =====
 function showNotification(text, isError = false) {
@@ -463,17 +459,17 @@ function getEntry(studentId) {
 }
 
 async function saveToFirebase(showNotif = true) {
-    if (isLoading) return;
-    isLoading = true;
+    if (isSaving) return;
+    isSaving = true;
     try {
         await set(ref(db, 'journalData'), journal);
-        if (showNotif) showNotification('✅ Сохранено в Firebase!');
+        if (showNotif) showNotification('✅ Сохранено в облаке!');
         console.log('✅ Данные сохранены в Firebase');
     } catch (e) {
         console.error('❌ Ошибка сохранения:', e);
-        showNotification('❌ Ошибка сохранения!', true);
+        if (showNotif) showNotification('❌ Ошибка сохранения!', true);
     }
-    isLoading = false;
+    isSaving = false;
 }
 
 async function loadFromFirebase() {
@@ -529,13 +525,31 @@ function initDB() {
     // Демо данные
     const today = new Date().toISOString().split('T')[0];
     const d = journal["Математика"][today];
-    if (d && d[0]) { d[0].taskName = "Алгебра №345-350"; d[0].taskType = "homework"; d[0].grades = ["5","4"]; }
-    if (d && d[1]) { d[1].taskName = "ЦДЗ: Квадратные уравнения"; d[1].taskType = "cdz"; d[1].grades = ["4"]; d[1].cdzChecked = true; d[1].cdzGrade = "4"; }
-    if (d && d[2]) { d[2].taskName = "Индивидуальная работа"; d[2].taskType = "individual"; d[2].grades = ["5","5"]; }
-    if (d && d[3]) { d[3].taskName = "ЦДЗ: Теорема Пифагора"; d[3].taskType = "cdz"; d[3].cdzChecked = true; d[3].cdzGrade = ""; }
+    if (d && d[0]) { 
+        d[0].taskName = "Алгебра №345-350"; 
+        d[0].taskType = "homework"; 
+        d[0].grades = ["5","4"]; 
+    }
+    if (d && d[1]) { 
+        d[1].taskName = "ЦДЗ: Квадратные уравнения"; 
+        d[1].taskType = "cdz"; 
+        d[1].grades = ["4"]; 
+        d[1].cdzChecked = true; 
+        d[1].cdzGrade = "4"; 
+    }
+    if (d && d[2]) { 
+        d[2].taskName = "Индивидуальная работа"; 
+        d[2].taskType = "individual"; 
+        d[2].grades = ["5","5"]; 
+    }
+    if (d && d[3]) { 
+        d[3].taskName = "ЦДЗ: Теорема Пифагора"; 
+        d[3].taskType = "cdz"; 
+        d[3].cdzChecked = true; 
+        d[3].cdzGrade = ""; 
+    }
     
-    console.log('✅ База данных инициализирована с демо-данными');
-    saveToFirebase(false);
+    console.log('✅ База данных инициализирована');
 }
 
 // ===== РЕНДЕР =====
@@ -744,7 +758,7 @@ function setDate(date) {
     document.getElementById('datePicker').value = date;
     const parts = date.split('-');
     document.getElementById('dateDisplay').textContent = `${parts[2]}.${parts[1]}.${parts[0]}`;
-    if (isInitialized) render();
+    if (isLoaded) render();
 }
 
 function changeDate(delta) {
@@ -764,6 +778,7 @@ async function init() {
     const hasData = await loadFromFirebase();
     if (!hasData) {
         initDB();
+        await saveToFirebase(false);
     }
 
     // Устанавливаем сегодняшнюю дату
@@ -791,12 +806,13 @@ async function init() {
     // Подписка на изменения в Firebase (реальное время)
     const journalRef = ref(db, 'journalData');
     onValue(journalRef, (snapshot) => {
-        if (snapshot.exists() && isInitialized) {
+        if (snapshot.exists() && isLoaded) {
             const newData = snapshot.val();
             if (JSON.stringify(journal) !== JSON.stringify(newData)) {
                 journal = newData;
                 console.log('🔄 Данные обновлены из Firebase');
                 render();
+                showNotification('🔄 Данные обновлены!');
             }
         }
     });
@@ -845,9 +861,9 @@ async function init() {
         }
     };
 
-    isInitialized = true;
+    isLoaded = true;
     render();
-    showNotification('✅ Загружено из Firebase!');
+    showNotification('✅ Загружено из облака!');
     console.log('✅ Приложение запущено успешно!');
 }
 
