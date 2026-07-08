@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Школьный журнал | Firebase</title>
+    <title>Школьный журнал | Детали оценок | Д/з, ЦДЗ, Индивидуальное</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -41,6 +41,28 @@
             border-radius: 60px;
             font-weight: 600;
         }
+        .status-bar {
+            background: #f8fafc;
+            padding: 8px 20px;
+            font-size: 0.8rem;
+            color: #64748b;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .status-dot {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 6px;
+        }
+        .status-dot.green { background: #22c55e; }
+        .status-dot.red { background: #ef4444; }
+        .status-dot.yellow { background: #eab308; }
         .controls {
             background: #f8fafc;
             padding: 15px 25px;
@@ -187,6 +209,12 @@
             display: inline-flex;
             align-items: center;
             gap: 6px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .grade-chip:hover {
+            transform: scale(1.05);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
         }
         .grade-chip i { cursor: pointer; color: #92400e; font-size: 0.7rem; }
         .grade-chip i:hover { color: #b91c1c; }
@@ -253,6 +281,82 @@
         .btn-save:hover { background: #16a34a; }
         .btn-danger { background: #ef4444; color: white; border-color: #ef4444; }
         .btn-danger:hover { background: #dc2626; }
+        
+        /* Модальное окно для деталей оценки */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            animation: fadeIn 0.3s ease;
+        }
+        .modal.show { display: flex; align-items: center; justify-content: center; }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .modal-content {
+            background: white;
+            border-radius: 24px;
+            padding: 32px;
+            max-width: 450px;
+            width: 90%;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+            animation: slideUp 0.3s ease;
+            position: relative;
+        }
+        @keyframes slideUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .modal-close {
+            position: absolute;
+            top: 16px;
+            right: 20px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #94a3b8;
+            transition: 0.2s;
+            background: none;
+            border: none;
+        }
+        .modal-close:hover { color: #1e293b; transform: rotate(90deg); }
+        .modal-grade {
+            font-size: 3.5rem;
+            font-weight: 800;
+            text-align: center;
+            color: #0f3b5f;
+            background: #fef9c3;
+            border-radius: 50%;
+            width: 100px;
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+        }
+        .modal-detail {
+            padding: 8px 0;
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .modal-detail:last-child { border-bottom: none; }
+        .modal-label { font-weight: 600; color: #64748b; }
+        .modal-value { font-weight: 600; color: #1e293b; text-align: right; }
+        .modal-subject-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 30px;
+            background: #eef2ff;
+            color: #0f3b5f;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
         .notification {
             position: fixed;
             bottom: 20px;
@@ -269,50 +373,54 @@
         .notification.show { display: block; animation: slideIn 0.3s ease; }
         .notification.success { background: #22c55e; }
         .notification.error { background: #ef4444; }
-        .notification.warning { background: #eab308; }
         @keyframes slideIn {
             from { transform: translateY(100px); opacity: 0; }
             to { transform: translateY(0); opacity: 1; }
         }
-        .loading {
-            text-align: center;
-            padding: 40px;
-            font-size: 1.2rem;
-            color: #64748b;
-        }
-        .status-bar {
-            background: #f8fafc;
-            padding: 8px 20px;
-            font-size: 0.8rem;
-            color: #64748b;
-            border-bottom: 1px solid #e2e8f0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-        .status-dot {
-            display: inline-block;
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            margin-right: 6px;
-        }
-        .status-dot.green { background: #22c55e; }
-        .status-dot.red { background: #ef4444; }
-        .status-dot.yellow { background: #eab308; }
         @media (max-width: 700px) {
             body { padding: 10px; }
             .controls { flex-direction: column; align-items: stretch; }
             .task-input { width: 120px; }
+            .modal-content { padding: 24px; }
+            .modal-grade { width: 80px; height: 80px; font-size: 2.8rem; }
         }
     </style>
 </head>
 <body>
 
 <div class="notification" id="notif">
-    <i class="fas fa-info-circle"></i> <span id="notifText">Сохранено!</span>
+    <i class="fas fa-check-circle"></i> <span id="notifText">Сохранено!</span>
+</div>
+
+<!-- Модальное окно для деталей оценки -->
+<div class="modal" id="gradeModal">
+    <div class="modal-content">
+        <button class="modal-close" id="modalClose">&times;</button>
+        <div class="modal-grade" id="modalGradeValue">5</div>
+        <div style="text-align:center; margin-bottom:16px;">
+            <span class="modal-subject-badge" id="modalSubject">📐 Математика</span>
+        </div>
+        <div class="modal-detail">
+            <span class="modal-label">📝 Задание</span>
+            <span class="modal-value" id="modalTaskName">—</span>
+        </div>
+        <div class="modal-detail">
+            <span class="modal-label">🏷️ Тип</span>
+            <span class="modal-value" id="modalTaskType">—</span>
+        </div>
+        <div class="modal-detail">
+            <span class="modal-label">📅 Дата</span>
+            <span class="modal-value" id="modalDate">—</span>
+        </div>
+        <div class="modal-detail">
+            <span class="modal-label">👨‍🎓 Ученик</span>
+            <span class="modal-value" id="modalStudent">—</span>
+        </div>
+        <div class="modal-detail" id="modalCdzRow" style="display:none;">
+            <span class="modal-label">✅ ЦДЗ проверка</span>
+            <span class="modal-value" id="modalCdzStatus">—</span>
+        </div>
+    </div>
 </div>
 
 <div class="container">
@@ -320,18 +428,18 @@
         <div>
             <h1><i class="fas fa-chalkboard-user"></i> Школьный журнал</h1>
             <p style="opacity:0.8; font-size:0.85rem; margin-top:4px;">
-                <i class="fas fa-cloud-upload-alt"></i> Firebase Cloud • Работает на всех устройствах
+                <i class="fas fa-cloud-upload-alt"></i> Firebase • 26 учеников • Д/з, ЦДЗ, Индивидуальное
             </p>
         </div>
         <div class="class-badge"><i class="fas fa-users"></i> 9 "А" класс</div>
     </div>
 
-    <div class="status-bar" id="statusBar">
+    <div class="status-bar">
         <span>
-            <span class="status-dot yellow" id="statusDot"></span>
-            <span id="statusText">Подключение к Firebase...</span>
+            <span class="status-dot green" id="statusDot"></span>
+            <span id="statusText">Готово</span>
         </span>
-        <span id="connectionInfo">⏳ Загрузка...</span>
+        <span id="studentCount">👨‍🎓 Учеников: 26</span>
     </div>
 
     <div class="controls">
@@ -383,9 +491,7 @@
                     <th style="min-width:160px;">✅ ЦДЗ проверка</th>
                 </tr>
             </thead>
-            <tbody id="tableBody">
-                <tr><td colspan="5" class="loading"><i class="fas fa-spinner fa-spin"></i> Загрузка данных...</td></tr>
-            </tbody>
+            <tbody id="tableBody"></tbody>
         </table>
     </div>
 
@@ -412,7 +518,7 @@
 import { initializeApp } from "firebase/app";
 import { getDatabase, ref, set, get, child, onValue } from "firebase/database";
 
-// ===== ВАША КОНФИГУРАЦИЯ FIREBASE =====
+// ===== КОНФИГУРАЦИЯ FIREBASE =====
 const firebaseConfig = {
     apiKey: "AIzaSyBfoIEyhvlUfIgAvXJwOthT6uzfB4gV0Uo",
     authDomain: "electronic-journal-5dff1.firebaseapp.com",
@@ -423,33 +529,11 @@ const firebaseConfig = {
     appId: "1:293962922085:web:391c3e453bb2725e392e8c"
 };
 
-// Инициализация Firebase
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 console.log('✅ Firebase подключен!');
 
-// ===== СТАТУС =====
-function updateStatus(text, type = 'loading') {
-    const dot = document.getElementById('statusDot');
-    const statusText = document.getElementById('statusText');
-    const info = document.getElementById('connectionInfo');
-    
-    statusText.textContent = text;
-    dot.className = 'status-dot';
-    
-    if (type === 'success') {
-        dot.classList.add('green');
-        info.textContent = '✅ Онлайн';
-    } else if (type === 'error') {
-        dot.classList.add('red');
-        info.textContent = '❌ Ошибка';
-    } else {
-        dot.classList.add('yellow');
-        info.textContent = '⏳ Соединение...';
-    }
-}
-
-// ===== УЧЕНИКИ (АЛФАВИТ) =====
+// ===== ВСЕ 26 УЧЕНИКОВ (АЛФАВИТ) =====
 const rawStudents = [
     "Абросимов Олег", "Борисова Анна", "Васильев Дмитрий", "Григорьев Максим",
     "Дмитриева София", "Егоров Иван", "Жукова Екатерина", "Зайцев Алексей",
@@ -476,24 +560,21 @@ let isSaving = false;
 let isLoaded = false;
 
 // ===== ФУНКЦИИ =====
-function showNotification(text, isError = false, isWarning = false) {
+function showNotification(text, isError = false) {
     const el = document.getElementById('notif');
     const textEl = document.getElementById('notifText');
     textEl.textContent = text;
-    el.className = 'notification show';
-    if (isError) el.classList.add('error');
-    else if (isWarning) el.classList.add('warning');
-    else el.classList.add('success');
+    el.className = 'notification show ' + (isError ? 'error' : 'success');
     clearTimeout(el._timeout);
-    el._timeout = setTimeout(() => el.classList.remove('show'), 4000);
+    el._timeout = setTimeout(() => el.classList.remove('show'), 3000);
 }
 
-function getEntry(studentId) {
-    if (!journal[currentSubject]) journal[currentSubject] = {};
-    if (!journal[currentSubject][currentDate]) {
-        journal[currentSubject][currentDate] = {};
+function ensureDateExists(subject, date) {
+    if (!journal[subject]) journal[subject] = {};
+    if (!journal[subject][date]) {
+        journal[subject][date] = {};
         students.forEach(s => {
-            journal[currentSubject][currentDate][s.id] = {
+            journal[subject][date][s.id] = {
                 taskName: "",
                 taskType: "",
                 grades: [],
@@ -501,7 +582,13 @@ function getEntry(studentId) {
                 cdzGrade: ""
             };
         });
+        return true;
     }
+    return false;
+}
+
+function getEntry(studentId) {
+    ensureDateExists(currentSubject, currentDate);
     if (!journal[currentSubject][currentDate][studentId]) {
         journal[currentSubject][currentDate][studentId] = {
             taskName: "",
@@ -521,33 +608,19 @@ async function saveToFirebase(showNotif = true) {
         await set(ref(db, 'journalData'), journal);
         if (showNotif) showNotification('✅ Сохранено в Firebase!');
         console.log('✅ Данные сохранены в Firebase');
-        updateStatus('Соединение установлено', 'success');
     } catch (e) {
         console.error('❌ Ошибка сохранения:', e);
-        let errorMsg = '❌ Ошибка сохранения! ';
-        if (e.message.includes('permission_denied')) {
-            errorMsg += 'Нет прав доступа. Проверьте правила Firebase!';
-            updateStatus('Ошибка доступа! Проверьте правила', 'error');
-        } else if (e.message.includes('network')) {
-            errorMsg += 'Проверьте интернет-соединение!';
-            updateStatus('Нет интернета', 'error');
-        } else {
-            errorMsg += e.message;
-            updateStatus('Ошибка: ' + e.message.substring(0, 50), 'error');
-        }
-        if (showNotif) showNotification(errorMsg, true);
+        if (showNotif) showNotification('❌ Ошибка сохранения', true);
     }
     isSaving = false;
 }
 
 async function loadFromFirebase() {
-    updateStatus('Загрузка данных...', 'loading');
     try {
         const dbRef = ref(db);
         const snapshot = await get(child(dbRef, 'journalData'));
         if (snapshot.exists()) {
             journal = snapshot.val();
-            // Проверка структуры
             subjects.forEach(sub => {
                 if (!journal[sub]) journal[sub] = {};
                 Object.keys(journal[sub]).forEach(date => {
@@ -559,26 +632,12 @@ async function loadFromFirebase() {
                 });
             });
             console.log('✅ Данные загружены из Firebase');
-            updateStatus('Данные загружены', 'success');
             return true;
         }
         console.log('ℹ️ В Firebase нет данных');
-        updateStatus('Нет данных в Firebase', 'loading');
         return false;
     } catch (e) {
         console.error('❌ Ошибка загрузки:', e);
-        let errorMsg = 'Ошибка загрузки: ';
-        if (e.message.includes('permission_denied')) {
-            errorMsg += 'Нет прав доступа! Проверьте правила Firebase.';
-            updateStatus('Ошибка доступа!', 'error');
-        } else if (e.message.includes('network')) {
-            errorMsg += 'Проверьте интернет-соединение!';
-            updateStatus('Нет интернета', 'error');
-        } else {
-            errorMsg += e.message;
-            updateStatus('Ошибка подключения', 'error');
-        }
-        showNotification(errorMsg, true);
         return false;
     }
 }
@@ -586,9 +645,8 @@ async function loadFromFirebase() {
 function initDB() {
     subjects.forEach(sub => {
         journal[sub] = {};
-        // Создаем даты на неделю
         const today = new Date();
-        for (let i = -3; i <= 4; i++) {
+        for (let i = -3; i <= 3; i++) {
             const d = new Date(today);
             d.setDate(d.getDate() + i);
             const dateStr = d.toISOString().split('T')[0];
@@ -605,34 +663,65 @@ function initDB() {
         }
     });
 
-    // Демо данные
     const today = new Date().toISOString().split('T')[0];
-    const d = journal["Математика"][today];
-    if (d && d[0]) { 
-        d[0].taskName = "Алгебра №345-350"; 
-        d[0].taskType = "homework"; 
-        d[0].grades = ["5","4"]; 
+    const math = journal["Математика"][today];
+    if (math) {
+        if (math[0]) { math[0].taskName = "Алгебра №345-350"; math[0].taskType = "homework"; math[0].grades = ["5","4"]; }
+        if (math[1]) { math[1].taskName = "ЦДЗ: Квадратные уравнения"; math[1].taskType = "cdz"; math[1].grades = ["4"]; math[1].cdzChecked = true; math[1].cdzGrade = "4"; }
+        if (math[2]) { math[2].taskName = "Индивидуальная работа"; math[2].taskType = "individual"; math[2].grades = ["5","5"]; }
+        if (math[3]) { math[3].taskName = "ЦДЗ: Теорема Пифагора"; math[3].taskType = "cdz"; math[3].cdzChecked = true; math[3].cdzGrade = ""; }
     }
-    if (d && d[1]) { 
-        d[1].taskName = "ЦДЗ: Квадратные уравнения"; 
-        d[1].taskType = "cdz"; 
-        d[1].grades = ["4"]; 
-        d[1].cdzChecked = true; 
-        d[1].cdzGrade = "4"; 
+
+    const rus = journal["Русский язык"][today];
+    if (rus) {
+        if (rus[0]) { rus[0].taskName = "Сочинение по картине"; rus[0].taskType = "homework"; rus[0].grades = ["5"]; }
+        if (rus[1]) { rus[1].taskName = "ЦДЗ: Правописание"; rus[1].taskType = "cdz"; rus[1].grades = ["4"]; rus[1].cdzChecked = true; rus[1].cdzGrade = "4"; }
     }
-    if (d && d[2]) { 
-        d[2].taskName = "Индивидуальная работа"; 
-        d[2].taskType = "individual"; 
-        d[2].grades = ["5","5"]; 
-    }
-    if (d && d[3]) { 
-        d[3].taskName = "ЦДЗ: Теорема Пифагора"; 
-        d[3].taskType = "cdz"; 
-        d[3].cdzChecked = true; 
-        d[3].cdzGrade = ""; 
+
+    console.log('✅ База данных инициализирована');
+    saveToFirebase(false);
+}
+
+// ===== ОТКРЫТИЕ МОДАЛЬНОГО ОКНА =====
+function showGradeDetails(studentId, gradeIdx) {
+    const entry = getEntry(studentId);
+    const grade = entry.grades[gradeIdx];
+    if (!grade) return;
+
+    const student = students.find(s => s.id === studentId);
+    const modal = document.getElementById('gradeModal');
+    
+    document.getElementById('modalGradeValue').textContent = grade === 'нб' ? 'н/б' : grade;
+    document.getElementById('modalSubject').textContent = getSubjectEmoji(currentSubject) + ' ' + currentSubject;
+    document.getElementById('modalTaskName').textContent = entry.taskName || '—';
+    
+    const typeMap = {
+        'homework': '📘 Домашнее задание',
+        'cdz': '💻 Цифровое ДЗ (ЦДЗ)',
+        'individual': '👤 Индивидуальное задание'
+    };
+    document.getElementById('modalTaskType').textContent = typeMap[entry.taskType] || '—';
+    
+    const parts = currentDate.split('-');
+    document.getElementById('modalDate').textContent = `${parts[2]}.${parts[1]}.${parts[0]}`;
+    document.getElementById('modalStudent').textContent = student ? student.name : '—';
+    
+    // ЦДЗ статус
+    const cdzRow = document.getElementById('modalCdzRow');
+    if (entry.taskType === 'cdz') {
+        cdzRow.style.display = 'flex';
+        document.getElementById('modalCdzStatus').textContent = entry.cdzChecked ? 
+            (entry.cdzGrade ? `✅ Проверено (оценка: ${entry.cdzGrade})` : '✅ Проверено (без оценки)') : 
+            '⏳ Ожидает проверки';
+    } else {
+        cdzRow.style.display = 'none';
     }
     
-    console.log('✅ База данных инициализирована');
+    modal.classList.add('show');
+}
+
+function closeModal() {
+    document.getElementById('gradeModal').classList.remove('show');
 }
 
 // ===== РЕНДЕР =====
@@ -672,7 +761,7 @@ function render() {
         }
         tr.appendChild(tdTask);
 
-        // Тип
+        // Тип (Д/з, ЦДЗ, Индивидуальное)
         const tdType = document.createElement('td');
         if (isTeacher) {
             const sel = document.createElement('select');
@@ -680,7 +769,7 @@ function render() {
             const types = [
                 {val:'', label:'— выберите —'},
                 {val:'homework', label:'📘 Домашнее задание'},
-                {val:'cdz', label:'💻 ЦДЗ'},
+                {val:'cdz', label:'💻 Цифровое ДЗ (ЦДЗ)'},
                 {val:'individual', label:'👤 Индивидуальное'}
             ];
             types.forEach(t => {
@@ -719,16 +808,24 @@ function render() {
             const chip = document.createElement('div');
             chip.className = 'grade-chip';
             const display = g === 'нб' ? 'н/б' : g;
-            chip.innerHTML = `${display} ${isTeacher ? `<i class="fas fa-times" data-idx="${idx}"></i>` : ''}`;
+            
             if (isTeacher) {
-                chip.querySelector('i').onclick = () => {
+                chip.innerHTML = `${display} <i class="fas fa-times" data-idx="${idx}"></i>`;
+                chip.querySelector('i').onclick = (e) => {
+                    e.stopPropagation();
                     entry.grades.splice(idx, 1);
                     saveToFirebase(false);
                     render();
                 };
+            } else {
+                chip.innerHTML = display;
+                chip.onclick = () => {
+                    showGradeDetails(student.id, idx);
+                };
+                chip.title = 'Нажмите для просмотра деталей';
             }
+            
             wrap.appendChild(chip);
-            // Статистика
             if (g !== 'нб') {
                 const num = parseInt(g);
                 if (!isNaN(num) && num >= 2 && num <= 5) {
@@ -756,11 +853,19 @@ function render() {
                 }
             };
             wrap.appendChild(addBtn);
+        } else {
+            // Для ученика показываем подсказку
+            if (entry.grades.length > 0) {
+                const hint = document.createElement('div');
+                hint.style.cssText = 'font-size:0.6rem;color:#94a3b8;margin-top:4px;width:100%;';
+                hint.textContent = '👆 нажми на оценку для деталей';
+                wrap.appendChild(hint);
+            }
         }
         tdGrades.appendChild(wrap);
         tr.appendChild(tdGrades);
 
-        // ЦДЗ
+        // ЦДЗ проверка
         const tdCdz = document.createElement('td');
         if (entry.taskType === 'cdz') {
             if (isTeacher) {
@@ -835,12 +940,24 @@ function render() {
     document.getElementById('avgGrade').textContent = total === 0 ? '—' : (sum / total).toFixed(2);
 }
 
+function getSubjectEmoji(subject) {
+    const map = {
+        'Математика': '📐',
+        'Русский язык': '📖',
+        'Физика': '⚛️',
+        'История': '🏛️',
+        'Литература': '📚'
+    };
+    return map[subject] || '📚';
+}
+
 // ===== НАВИГАЦИЯ =====
 function setDate(date) {
     currentDate = date;
     document.getElementById('datePicker').value = date;
     const parts = date.split('-');
     document.getElementById('dateDisplay').textContent = `${parts[2]}.${parts[1]}.${parts[0]}`;
+    ensureDateExists(currentSubject, currentDate);
     if (isLoaded) render();
 }
 
@@ -856,15 +973,13 @@ function changeDate(delta) {
 // ===== ЗАПУСК =====
 async function init() {
     console.log('🚀 Запуск приложения...');
+    console.log(`👨‍🎓 Загружено ${students.length} учеников`);
     
-    // Загрузка данных
     const hasData = await loadFromFirebase();
     if (!hasData) {
         initDB();
-        await saveToFirebase(false);
     }
 
-    // Устанавливаем сегодняшнюю дату
     const today = new Date();
     const y = today.getFullYear();
     const m = String(today.getMonth()+1).padStart(2,'0');
@@ -872,8 +987,9 @@ async function init() {
     currentDate = `${y}-${m}-${d}`;
     document.getElementById('datePicker').value = currentDate;
     document.getElementById('dateDisplay').textContent = `${d}.${m}.${y}`;
+    
+    ensureDateExists(currentSubject, currentDate);
 
-    // Заполняем список учеников
     const sel = document.getElementById('studentSelect');
     students.forEach(s => {
         const opt = document.createElement('option');
@@ -886,7 +1002,7 @@ async function init() {
         if (currentMode === 'student') render();
     };
 
-    // Подписка на изменения в Firebase (реальное время)
+    // Подписка на изменения в Firebase
     const journalRef = ref(db, 'journalData');
     onValue(journalRef, (snapshot) => {
         if (snapshot.exists() && isLoaded) {
@@ -895,17 +1011,14 @@ async function init() {
                 journal = newData;
                 console.log('🔄 Данные обновлены из Firebase');
                 render();
-                showNotification('🔄 Данные обновлены!');
             }
         }
-    }, (error) => {
-        console.error('Ошибка подписки:', error);
-        updateStatus('Ошибка синхронизации', 'error');
     });
 
     // События
     document.getElementById('subjectSelect').onchange = (e) => {
         currentSubject = e.target.value;
+        ensureDateExists(currentSubject, currentDate);
         render();
     };
 
@@ -947,18 +1060,24 @@ async function init() {
         }
     };
 
+    // Модальное окно
+    document.getElementById('modalClose').onclick = closeModal;
+    document.getElementById('gradeModal').onclick = (e) => {
+        if (e.target === e.currentTarget) closeModal();
+    };
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeModal();
+    });
+
     isLoaded = true;
     render();
-    updateStatus('Готово!', 'success');
-    showNotification('✅ Загружено из Firebase!');
+    showNotification('✅ Загружено!');
     console.log('✅ Приложение запущено успешно!');
 }
 
-// Запускаем
 init().catch(err => {
     console.error('❌ Ошибка при запуске:', err);
-    showNotification('❌ Ошибка подключения к Firebase: ' + err.message, true);
-    updateStatus('Ошибка запуска', 'error');
+    showNotification('❌ Ошибка подключения', true);
 });
 </script>
 </body>
