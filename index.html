@@ -242,11 +242,11 @@
         .student-name {
             font-weight: 600;
             text-align: left;
-            background-color: #fefce8;
+            background: white;
             position: sticky;
             left: 0;
-            background: white;
             border-right: 1px solid #e2e8f0;
+            padding-left: 1rem;
         }
 
         .task-input {
@@ -412,7 +412,6 @@
             to { transform: translateY(0); opacity: 1; }
         }
 
-        /* GitHub badge */
         .github-badge {
             display: inline-flex;
             align-items: center;
@@ -1115,7 +1114,7 @@
             setMode("teacher");
             renderTable();
             
-            // Ссылка на GitHub (замените на вашу)
+            // Ссылка на GitHub
             const githubLink = document.getElementById('githubLink');
             githubLink.href = 'https://github.com/yourusername/school-journal';
             
