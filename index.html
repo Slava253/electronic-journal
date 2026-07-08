@@ -264,10 +264,12 @@
             display: none;
             z-index: 1000;
             box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            max-width: 90%;
         }
         .notification.show { display: block; animation: slideIn 0.3s ease; }
         .notification.success { background: #22c55e; }
         .notification.error { background: #ef4444; }
+        .notification.warning { background: #eab308; }
         @keyframes slideIn {
             from { transform: translateY(100px); opacity: 0; }
             to { transform: translateY(0); opacity: 1; }
@@ -278,6 +280,28 @@
             font-size: 1.2rem;
             color: #64748b;
         }
+        .status-bar {
+            background: #f8fafc;
+            padding: 8px 20px;
+            font-size: 0.8rem;
+            color: #64748b;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .status-dot {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 6px;
+        }
+        .status-dot.green { background: #22c55e; }
+        .status-dot.red { background: #ef4444; }
+        .status-dot.yellow { background: #eab308; }
         @media (max-width: 700px) {
             body { padding: 10px; }
             .controls { flex-direction: column; align-items: stretch; }
@@ -288,7 +312,7 @@
 <body>
 
 <div class="notification" id="notif">
-    <i class="fas fa-check-circle"></i> <span id="notifText">Сохранено!</span>
+    <i class="fas fa-info-circle"></i> <span id="notifText">Сохранено!</span>
 </div>
 
 <div class="container">
@@ -296,10 +320,18 @@
         <div>
             <h1><i class="fas fa-chalkboard-user"></i> Школьный журнал</h1>
             <p style="opacity:0.8; font-size:0.85rem; margin-top:4px;">
-                <i class="fas fa-cloud-upload-alt"></i> Облачная синхронизация • Работает на всех устройствах
+                <i class="fas fa-cloud-upload-alt"></i> Firebase Cloud • Работает на всех устройствах
             </p>
         </div>
         <div class="class-badge"><i class="fas fa-users"></i> 9 "А" класс</div>
+    </div>
+
+    <div class="status-bar" id="statusBar">
+        <span>
+            <span class="status-dot yellow" id="statusDot"></span>
+            <span id="statusText">Подключение к Firebase...</span>
+        </span>
+        <span id="connectionInfo">⏳ Загрузка...</span>
     </div>
 
     <div class="controls">
@@ -360,7 +392,7 @@
     <div class="footer">
         <div class="stat"><i class="fas fa-star"></i> Всего оценок: <span id="totalGrades">0</span></div>
         <div class="stat"><i class="fas fa-chart-line"></i> Средний балл: <span id="avgGrade">—</span></div>
-        <div style="display:flex; gap:8px;">
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
             <button class="btn btn-save" id="saveBtn"><i class="fas fa-save"></i> Сохранить</button>
             <button class="btn btn-danger" id="resetBtn"><i class="fas fa-trash"></i> Очистить</button>
         </div>
@@ -396,6 +428,27 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 console.log('✅ Firebase подключен!');
 
+// ===== СТАТУС =====
+function updateStatus(text, type = 'loading') {
+    const dot = document.getElementById('statusDot');
+    const statusText = document.getElementById('statusText');
+    const info = document.getElementById('connectionInfo');
+    
+    statusText.textContent = text;
+    dot.className = 'status-dot';
+    
+    if (type === 'success') {
+        dot.classList.add('green');
+        info.textContent = '✅ Онлайн';
+    } else if (type === 'error') {
+        dot.classList.add('red');
+        info.textContent = '❌ Ошибка';
+    } else {
+        dot.classList.add('yellow');
+        info.textContent = '⏳ Соединение...';
+    }
+}
+
 // ===== УЧЕНИКИ (АЛФАВИТ) =====
 const rawStudents = [
     "Абросимов Олег", "Борисова Анна", "Васильев Дмитрий", "Григорьев Максим",
@@ -423,13 +476,16 @@ let isSaving = false;
 let isLoaded = false;
 
 // ===== ФУНКЦИИ =====
-function showNotification(text, isError = false) {
+function showNotification(text, isError = false, isWarning = false) {
     const el = document.getElementById('notif');
     const textEl = document.getElementById('notifText');
     textEl.textContent = text;
-    el.className = 'notification show ' + (isError ? 'error' : 'success');
+    el.className = 'notification show';
+    if (isError) el.classList.add('error');
+    else if (isWarning) el.classList.add('warning');
+    else el.classList.add('success');
     clearTimeout(el._timeout);
-    el._timeout = setTimeout(() => el.classList.remove('show'), 3000);
+    el._timeout = setTimeout(() => el.classList.remove('show'), 4000);
 }
 
 function getEntry(studentId) {
@@ -463,16 +519,29 @@ async function saveToFirebase(showNotif = true) {
     isSaving = true;
     try {
         await set(ref(db, 'journalData'), journal);
-        if (showNotif) showNotification('✅ Сохранено в облаке!');
+        if (showNotif) showNotification('✅ Сохранено в Firebase!');
         console.log('✅ Данные сохранены в Firebase');
+        updateStatus('Соединение установлено', 'success');
     } catch (e) {
         console.error('❌ Ошибка сохранения:', e);
-        if (showNotif) showNotification('❌ Ошибка сохранения!', true);
+        let errorMsg = '❌ Ошибка сохранения! ';
+        if (e.message.includes('permission_denied')) {
+            errorMsg += 'Нет прав доступа. Проверьте правила Firebase!';
+            updateStatus('Ошибка доступа! Проверьте правила', 'error');
+        } else if (e.message.includes('network')) {
+            errorMsg += 'Проверьте интернет-соединение!';
+            updateStatus('Нет интернета', 'error');
+        } else {
+            errorMsg += e.message;
+            updateStatus('Ошибка: ' + e.message.substring(0, 50), 'error');
+        }
+        if (showNotif) showNotification(errorMsg, true);
     }
     isSaving = false;
 }
 
 async function loadFromFirebase() {
+    updateStatus('Загрузка данных...', 'loading');
     try {
         const dbRef = ref(db);
         const snapshot = await get(child(dbRef, 'journalData'));
@@ -490,12 +559,26 @@ async function loadFromFirebase() {
                 });
             });
             console.log('✅ Данные загружены из Firebase');
+            updateStatus('Данные загружены', 'success');
             return true;
         }
         console.log('ℹ️ В Firebase нет данных');
+        updateStatus('Нет данных в Firebase', 'loading');
         return false;
     } catch (e) {
         console.error('❌ Ошибка загрузки:', e);
+        let errorMsg = 'Ошибка загрузки: ';
+        if (e.message.includes('permission_denied')) {
+            errorMsg += 'Нет прав доступа! Проверьте правила Firebase.';
+            updateStatus('Ошибка доступа!', 'error');
+        } else if (e.message.includes('network')) {
+            errorMsg += 'Проверьте интернет-соединение!';
+            updateStatus('Нет интернета', 'error');
+        } else {
+            errorMsg += e.message;
+            updateStatus('Ошибка подключения', 'error');
+        }
+        showNotification(errorMsg, true);
         return false;
     }
 }
@@ -815,6 +898,9 @@ async function init() {
                 showNotification('🔄 Данные обновлены!');
             }
         }
+    }, (error) => {
+        console.error('Ошибка подписки:', error);
+        updateStatus('Ошибка синхронизации', 'error');
     });
 
     // События
@@ -863,14 +949,16 @@ async function init() {
 
     isLoaded = true;
     render();
-    showNotification('✅ Загружено из облака!');
+    updateStatus('Готово!', 'success');
+    showNotification('✅ Загружено из Firebase!');
     console.log('✅ Приложение запущено успешно!');
 }
 
 // Запускаем
 init().catch(err => {
     console.error('❌ Ошибка при запуске:', err);
-    showNotification('❌ Ошибка подключения к Firebase', true);
+    showNotification('❌ Ошибка подключения к Firebase: ' + err.message, true);
+    updateStatus('Ошибка запуска', 'error');
 });
 </script>
 </body>
