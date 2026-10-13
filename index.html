@@ -100,9 +100,7 @@
     animation: spin 0.9s linear infinite;
   }
 
-  @keyframes spin {
-    to { transform: rotate(360deg); }
-  }
+  @keyframes spin { to { transform: rotate(360deg); } }
 
   .loader-text {
     font-size: 15px;
@@ -1038,10 +1036,41 @@
     gap: 10px;
     flex-wrap: wrap;
     margin-bottom: 18px;
+    align-items: flex-end;
   }
 
-  .hw-form input[type="text"] { flex: 1; min-width: 200px; }
-  .hw-form select { min-width: 180px; }
+  .hw-form .form-group {
+    margin-bottom: 0;
+    flex: 1;
+    min-width: 160px;
+  }
+
+  .hw-form .hw-text-input { flex: 2; min-width: 240px; }
+
+  /* Инфо-карточка с днём недели */
+  .hw-day-info {
+    background: linear-gradient(90deg, #eef2ff, #f8fafc);
+    border-radius: var(--radius-sm);
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    border-left: 4px solid var(--primary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .hw-day-info .badge {
+    background: var(--primary);
+    color: #fff;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 700;
+  }
 
   .hw-list {
     display: flex;
@@ -1104,6 +1133,8 @@
   .hw-badge { padding: 2px 8px; border-radius: 6px; white-space: nowrap; }
   .hw-badge.individual { background: #fce7f3; color: var(--pink); }
   .hw-badge.for-student { background: #e0e7ff; color: var(--primary-dark); }
+  .hw-badge.date-badge { background: #fef3c7; color: #92400e; }
+  .hw-badge.subject-badge { background: #dbeafe; color: #1e40af; }
 
   .hw-counter {
     font-size: 12px;
@@ -1484,7 +1515,9 @@
       <div class="card-title">
         📚 Домашнее задание · <span class="subject-tag" id="hwSubjectTagTeacher"></span>
       </div>
-      <div class="card-subtitle">Задайте общее или индивидуальное Д/З по выбранному предмету.</div>
+      <div class="card-subtitle">Задайте общее или индивидуальное Д/З. Д/З задаётся только по предметам, которые есть в расписании выбранного дня.</div>
+
+      <div class="hw-day-info" id="hwDayInfo">—</div>
 
       <div class="hw-tabs" id="hwTabsNav">
         <button class="hw-tab active" id="hwTabCommon" onclick="setHwTab('common')">👥 Общее для всех</button>
@@ -1492,8 +1525,22 @@
       </div>
 
       <div class="hw-form">
-        <select id="hwStudentSelect" class="hidden"></select>
-        <input type="text" id="hwInput" placeholder="Введите домашнее задание..." onkeydown="if(event.key==='Enter')addHomework()">
+        <div class="form-group">
+          <label style="font-size:12px;">Предмет</label>
+          <select id="hwSubjectSelect"></select>
+        </div>
+        <div class="form-group">
+          <label style="font-size:12px;">Задано на число</label>
+          <input type="date" id="hwDueDate">
+        </div>
+        <div class="form-group hw-text-input">
+          <label style="font-size:12px;">Задание</label>
+          <input type="text" id="hwInput" placeholder="Введите домашнее задание..." onkeydown="if(event.key==='Enter')addHomework()">
+        </div>
+        <div class="form-group hidden" id="hwStudentGroup">
+          <label style="font-size:12px;">Ученик</label>
+          <select id="hwStudentSelect"></select>
+        </div>
         <button class="btn btn-primary" onclick="addHomework()">➕ Задать</button>
       </div>
       <div class="hw-list" id="hwListTeacher"></div>
@@ -1573,7 +1620,7 @@
       <div class="card-title">
         📚 Домашнее задание · <span class="subject-tag" id="hwSubjectTagStudent"></span>
       </div>
-      <div class="card-subtitle">Отметьте выполненные задания галочкой.</div>
+      <div class="card-subtitle">Все задания — по всем предметам. Отметьте выполненные галочкой.</div>
       <div class="hw-list" id="hwListStudent"></div>
     </div>
   </div>
@@ -1715,7 +1762,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-const ROOT_PATH = 'school_journal_v1';
+const ROOT_PATH = 'school_journal_v2';
 const PATHS = {
   meta:     ROOT_PATH + '/meta',
   marks:    ROOT_PATH + '/marks',
@@ -1814,6 +1861,7 @@ function escapeHtml(str) {
   return div.innerHTML;
 }
 function formatDate(iso) {
+  if (!iso) return '—';
   const [y, m, d] = iso.split('-');
   return d + '.' + m + '.' + y;
 }
@@ -1891,9 +1939,14 @@ async function fbRemoveBFromDay(studentName, date) {
 }
 async function fbSetHomework(hw) {
   await set(ref(db, `${PATHS.homework}/${hw.id}`), {
-    id: hw.id, subjectId: hw.subjectId, text: hw.text,
+    id: hw.id,
+    subjectId: hw.subjectId,
+    text: hw.text,
     individualFor: hw.individualFor || null,
-    done: hw.done || {}, createdAt: hw.createdAt || Date.now()
+    dueDate: hw.dueDate || null,
+    lessonDate: hw.lessonDate || null,
+    done: hw.done || {},
+    createdAt: hw.createdAt || Date.now()
   });
 }
 async function fbDeleteHomework(id) {
@@ -1962,8 +2015,7 @@ function hideLoader() {
   setTimeout(() => loader.classList.add('hidden'), 300);
 }
 
-let loaderTimeout = setTimeout(() => {
-  console.warn('Firebase: таймаут загрузки');
+setTimeout(() => {
   hideLoader();
   setSync('offline', 'Долгое подключение');
 }, 6000);
@@ -2071,7 +2123,7 @@ function setHwTab(tab) {
   document.getElementById('hwTabsNav').classList.toggle('individual', tab === 'individual');
   document.getElementById('hwTabCommon').classList.toggle('active', tab === 'common');
   document.getElementById('hwTabIndividual').classList.toggle('active', tab === 'individual');
-  document.getElementById('hwStudentSelect').classList.toggle('hidden', tab !== 'individual');
+  document.getElementById('hwStudentGroup').classList.toggle('hidden', tab !== 'individual');
   renderAll();
 }
 function renderAll(direction = null) {
@@ -2376,27 +2428,35 @@ async function deleteMark() {
    Д/З
    ============================================================ */
 async function addHomework() {
-  const input = document.getElementById('hwInput');
-  const text = input.value.trim();
-  if (!text) return;
+  const text = document.getElementById('hwInput').value.trim();
+  if (!text) { alert('Введите текст задания'); return; }
+
+  const subjectId = document.getElementById('hwSubjectSelect').value;
+  const dueDate = document.getElementById('hwDueDate').value;
+
+  if (!subjectId) { alert('Выберите предмет'); return; }
+  if (!dueDate) { alert('Укажите, на какое число задано Д/З'); return; }
+
   const isIndividual = state.hwTab === 'individual';
   let individualFor = null;
   if (isIndividual) {
-    const sel = document.getElementById('hwStudentSelect');
-    individualFor = sel.value;
+    individualFor = document.getElementById('hwStudentSelect').value;
     if (!individualFor) { alert('Выберите ученика'); return; }
   }
+
   pulseSync('Сохранение Д/З...');
   try {
     await fbSetHomework({
       id: uid(),
-      subjectId: state.currentSubject,
+      subjectId: subjectId,
       text: text,
       individualFor: individualFor,
+      dueDate: dueDate,
+      lessonDate: state.currentDate, // дата, когда был урок
       done: {},
       createdAt: Date.now()
     });
-    input.value = '';
+    document.getElementById('hwInput').value = '';
   } catch (e) {
     console.error(e);
     setSync('offline', 'Ошибка');
@@ -2408,115 +2468,288 @@ async function deleteHomework(id) {
   try { await fbDeleteHomework(id); }
   catch (e) { console.error(e); setSync('offline', 'Ошибка'); }
 }
+
+/* Д/З, относящееся к указанной дате (урок в этот день) */
+function getHomeworkForLessonDate(lessonDate, subjectId = null) {
+  return Object.values(fb.homework || {}).filter(h => {
+    if (subjectId && h.subjectId !== subjectId) return false;
+    return h.lessonDate === lessonDate;
+  });
+}
+
+/* Д/З, у которых dueDate == указанной дате (ученик видит, что сдать) */
+function getHomeworkForDueDate(dueDate) {
+  return Object.values(fb.homework || {}).filter(h => h.dueDate === dueDate);
+}
+
 function getHomeworkList() {
   return Object.values(fb.homework || {}).sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
 }
+
+/* Рендер панели учителя Д/З */
 function renderHomeworkTeacher() {
+  const iso = state.currentDate;
+  const wd = getWeekday(iso);
+  const scheduleIds = getScheduleForDate(iso);
+  const status = getDayStatus(iso);
+
+  // Информация о дне
+  const info = document.getElementById('hwDayInfo');
+  if (status === 'weekend') {
+    info.innerHTML = '<span class="badge" style="background:var(--orange);">🎉 Выходной</span> В этот день уроков нет — Д/З задать нельзя.';
+  } else if (status === 'holiday') {
+    const h = getHolidayForDate(iso);
+    info.innerHTML = '<span class="badge" style="background:var(--orange);">🏖 ' + escapeHtml(h.title || 'Каникулы') + '</span> В каникулы Д/З не задаётся.';
+  } else if (scheduleIds.length === 0) {
+    info.innerHTML = '<span class="badge" style="background:var(--gray);">🗓 Пусто</span> В этот день нет уроков по расписанию. Сначала задайте расписание.';
+  } else {
+    info.innerHTML = '<span class="badge">' + getWeekdayName(wd) + '</span> Предметы этого дня: ' +
+      scheduleIds.map(id => getSubjectIconById(id) + ' ' + getSubjectName(id)).join(', ');
+  }
+
+  // Заполняем список предметов в селекте (только для этого дня недели)
+  const subjSel = document.getElementById('hwSubjectSelect');
+  const prevVal = subjSel.value;
+  subjSel.innerHTML = '';
+  if (scheduleIds.length === 0) {
+    const opt = document.createElement('option');
+    opt.value = '';
+    opt.textContent = '— нет предметов —';
+    subjSel.appendChild(opt);
+    subjSel.disabled = true;
+  } else {
+    subjSel.disabled = false;
+    scheduleIds.forEach(id => {
+      const opt = document.createElement('option');
+      opt.value = id;
+      opt.textContent = getSubjectIconById(id) + ' ' + getSubjectName(id);
+      subjSel.appendChild(opt);
+    });
+    if (prevVal && scheduleIds.includes(prevVal)) subjSel.value = prevVal;
+    else subjSel.value = scheduleIds[0];
+  }
+
+  // Ставим дату задания по умолчанию
+  const dueInput = document.getElementById('hwDueDate');
+  if (!dueInput.value) {
+    dueInput.value = state.currentDate;
+  }
+
+  // Список Д/З заданных в этот день (по всем предметам дня)
   const list = document.getElementById('hwListTeacher');
   list.innerHTML = '';
-  const hwForSubject = getHomeworkList().filter(h => h.subjectId === state.currentSubject);
-  if (hwForSubject.length === 0) {
-    list.innerHTML = '<div class="empty-msg"><span class="emoji">📭</span>Домашнее задание не задано.</div>';
+
+  const todaysHw = getHomeworkForLessonDate(iso);
+
+  if (todaysHw.length === 0) {
+    list.innerHTML = '<div class="empty-msg"><span class="emoji">📭</span>На этот день Д/З не задано.</div>';
     return;
   }
-  hwForSubject.forEach(hw => {
-    const div = document.createElement('div');
-    const isIndividual = !!hw.individualFor;
-    div.className = 'hw-item' + (isIndividual ? ' individual' : '');
-    const content = document.createElement('div');
-    content.className = 'hw-content';
-    const text = document.createElement('div');
-    text.className = 'hw-text';
-    text.textContent = hw.text;
-    content.appendChild(text);
-    const meta = document.createElement('div');
-    meta.className = 'hw-meta';
-    if (isIndividual) {
-      const b1 = document.createElement('span');
-      b1.className = 'hw-badge individual';
-      b1.textContent = '🎯 Индивидуальное';
-      meta.appendChild(b1);
-      const b2 = document.createElement('span');
-      b2.className = 'hw-badge for-student';
-      b2.textContent = '👤 ' + hw.individualFor;
-      meta.appendChild(b2);
-    } else {
-      const b1 = document.createElement('span');
-      b1.className = 'hw-badge for-student';
-      b1.textContent = '👥 Для всех';
-      meta.appendChild(b1);
-    }
-    content.appendChild(meta);
-    div.appendChild(content);
-    const done = hw.done || {};
-    if (!isIndividual) {
-      const doneCount = Object.values(done).filter(Boolean).length;
-      const counter = document.createElement('span');
-      counter.className = 'hw-counter';
-      counter.textContent = '✅ ' + doneCount + ' / ' + STUDENTS.length;
-      div.appendChild(counter);
-    } else {
-      const isDone = !!done[studentKey(hw.individualFor)];
-      const counter = document.createElement('span');
-      counter.className = 'hw-counter';
-      counter.style.background = isDone ? '#dcfce7' : '#fee2e2';
-      counter.style.color = isDone ? 'var(--green)' : 'var(--red)';
-      counter.textContent = isDone ? '✅ Выполнено' : '⏳ Не выполнено';
-      div.appendChild(counter);
-    }
-    const delBtn = document.createElement('button');
-    delBtn.className = 'btn btn-danger btn-sm';
-    delBtn.textContent = '✕';
-    delBtn.onclick = () => deleteHomework(hw.id);
-    div.appendChild(delBtn);
-    list.appendChild(div);
+
+  // Группируем по предмету
+  const bySubject = {};
+  todaysHw.forEach(hw => {
+    if (!bySubject[hw.subjectId]) bySubject[hw.subjectId] = [];
+    bySubject[hw.subjectId].push(hw);
+  });
+
+  // Выводим в порядке расписания
+  scheduleIds.forEach(subjId => {
+    if (!bySubject[subjId]) return;
+    const group = document.createElement('div');
+    group.style.marginBottom = '16px';
+
+    const groupTitle = document.createElement('div');
+    groupTitle.style.fontWeight = '700';
+    groupTitle.style.fontSize = '14px';
+    groupTitle.style.color = 'var(--text)';
+    groupTitle.style.marginBottom = '8px';
+    groupTitle.textContent = getSubjectIconById(subjId) + ' ' + getSubjectName(subjId);
+    group.appendChild(groupTitle);
+
+    bySubject[subjId].forEach(hw => {
+      group.appendChild(renderHwItemTeacher(hw));
+    });
+
+    list.appendChild(group);
   });
 }
+
+function renderHwItemTeacher(hw) {
+  const div = document.createElement('div');
+  const isIndividual = !!hw.individualFor;
+  div.className = 'hw-item' + (isIndividual ? ' individual' : '');
+  div.style.marginBottom = '8px';
+
+  const content = document.createElement('div');
+  content.className = 'hw-content';
+
+  const text = document.createElement('div');
+  text.className = 'hw-text';
+  text.textContent = hw.text;
+  content.appendChild(text);
+
+  const meta = document.createElement('div');
+  meta.className = 'hw-meta';
+
+  if (isIndividual) {
+    const b1 = document.createElement('span');
+    b1.className = 'hw-badge individual';
+    b1.textContent = '🎯 Индивидуальное';
+    meta.appendChild(b1);
+
+    const b2 = document.createElement('span');
+    b2.className = 'hw-badge for-student';
+    b2.textContent = '👤 ' + hw.individualFor;
+    meta.appendChild(b2);
+  } else {
+    const b1 = document.createElement('span');
+    b1.className = 'hw-badge for-student';
+    b1.textContent = '👥 Для всех';
+    meta.appendChild(b1);
+  }
+
+  const dueBadge = document.createElement('span');
+  dueBadge.className = 'hw-badge date-badge';
+  dueBadge.textContent = '📅 Сдать: ' + formatDate(hw.dueDate);
+  meta.appendChild(dueBadge);
+
+  content.appendChild(meta);
+  div.appendChild(content);
+
+  const done = hw.done || {};
+  if (!isIndividual) {
+    const doneCount = Object.values(done).filter(Boolean).length;
+    const counter = document.createElement('span');
+    counter.className = 'hw-counter';
+    counter.textContent = '✅ ' + doneCount + ' / ' + STUDENTS.length;
+    div.appendChild(counter);
+  } else {
+    const isDone = !!done[studentKey(hw.individualFor)];
+    const counter = document.createElement('span');
+    counter.className = 'hw-counter';
+    counter.style.background = isDone ? '#dcfce7' : '#fee2e2';
+    counter.style.color = isDone ? 'var(--green)' : 'var(--red)';
+    counter.textContent = isDone ? '✅ Выполнено' : '⏳ Не выполнено';
+    div.appendChild(counter);
+  }
+
+  const delBtn = document.createElement('button');
+  delBtn.className = 'btn btn-danger btn-sm';
+  delBtn.textContent = '✕';
+  delBtn.onclick = () => deleteHomework(hw.id);
+  div.appendChild(delBtn);
+
+  return div;
+}
+
+/* Рендер Д/З для ученика — все Д/З по всем предметам */
 function renderHomeworkStudent() {
   const list = document.getElementById('hwListStudent');
   list.innerHTML = '';
+
   const student = state.currentStudent;
+
+  // Все Д/З, которые видит ученик
   const hwForStudent = getHomeworkList().filter(h =>
-    h.subjectId === state.currentSubject &&
-    (h.individualFor === null || h.individualFor === student)
+    h.individualFor === null ||
+    h.individualFor === undefined ||
+    h.individualFor === student
   );
+
   if (hwForStudent.length === 0) {
     list.innerHTML = '<div class="empty-msg"><span class="emoji">📭</span>Домашнее задание не задано.</div>';
     return;
   }
+
+  // Группируем по дате сдачи (dueDate)
+  const byDue = {};
   hwForStudent.forEach(hw => {
-    const done = hw.done || {};
-    const isDone = !!done[studentKey(student)];
-    const isIndividual = !!hw.individualFor;
-    const div = document.createElement('div');
-    div.className = 'hw-item' + (isDone ? ' done' : '') + (isIndividual ? ' individual' : '');
-    const cb = document.createElement('input');
-    cb.type = 'checkbox';
-    cb.checked = isDone;
-    cb.onchange = async () => {
-      pulseSync('Сохранение...');
-      try { await fbToggleHomeworkDone(hw.id, student, cb.checked); }
-      catch (e) { console.error(e); setSync('offline', 'Ошибка'); }
-    };
-    const content = document.createElement('div');
-    content.className = 'hw-content';
-    const text = document.createElement('div');
-    text.className = 'hw-text' + (isDone ? ' done-text' : '');
-    text.textContent = hw.text;
-    content.appendChild(text);
-    if (isIndividual) {
-      const meta = document.createElement('div');
-      meta.className = 'hw-meta';
-      const b = document.createElement('span');
-      b.className = 'hw-badge individual';
-      b.textContent = '🎯 Индивидуальное задание';
-      meta.appendChild(b);
-      content.appendChild(meta);
-    }
-    div.appendChild(cb);
-    div.appendChild(content);
-    list.appendChild(div);
+    const key = hw.dueDate || 'no-date';
+    if (!byDue[key]) byDue[key] = [];
+    byDue[key].push(hw);
   });
+
+  const sortedKeys = Object.keys(byDue).sort((a, b) => {
+    if (a === 'no-date') return 1;
+    if (b === 'no-date') return -1;
+    return a.localeCompare(b);
+  });
+
+  sortedKeys.forEach(dueKey => {
+    const group = document.createElement('div');
+    group.style.marginBottom = '20px';
+
+    const title = document.createElement('div');
+    title.style.fontWeight = '800';
+    title.style.fontSize = '14px';
+    title.style.color = 'var(--primary-dark)';
+    title.style.marginBottom = '10px';
+    title.style.display = 'flex';
+    title.style.alignItems = 'center';
+    title.style.gap = '8px';
+    title.style.flexWrap = 'wrap';
+
+    if (dueKey === 'no-date') {
+      title.innerHTML = '<span style="background:#fef3c7;color:#92400e;padding:3px 10px;border-radius:10px;font-size:12px;font-weight:700;">📅 Без даты</span> Сдать без указанной даты';
+    } else {
+      const wd = getWeekday(dueKey);
+      title.innerHTML = '<span style="background:linear-gradient(135deg,var(--primary),var(--primary-light));color:#fff;padding:3px 10px;border-radius:10px;font-size:12px;font-weight:700;">📅 Сдать к ' + formatDate(dueKey) + '</span> <span style="font-size:12px;color:var(--text-muted);font-weight:600;">(' + getWeekdayName(wd) + ')</span>';
+    }
+    group.appendChild(title);
+
+    byDue[dueKey].sort((a, b) => (a.subjectId > b.subjectId ? 1 : -1)).forEach(hw => {
+      group.appendChild(renderHwItemStudent(hw, student));
+    });
+
+    list.appendChild(group);
+  });
+}
+
+function renderHwItemStudent(hw, student) {
+  const done = hw.done || {};
+  const isDone = !!done[studentKey(student)];
+  const isIndividual = !!hw.individualFor;
+  const div = document.createElement('div');
+  div.className = 'hw-item' + (isDone ? ' done' : '') + (isIndividual ? ' individual' : '');
+  div.style.marginBottom = '8px';
+
+  const cb = document.createElement('input');
+  cb.type = 'checkbox';
+  cb.checked = isDone;
+  cb.onchange = async () => {
+    pulseSync('Сохранение...');
+    try { await fbToggleHomeworkDone(hw.id, student, cb.checked); }
+    catch (e) { console.error(e); setSync('offline', 'Ошибка'); }
+  };
+
+  const content = document.createElement('div');
+  content.className = 'hw-content';
+
+  const text = document.createElement('div');
+  text.className = 'hw-text' + (isDone ? ' done-text' : '');
+  text.textContent = hw.text;
+  content.appendChild(text);
+
+  const meta = document.createElement('div');
+  meta.className = 'hw-meta';
+
+  const subjBadge = document.createElement('span');
+  subjBadge.className = 'hw-badge subject-badge';
+  subjBadge.textContent = getSubjectIconById(hw.subjectId) + ' ' + getSubjectName(hw.subjectId);
+  meta.appendChild(subjBadge);
+
+  if (isIndividual) {
+    const b = document.createElement('span');
+    b.className = 'hw-badge individual';
+    b.textContent = '🎯 Индивидуальное';
+    meta.appendChild(b);
+  }
+
+  content.appendChild(meta);
+  div.appendChild(cb);
+  div.appendChild(content);
+  return div;
 }
 
 /* ============================================================
@@ -2861,9 +3094,11 @@ function initUI() {
   lastTabIndex = 0;
   document.getElementById('tabJournal').classList.add('active');
   document.getElementById('btnTeacher').classList.add('active');
+
+  // Дата Д/З по умолчанию — текущая
+  document.getElementById('hwDueDate').value = state.currentDate;
 }
 
-/* Экспорт функций в window */
 window.setRole = setRole;
 window.setTab = setTab;
 window.setHwTab = setHwTab;
@@ -2900,9 +3135,11 @@ document.addEventListener('keydown', e => {
   if (e.key === 'Escape') {
     if (!document.getElementById('markModal').classList.contains('hidden')) closeMarkModal();
     if (!document.getElementById('viewMarkModal').classList.contains('hidden')) closeViewModal();
-    if (!document.getElementById('profileModal').classList.contains('hidden')) closeProfileModal();
+    if (!documentмени.getElementById('profileModal').classList.contains('hidden'))лось closeProfileModal();
   }
 });
-</script>
+</
+
+script>
 </body>
 </html>
