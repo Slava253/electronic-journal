@@ -88,7 +88,7 @@
     align-items: center;
     justify-content: center;
     z-index: 2000;
-    gap: 20px;
+    gap: 16px;
   }
 
   .loader-spinner {
@@ -108,6 +108,13 @@
     font-size: 15px;
     font-weight: 700;
     color: var(--text-muted);
+  }
+
+  .loader-detail {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 500;
+    opacity: 0.75;
   }
 
   /* ============ HEADER ============ */
@@ -374,7 +381,6 @@
     transform: translateY(-1px);
   }
 
-  /* Controls */
   .controls {
     display: flex;
     flex-wrap: wrap;
@@ -393,7 +399,7 @@
     color: var(--text-muted);
   }
 
-  select, input[type="text"], input[type="date"], input[type="time"], textarea {
+  select, input[type="text"], input[type="date"], textarea {
     padding: 9px 12px;
     border: 1.5px solid var(--border);
     border-radius: var(--radius-sm);
@@ -410,7 +416,7 @@
     box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
   }
 
-  input[type="date"], input[type="time"] { cursor: pointer; }
+  input[type="date"] { cursor: pointer; }
 
   /* ============ BUTTONS ============ */
   .btn {
@@ -487,7 +493,7 @@
     margin-bottom: 16px;
   }
 
-  /* ============ АНИМИРОВАННЫЕ ПАНЕЛИ ============ */
+  /* ============ АНИМАЦИИ ============ */
   .view-panel { animation: panelIn 0.42s cubic-bezier(0.22, 1, 0.36, 1); }
   .view-panel.slide-left { animation: panelInLeft 0.42s cubic-bezier(0.22, 1, 0.36, 1); }
   .view-panel.slide-right { animation: panelInRight 0.42s cubic-bezier(0.22, 1, 0.36, 1); }
@@ -689,10 +695,7 @@
     color: var(--text);
   }
 
-  .schedule-info-card.holiday-card {
-    border-left-color: var(--orange);
-  }
-
+  .schedule-info-card.holiday-card { border-left-color: var(--orange); }
   .schedule-info-card.holiday-card .value { color: var(--orange); }
 
   .weekday-tabs {
@@ -765,16 +768,10 @@
     flex-shrink: 0;
   }
 
-  .schedule-row .row-content {
-    flex: 1;
-    min-width: 0;
-  }
+  .schedule-row .row-content { flex: 1; min-width: 0; }
+  .schedule-row select { width: 100%; }
 
-  .schedule-row select {
-    width: 100%;
-  }
-
-  /* ============ ДНИ / КАНИКУЛЫ ============ */
+  /* ============ КАНИКУЛЫ ============ */
   .holiday-form {
     display: flex;
     gap: 10px;
@@ -805,15 +802,8 @@
     border-left: 4px solid var(--orange);
   }
 
-  .holiday-item .holiday-icon {
-    font-size: 20px;
-    flex-shrink: 0;
-  }
-
-  .holiday-item .holiday-info {
-    flex: 1;
-    min-width: 0;
-  }
+  .holiday-item .holiday-icon { font-size: 20px; flex-shrink: 0; }
+  .holiday-item .holiday-info { flex: 1; min-width: 0; }
 
   .holiday-item .holiday-title {
     font-weight: 700;
@@ -945,9 +935,7 @@
     box-shadow: 0 3px 8px rgba(0,0,0,0.12);
   }
 
-  .mark-choice button:hover {
-    transform: translateY(-3px) scale(1.05);
-  }
+  .mark-choice button:hover { transform: translateY(-3px) scale(1.05); }
 
   .mark-choice button.selected {
     border-color: var(--text);
@@ -966,7 +954,6 @@
   .modal-actions .btn { flex: 1; justify-content: center; }
   .modal-actions .btn-danger { flex: 0 0 auto; }
 
-  /* ============ PROFILE MODAL ============ */
   .profile-hero {
     display: flex;
     flex-direction: column;
@@ -1411,6 +1398,7 @@
 <div class="loader-overlay" id="loader">
   <div class="loader-spinner"></div>
   <div class="loader-text">Подключение к Firebase...</div>
+  <div class="loader-detail" id="loaderDetail">Инициализация</div>
 </div>
 
 <!-- ============ SYNC STATUS ============ -->
@@ -1711,7 +1699,7 @@
    ============================================================ */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
-  getDatabase, ref, onValue, set, update, remove, get, off
+  getDatabase, ref, onValue, set, update, remove
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
 const firebaseConfig = {
@@ -1727,17 +1715,13 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-/* Корневой путь данных журнала */
 const ROOT_PATH = 'school_journal_v1';
-
-/* Пути */
 const PATHS = {
   meta:     ROOT_PATH + '/meta',
-  marks:    ROOT_PATH + '/marks',      // /marks/{subjectId}/{studentKey}/{date}/{markId}
-  homework: ROOT_PATH + '/homework',   // /homework/{hwId}
-  schedule: ROOT_PATH + '/schedule',   // /schedule/{weekday}/{index} = subjectId
-  holidays: ROOT_PATH + '/holidays',   // /holidays/{holidayId}
-  ui:       ROOT_PATH + '/ui'          // общий UI-state (профиль и т.п.)
+  marks:    ROOT_PATH + '/marks',
+  homework: ROOT_PATH + '/homework',
+  schedule: ROOT_PATH + '/schedule',
+  holidays: ROOT_PATH + '/holidays'
 };
 
 /* ============================================================
@@ -1782,14 +1766,10 @@ const WEEKDAYS = [
   { id: 0, name: 'Воскресенье', short: 'Вс' }
 ];
 
-/* Приводим имя ученика к безопасному ключу Firebase */
 function studentKey(name) {
   return name.replace(/[.#$/\[\]]/g, '_');
 }
 
-/* ============================================================
-   ЛОКАЛЬНЫЙ STATE (только UI, не сохраняется на сервер)
-   ============================================================ */
 let state = {
   role: 'teacher',
   tab: 'journal',
@@ -1800,13 +1780,20 @@ let state = {
   schedSelectedWeekday: 1
 };
 
-/* ДАННЫЕ ИЗ FIREBASE */
 let fb = {
-  marks: {},       // { subjectId: { studentKey: { date: { markId: {mark,type,comment} } } } }
-  homework: {},    // { hwId: { id, subjectId, text, individualFor, done: {studentKey: bool}, createdAt } }
-  schedule: {},    // { weekday: { "0": subjectId, "1": subjectId, ... } }
-  holidays: {},    // { holidayId: {id,title,start,end} }
-  meta: {}         // { teacherProfile: {...} }
+  marks: {},
+  homework: {},
+  schedule: {},
+  holidays: {},
+  meta: {}
+};
+
+const ready = {
+  marks: false,
+  homework: false,
+  schedule: false,
+  holidays: false,
+  meta: false
 };
 
 /* ============================================================
@@ -1818,79 +1805,53 @@ function todayStr() {
     String(d.getMonth() + 1).padStart(2, '0') + '-' +
     String(d.getDate()).padStart(2, '0');
 }
-
 function uid() {
   return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
 }
-
 function escapeHtml(str) {
   const div = document.createElement('div');
   div.textContent = str;
   return div.innerHTML;
 }
-
 function formatDate(iso) {
   const [y, m, d] = iso.split('-');
   return d + '.' + m + '.' + y;
 }
-
 function getWeekday(iso) {
   const [y, m, d] = iso.split('-').map(Number);
   return new Date(y, m - 1, d).getDay();
 }
-
 function getWeekdayName(wd) {
   const w = WEEKDAYS.find(x => x.id === wd);
   return w ? w.name : '—';
 }
-
 function getHolidayForDate(iso) {
   const list = Object.values(fb.holidays || {});
   return list.find(h => iso >= h.start && iso <= h.end);
 }
-
 function getScheduleForWeekday(wd) {
   const raw = fb.schedule && fb.schedule[wd];
   if (!raw) return [];
-  // Firebase хранит как объект {0: 'rus', 1: 'lit'}, превращаем в массив
   return Object.keys(raw).sort((a, b) => Number(a) - Number(b)).map(k => raw[k]).filter(Boolean);
 }
-
 function getScheduleForDate(iso) {
   return getScheduleForWeekday(getWeekday(iso));
 }
-
 function getDayStatus(iso) {
   const wd = getWeekday(iso);
   if (wd === 0 || wd === 6) return 'weekend';
   if (getHolidayForDate(iso)) return 'holiday';
   return 'ok';
 }
-
-function getSubjectById(id) {
-  return BASE_SUBJECTS.find(s => s.id === id);
-}
-
-function getSubjectName(id) {
-  const s = getSubjectById(id);
-  return s ? s.name : '—';
-}
-
-function getSubjectIconById(id) {
-  const s = getSubjectById(id);
-  return s ? s.icon : '📘';
-}
-
+function getSubjectById(id) { return BASE_SUBJECTS.find(s => s.id === id); }
+function getSubjectName(id) { const s = getSubjectById(id); return s ? s.name : '—'; }
+function getSubjectIconById(id) { const s = getSubjectById(id); return s ? s.icon : '📘'; }
 function getInitials(fullName) {
   if (!fullName) return '👨‍🏫';
   const parts = fullName.trim().split(/\s+/);
   if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
   return (parts[0][0] + (parts[1] ? parts[1][0] : '')).toUpperCase();
 }
-
-/* ============================================================
-   МАРКСЫ — структура: fb.marks[subjectId][studentKey][date][markId]
-   ============================================================ */
 function getMarks(subjectId, studentName, date) {
   const bySubj = fb.marks && fb.marks[subjectId];
   if (!bySubj) return [];
@@ -1912,141 +1873,149 @@ async function fbSetMark(subjectId, studentName, date, markObj) {
     comment: markObj.comment || ''
   });
 }
-
 async function fbDeleteMark(subjectId, studentName, date, markId) {
-  const path = `${PATHS.marks}/${subjectId}/${studentKey(studentName)}/${date}/${markId}`;
-  await remove(ref(db, path));
+  await remove(ref(db, `${PATHS.marks}/${subjectId}/${studentKey(studentName)}/${date}/${markId}`));
 }
-
 async function fbRemoveBFromDay(studentName, date) {
   const scheduleIds = getScheduleForDate(date);
-  const subjectsForDay = scheduleIds.length > 0
-    ? scheduleIds
-    : BASE_SUBJECTS.map(s => s.id);
-
+  const subjectsForDay = scheduleIds.length > 0 ? scheduleIds : BASE_SUBJECTS.map(s => s.id);
   const updates = {};
   const skey = studentKey(studentName);
   subjectsForDay.forEach(subjId => {
     const subjMarks = getMarks(subjId, studentName, date);
     subjMarks.forEach(m => {
-      if (m.mark === 'б') {
-        updates[`${PATHS.marks}/${subjId}/${skey}/${date}/${m.id}`] = null;
-      }
+      if (m.mark === 'б') updates[`${PATHS.marks}/${subjId}/${skey}/${date}/${m.id}`] = null;
     });
   });
-  if (Object.keys(updates).length > 0) {
-    await update(ref(db), updates);
-  }
+  if (Object.keys(updates).length > 0) await update(ref(db), updates);
 }
-
 async function fbSetHomework(hw) {
-  const path = `${PATHS.homework}/${hw.id}`;
-  await set(ref(db, path), {
-    id: hw.id,
-    subjectId: hw.subjectId,
-    text: hw.text,
+  await set(ref(db, `${PATHS.homework}/${hw.id}`), {
+    id: hw.id, subjectId: hw.subjectId, text: hw.text,
     individualFor: hw.individualFor || null,
-    done: hw.done || {},
-    createdAt: hw.createdAt || Date.now()
+    done: hw.done || {}, createdAt: hw.createdAt || Date.now()
   });
 }
-
 async function fbDeleteHomework(id) {
   await remove(ref(db, `${PATHS.homework}/${id}`));
 }
-
 async function fbToggleHomeworkDone(hwId, studentName, value) {
-  const path = `${PATHS.homework}/${hwId}/done/${studentKey(studentName)}`;
-  await set(ref(db, path), value);
+  await set(ref(db, `${PATHS.homework}/${hwId}/done/${studentKey(studentName)}`), value);
 }
-
 async function fbSetScheduleSlot(weekday, index, subjectId) {
   const path = `${PATHS.schedule}/${weekday}/${index}`;
   if (subjectId) await set(ref(db, path), subjectId);
   else await remove(ref(db, path));
 }
-
 async function fbSetSchedule(weekday, arr) {
   const path = `${PATHS.schedule}/${weekday}`;
-  if (arr.length === 0) {
-    await remove(ref(db, path));
-  } else {
+  if (arr.length === 0) await remove(ref(db, path));
+  else {
     const obj = {};
     arr.forEach((v, i) => { obj[i] = v; });
     await set(ref(db, path), obj);
   }
 }
-
 async function fbAddHoliday(h) {
   await set(ref(db, `${PATHS.holidays}/${h.id}`), {
     id: h.id, title: h.title, start: h.start, end: h.end
   });
 }
-
 async function fbDeleteHoliday(id) {
   await remove(ref(db, `${PATHS.holidays}/${id}`));
 }
-
 async function fbSaveProfile(profile) {
   await set(ref(db, `${PATHS.meta}/teacherProfile`), profile);
 }
 
 /* ============================================================
-   FIREBASE: ПОДПИСКИ
+   СТАТУС
    ============================================================ */
+let syncTimer = null;
 function setSync(status, text) {
   const el = document.getElementById('syncStatus');
   el.classList.remove('online', 'syncing', 'offline');
   el.classList.add(status);
   document.getElementById('syncText').textContent = text;
 }
-
-function subscribeAll() {
-  // marks
-  onValue(ref(db, PATHS.marks), snap => {
-    fb.marks = snap.val() || {};
-    renderAll();
-  });
-
-  // homework
-  onValue(ref(db, PATHS.homework), snap => {
-    fb.homework = snap.val() || {};
-    renderAll();
-  });
-
-  // schedule
-  onValue(ref(db, PATHS.schedule), snap => {
-    fb.schedule = snap.val() || {};
-    renderAll();
-  });
-
-  // holidays
-  onValue(ref(db, PATHS.holidays), snap => {
-    fb.holidays = snap.val() || {};
-    renderAll();
-  });
-
-  // meta
-  onValue(ref(db, PATHS.meta), snap => {
-    fb.meta = snap.val() || {};
-    renderProfileButton();
-  });
-
-  // статус соединения
-  const connectedRef = ref(db, '.info/connected');
-  onValue(connectedRef, snap => {
-    if (snap.val() === true) setSync('online', 'Синхронизировано');
-    else setSync('offline', 'Нет соединения');
-  });
-
-  // Скрываем лоадер
-  setTimeout(() => {
-    document.getElementById('loader').classList.add('hidden');
-  }, 800);
+function pulseSync(text = 'Сохранение...') {
+  setSync('syncing', text);
+  clearTimeout(syncTimer);
+  syncTimer = setTimeout(() => setSync('online', 'Синхронизировано'), 1500);
 }
 
 /* ============================================================
-   АНИМАЦИЯ ПАНЕЛЕЙ
+   ПОДПИСКИ
+   ============================================================ */
+function updateLoaderDetail() {
+  const items = ['marks', 'schedule', 'homework', 'holidays', 'meta'];
+  const done = items.filter(k => ready[k]).length;
+  const el = document.getElementById('loaderDetail');
+  if (el) el.textContent = `Загружено ${done} из ${items.length}`;
+  if (done === items.length) hideLoader();
+}
+function hideLoader() {
+  const loader = document.getElementById('loader');
+  if (!loader || loader.classList.contains('hidden')) return;
+  loader.style.transition = 'opacity 0.3s ease';
+  loader.style.opacity = '0';
+  setTimeout(() => loader.classList.add('hidden'), 300);
+}
+
+let loaderTimeout = setTimeout(() => {
+  console.warn('Firebase: таймаут загрузки');
+  hideLoader();
+  setSync('offline', 'Долгое подключение');
+}, 6000);
+
+function subscribeAll() {
+  onValue(ref(db, PATHS.marks), snap => {
+    fb.marks = snap.val() || {};
+    ready.marks = true;
+    updateLoaderDetail();
+    renderAll();
+  }, err => { ready.marks = true; updateLoaderDetail(); console.error(err); });
+
+  onValue(ref(db, PATHS.homework), snap => {
+    fb.homework = snap.val() || {};
+    ready.homework = true;
+    updateLoaderDetail();
+    renderAll();
+  }, err => { ready.homework = true; updateLoaderDetail(); console.error(err); });
+
+  onValue(ref(db, PATHS.schedule), snap => {
+    fb.schedule = snap.val() || {};
+    ready.schedule = true;
+    updateLoaderDetail();
+    renderAll();
+  }, err => { ready.schedule = true; updateLoaderDetail(); console.error(err); });
+
+  onValue(ref(db, PATHS.holidays), snap => {
+    fb.holidays = snap.val() || {};
+    ready.holidays = true;
+    updateLoaderDetail();
+    renderAll();
+  }, err => { ready.holidays = true; updateLoaderDetail(); console.error(err); });
+
+  onValue(ref(db, PATHS.meta), snap => {
+    fb.meta = snap.val() || {};
+    ready.meta = true;
+    updateLoaderDetail();
+    renderProfileButton();
+  }, err => { ready.meta = true; updateLoaderDetail(); console.error(err); });
+
+  onValue(ref(db, '.info/connected'), snap => {
+    if (snap.val() === true) {
+      setSync('online', 'Синхронизировано');
+      if (Object.values(ready).every(Boolean)) hideLoader();
+    } else {
+      setSync('offline', 'Подключение...');
+    }
+  });
+}
+
+/* ============================================================
+   АНИМАЦИЯ
    ============================================================ */
 let lastTabIndex = 0;
 let lastRoleIndex = 0;
@@ -2074,70 +2043,54 @@ function setRole(role) {
   const direction = newRoleIndex > lastRoleIndex ? 'right' :
                     newRoleIndex < lastRoleIndex ? 'left' : null;
   lastRoleIndex = newRoleIndex;
-
   state.role = role;
-  const roleSwitch = document.getElementById('roleSwitch');
-  roleSwitch.classList.toggle('student', role === 'student');
-
+  document.getElementById('roleSwitch').classList.toggle('student', role === 'student');
   document.getElementById('btnTeacher').classList.toggle('active', role === 'teacher');
   document.getElementById('btnStudent').classList.toggle('active', role === 'student');
   document.getElementById('teacherDateBlock').classList.toggle('hidden', role !== 'teacher');
   document.getElementById('studentSelectBlock').classList.toggle('hidden', role !== 'student');
   document.getElementById('profileBtn').classList.toggle('hidden', role !== 'teacher');
-
   renderAll(direction);
 }
-
 function setTab(tab) {
   const idx = tab === 'journal' ? 0 : tab === 'homework' ? 1 : 2;
-  const direction = idx > lastTabIndex ? 'right' :
-                    idx < lastTabIndex ? 'left' : null;
+  const direction = idx > lastTabIndex ? 'right' : idx < lastTabIndex ? 'left' : null;
   lastTabIndex = idx;
-
   state.tab = tab;
   const tabsNav = document.getElementById('tabsNav');
   tabsNav.classList.remove('tab-homework', 'tab-schedule');
   if (tab === 'homework') tabsNav.classList.add('tab-homework');
   else if (tab === 'schedule') tabsNav.classList.add('tab-schedule');
-
   document.getElementById('tabJournal').classList.toggle('active', tab === 'journal');
   document.getElementById('tabHomework').classList.toggle('active', tab === 'homework');
   document.getElementById('tabSchedule').classList.toggle('active', tab === 'schedule');
-
   renderAll(direction);
 }
-
 function setHwTab(tab) {
   state.hwTab = tab;
-  const hwTabsNav = document.getElementById('hwTabsNav');
-  hwTabsNav.classList.toggle('individual', tab === 'individual');
+  document.getElementById('hwTabsNav').classList.toggle('individual', tab === 'individual');
   document.getElementById('hwTabCommon').classList.toggle('active', tab === 'common');
   document.getElementById('hwTabIndividual').classList.toggle('active', tab === 'individual');
   document.getElementById('hwStudentSelect').classList.toggle('hidden', tab !== 'individual');
   renderAll();
 }
-
 function renderAll(direction = null) {
   const isTeacher = state.role === 'teacher';
   const isJournal = state.tab === 'journal';
   const isHw = state.tab === 'homework';
   const isSched = state.tab === 'schedule';
-
   animatePanel('teacherJournalView',  isTeacher && isJournal,   direction);
   animatePanel('teacherHomeworkView', isTeacher && isHw,        direction);
   animatePanel('teacherScheduleView', isTeacher && isSched,     direction);
   animatePanel('studentJournalView',  !isTeacher && isJournal,  direction);
   animatePanel('studentHomeworkView', !isTeacher && isHw,       direction);
   animatePanel('studentScheduleView', !isTeacher && isSched,    direction);
-
   renderSubjectPills();
   renderProfileButton();
-
   const subjectName = getSubjectName(state.currentSubject);
   document.getElementById('journalSubjectTag').textContent = subjectName;
   document.getElementById('hwSubjectTagTeacher').textContent = subjectName;
   document.getElementById('hwSubjectTagStudent').textContent = subjectName;
-
   if (isTeacher) {
     if (isJournal) renderJournal();
     else if (isHw) renderHomeworkTeacher();
@@ -2157,7 +2110,6 @@ function renderProfileButton() {
   const nameEl = document.getElementById('profileBtnName');
   const classEl = document.getElementById('profileBtnClass');
   const avatarEl = document.getElementById('profileAvatar');
-
   if (p.name) {
     nameEl.textContent = p.name;
     nameEl.classList.remove('p-empty');
@@ -2167,7 +2119,6 @@ function renderProfileButton() {
     nameEl.classList.add('p-empty');
     avatarEl.textContent = '👨‍🏫';
   }
-
   if (p.className) {
     classEl.textContent = p.className;
     classEl.classList.remove('hidden');
@@ -2176,7 +2127,6 @@ function renderProfileButton() {
     classEl.classList.add('hidden');
   }
 }
-
 function openProfileModal() {
   const p = (fb.meta && fb.meta.teacherProfile) || { name: '', className: '' };
   document.getElementById('profileNameInput').value = p.name || '';
@@ -2187,23 +2137,16 @@ function openProfileModal() {
   document.body.style.overflow = 'hidden';
   setTimeout(() => document.getElementById('profileNameInput').focus(), 100);
 }
-
 function closeProfileModal() {
   document.getElementById('profileModal').classList.add('hidden');
   document.body.style.overflow = '';
 }
-
 async function saveProfile() {
   const name = document.getElementById('profileNameInput').value.trim();
   const className = document.getElementById('profileClassInput').value.trim();
-  setSync('syncing', 'Сохранение...');
-  try {
-    await fbSaveProfile({ name, className });
-    setSync('online', 'Сохранено');
-  } catch (e) {
-    console.error(e);
-    setSync('offline', 'Ошибка сохранения');
-  }
+  pulseSync('Сохранение...');
+  try { await fbSaveProfile({ name, className }); }
+  catch (e) { console.error(e); setSync('offline', 'Ошибка'); }
   closeProfileModal();
 }
 
@@ -2213,31 +2156,23 @@ async function saveProfile() {
 function renderSubjectPills() {
   const container = document.getElementById('subjectPills');
   container.innerHTML = '';
-
   const iso = state.currentDate;
   const scheduleIds = getScheduleForDate(iso);
-
   const subjectsToShow = scheduleIds.length > 0
     ? scheduleIds.map(id => getSubjectById(id)).filter(Boolean)
     : BASE_SUBJECTS;
-
   if (scheduleIds.length > 0 && !scheduleIds.includes(state.currentSubject)) {
     state.currentSubject = scheduleIds[0];
   }
-
   subjectsToShow.forEach(s => {
     const btn = document.createElement('button');
     btn.className = 'subject-pill' + (s.id === state.currentSubject ? ' active' : '');
     const num = scheduleIds.indexOf(s.id);
     const numBadge = num >= 0 ? (num + 1) + '. ' : '';
     btn.innerHTML = numBadge + (s.icon || '📘') + ' ' + escapeHtml(s.name);
-    btn.onclick = () => {
-      state.currentSubject = s.id;
-      renderAll('right');
-    };
+    btn.onclick = () => { state.currentSubject = s.id; renderAll('right'); };
     container.appendChild(btn);
   });
-
   if (subjectsToShow.length === 0) {
     container.innerHTML = '<div style="font-size:13px;color:var(--text-muted);font-weight:600;padding:8px 0;">Расписание не задано. Настройте его во вкладке «Расписание».</div>';
   }
@@ -2250,23 +2185,19 @@ function onDateChange() {
   state.currentDate = document.getElementById('datePicker').value || todayStr();
   renderAll();
 }
-
 function onStudentChange() {
   state.currentStudent = document.getElementById('studentPicker').value;
   renderAll();
 }
-
 function renderJournal() {
   state.currentDate = document.getElementById('datePicker').value || todayStr();
   const iso = state.currentDate;
-
   document.getElementById('journalDateLabel').textContent =
     formatDate(iso) + ' · ' + getWeekdayName(getWeekday(iso));
   document.getElementById('datePicker').value = iso;
 
   const statusEl = document.getElementById('journalDayStatus');
   const status = getDayStatus(iso);
-
   if (status === 'weekend') {
     statusEl.innerHTML = '<div class="day-status weekend"><span class="status-emoji">🎉</span> Выходной день — журнал не ведётся.</div>';
   } else if (status === 'holiday') {
@@ -2277,7 +2208,6 @@ function renderJournal() {
   }
 
   const scheduleIds = getScheduleForDate(iso);
-
   if (status === 'weekend' || status === 'holiday') {
     document.getElementById('journalSubtitle').textContent = 'В этот день занятия не проводятся.';
     document.getElementById('journalBody').innerHTML =
@@ -2287,38 +2217,30 @@ function renderJournal() {
       '</div></td></tr>';
     return;
   }
-
   if (scheduleIds.length === 0) {
     document.getElementById('journalSubtitle').textContent = 'Расписание на этот день не задано.';
     document.getElementById('journalBody').innerHTML =
-      '<tr><td colspan="2"><div class="empty-msg"><span class="emoji">🗓</span>' +
-      'Расписание не задано</div></td></tr>';
+      '<tr><td colspan="2"><div class="empty-msg"><span class="emoji">🗓</span>Расписание не задано</div></td></tr>';
     return;
   }
-
   if (!scheduleIds.includes(state.currentSubject)) {
     state.currentSubject = scheduleIds[0];
     document.getElementById('journalSubjectTag').textContent = getSubjectName(state.currentSubject);
   }
-
   document.getElementById('journalSubtitle').textContent =
     'Урок №' + (scheduleIds.indexOf(state.currentSubject) + 1) + ' · Нажмите «+», чтобы поставить оценку.';
 
   const tbody = document.getElementById('journalBody');
   tbody.innerHTML = '';
-
   STUDENTS.forEach(student => {
     const tr = document.createElement('tr');
-
     const tdName = document.createElement('td');
     tdName.className = 'name-col';
     tdName.textContent = student;
     tr.appendChild(tdName);
-
     const tdMarks = document.createElement('td');
     const cell = document.createElement('div');
     cell.className = 'cell-marks';
-
     const marks = getMarks(state.currentSubject, student, iso);
     marks.forEach(m => {
       const badge = document.createElement('button');
@@ -2329,14 +2251,12 @@ function renderJournal() {
       badge.onclick = (e) => { e.stopPropagation(); openMarkModal(student, iso, m.id); };
       cell.appendChild(badge);
     });
-
     const addBtn = document.createElement('button');
     addBtn.type = 'button';
     addBtn.className = 'add-mark-btn';
     addBtn.textContent = '+';
     addBtn.onclick = (e) => { e.stopPropagation(); openMarkModal(student, iso, null); };
     cell.appendChild(addBtn);
-
     tdMarks.appendChild(cell);
     tr.appendChild(tdMarks);
     tbody.appendChild(tr);
@@ -2353,7 +2273,6 @@ function openMarkModal(student, date, markId) {
   editing.student = student;
   editing.date = date;
   editing.markId = markId;
-
   const modal = document.getElementById('markModal');
   const title = document.getElementById('markModalTitle');
   const sub = document.getElementById('markModalSub');
@@ -2361,12 +2280,9 @@ function openMarkModal(student, date, markId) {
   const markChoice = document.getElementById('markChoice');
   const typeSelect = document.getElementById('markType');
   const commentInput = document.getElementById('markComment');
-
   markChoice.querySelectorAll('button').forEach(b => b.classList.remove('selected'));
   editing.selectedMark = null;
-
   const subjectName = getSubjectName(state.currentSubject);
-
   if (markId) {
     const marks = getMarks(state.currentSubject, student, date);
     const m = marks.find(x => x.id === markId);
@@ -2386,17 +2302,14 @@ function openMarkModal(student, date, markId) {
     typeSelect.value = 'Классная работа';
     commentInput.value = '';
   }
-
   modal.classList.remove('hidden');
   document.body.style.overflow = 'hidden';
 }
-
 function closeMarkModal() {
   document.getElementById('markModal').classList.add('hidden');
   document.body.style.overflow = '';
   editing = { subject: null, student: null, date: null, markId: null, selectedMark: null };
 }
-
 document.getElementById('markChoice').addEventListener('click', e => {
   const btn = e.target.closest('button[data-mark]');
   if (!btn) return;
@@ -2404,29 +2317,16 @@ document.getElementById('markChoice').addEventListener('click', e => {
   btn.classList.add('selected');
   editing.selectedMark = btn.dataset.mark;
 });
-
 async function saveMark() {
-  if (!editing.selectedMark) {
-    alert('Выберите оценку!');
-    return;
-  }
+  if (!editing.selectedMark) { alert('Выберите оценку!'); return; }
   const type = document.getElementById('markType').value;
   const comment = document.getElementById('markComment').value.trim();
-
-  setSync('syncing', 'Сохранение...');
-
+  pulseSync('Сохранение...');
   try {
     if (editing.selectedMark === 'б') {
-      /* Ставим "б" на весь учебный день */
       const scheduleIds = getScheduleForDate(editing.date);
-      const subjectsForDay = scheduleIds.length > 0
-        ? scheduleIds
-        : BASE_SUBJECTS.map(s => s.id);
-
-      // Удаляем все старые "б" по этому ученику и дате
+      const subjectsForDay = scheduleIds.length > 0 ? scheduleIds : BASE_SUBJECTS.map(s => s.id);
       await fbRemoveBFromDay(editing.student, editing.date);
-
-      // Ставим "б" на каждый предмет дня
       const updates = {};
       const skey = studentKey(editing.student);
       subjectsForDay.forEach(subjId => {
@@ -2438,53 +2338,37 @@ async function saveMark() {
       await update(ref(db), updates);
     } else {
       if (editing.markId) {
-        // Обновляем существующую
         await fbSetMark(editing.subject, editing.student, editing.date, {
-          id: editing.markId,
-          mark: editing.selectedMark,
-          type: type,
-          comment: comment
+          id: editing.markId, mark: editing.selectedMark, type, comment
         });
       } else {
-        // Новая
         await fbSetMark(editing.subject, editing.student, editing.date, {
-          id: uid(),
-          mark: editing.selectedMark,
-          type: type,
-          comment: comment
+          id: uid(), mark: editing.selectedMark, type, comment
         });
       }
     }
-    setSync('online', 'Сохранено');
   } catch (e) {
     console.error(e);
-    setSync('offline', 'Ошибка сохранения');
+    setSync('offline', 'Ошибка');
     alert('Ошибка сохранения: ' + e.message);
   }
-
   closeMarkModal();
 }
-
 async function deleteMark() {
   if (!editing.markId) return;
-
-  setSync('syncing', 'Удаление...');
-
+  pulseSync('Удаление...');
   try {
     const marks = getMarks(editing.subject, editing.student, editing.date);
     const m = marks.find(x => x.id === editing.markId);
-
     if (m && m.mark === 'б') {
       await fbRemoveBFromDay(editing.student, editing.date);
     } else {
       await fbDeleteMark(editing.subject, editing.student, editing.date, editing.markId);
     }
-    setSync('online', 'Удалено');
   } catch (e) {
     console.error(e);
-    setSync('offline', 'Ошибка удаления');
+    setSync('offline', 'Ошибка');
   }
-
   closeMarkModal();
 }
 
@@ -2495,20 +2379,14 @@ async function addHomework() {
   const input = document.getElementById('hwInput');
   const text = input.value.trim();
   if (!text) return;
-
   const isIndividual = state.hwTab === 'individual';
   let individualFor = null;
-
   if (isIndividual) {
     const sel = document.getElementById('hwStudentSelect');
     individualFor = sel.value;
-    if (!individualFor) {
-      alert('Выберите ученика');
-      return;
-    }
+    if (!individualFor) { alert('Выберите ученика'); return; }
   }
-
-  setSync('syncing', 'Сохранение Д/З...');
+  pulseSync('Сохранение Д/З...');
   try {
     await fbSetHomework({
       id: uid(),
@@ -2519,62 +2397,45 @@ async function addHomework() {
       createdAt: Date.now()
     });
     input.value = '';
-    setSync('online', 'Сохранено');
   } catch (e) {
     console.error(e);
-    setSync('offline', 'Ошибка сохранения');
+    setSync('offline', 'Ошибка');
   }
 }
-
 async function deleteHomework(id) {
   if (!confirm('Удалить это Д/З?')) return;
-  setSync('syncing', 'Удаление...');
-  try {
-    await fbDeleteHomework(id);
-    setSync('online', 'Удалено');
-  } catch (e) {
-    console.error(e);
-    setSync('offline', 'Ошибка удаления');
-  }
+  pulseSync('Удаление...');
+  try { await fbDeleteHomework(id); }
+  catch (e) { console.error(e); setSync('offline', 'Ошибка'); }
 }
-
 function getHomeworkList() {
   return Object.values(fb.homework || {}).sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
 }
-
 function renderHomeworkTeacher() {
   const list = document.getElementById('hwListTeacher');
   list.innerHTML = '';
-
   const hwForSubject = getHomeworkList().filter(h => h.subjectId === state.currentSubject);
-
   if (hwForSubject.length === 0) {
     list.innerHTML = '<div class="empty-msg"><span class="emoji">📭</span>Домашнее задание не задано.</div>';
     return;
   }
-
   hwForSubject.forEach(hw => {
     const div = document.createElement('div');
     const isIndividual = !!hw.individualFor;
     div.className = 'hw-item' + (isIndividual ? ' individual' : '');
-
     const content = document.createElement('div');
     content.className = 'hw-content';
-
     const text = document.createElement('div');
     text.className = 'hw-text';
     text.textContent = hw.text;
     content.appendChild(text);
-
     const meta = document.createElement('div');
     meta.className = 'hw-meta';
-
     if (isIndividual) {
       const b1 = document.createElement('span');
       b1.className = 'hw-badge individual';
       b1.textContent = '🎯 Индивидуальное';
       meta.appendChild(b1);
-
       const b2 = document.createElement('span');
       b2.className = 'hw-badge for-student';
       b2.textContent = '👤 ' + hw.individualFor;
@@ -2585,10 +2446,8 @@ function renderHomeworkTeacher() {
       b1.textContent = '👥 Для всех';
       meta.appendChild(b1);
     }
-
     content.appendChild(meta);
     div.appendChild(content);
-
     const done = hw.done || {};
     if (!isIndividual) {
       const doneCount = Object.values(done).filter(Boolean).length;
@@ -2605,61 +2464,46 @@ function renderHomeworkTeacher() {
       counter.textContent = isDone ? '✅ Выполнено' : '⏳ Не выполнено';
       div.appendChild(counter);
     }
-
     const delBtn = document.createElement('button');
     delBtn.className = 'btn btn-danger btn-sm';
     delBtn.textContent = '✕';
     delBtn.onclick = () => deleteHomework(hw.id);
     div.appendChild(delBtn);
-
     list.appendChild(div);
   });
 }
-
 function renderHomeworkStudent() {
   const list = document.getElementById('hwListStudent');
   list.innerHTML = '';
-
   const student = state.currentStudent;
   const hwForStudent = getHomeworkList().filter(h =>
     h.subjectId === state.currentSubject &&
     (h.individualFor === null || h.individualFor === student)
   );
-
   if (hwForStudent.length === 0) {
     list.innerHTML = '<div class="empty-msg"><span class="emoji">📭</span>Домашнее задание не задано.</div>';
     return;
   }
-
   hwForStudent.forEach(hw => {
     const done = hw.done || {};
     const isDone = !!done[studentKey(student)];
     const isIndividual = !!hw.individualFor;
     const div = document.createElement('div');
     div.className = 'hw-item' + (isDone ? ' done' : '') + (isIndividual ? ' individual' : '');
-
     const cb = document.createElement('input');
     cb.type = 'checkbox';
     cb.checked = isDone;
     cb.onchange = async () => {
-      setSync('syncing', 'Сохранение...');
-      try {
-        await fbToggleHomeworkDone(hw.id, student, cb.checked);
-        setSync('online', 'Сохранено');
-      } catch (e) {
-        console.error(e);
-        setSync('offline', 'Ошибка');
-      }
+      pulseSync('Сохранение...');
+      try { await fbToggleHomeworkDone(hw.id, student, cb.checked); }
+      catch (e) { console.error(e); setSync('offline', 'Ошибка'); }
     };
-
     const content = document.createElement('div');
     content.className = 'hw-content';
-
     const text = document.createElement('div');
     text.className = 'hw-text' + (isDone ? ' done-text' : '');
     text.textContent = hw.text;
     content.appendChild(text);
-
     if (isIndividual) {
       const meta = document.createElement('div');
       meta.className = 'hw-meta';
@@ -2669,7 +2513,6 @@ function renderHomeworkStudent() {
       meta.appendChild(b);
       content.appendChild(meta);
     }
-
     div.appendChild(cb);
     div.appendChild(content);
     list.appendChild(div);
@@ -2683,11 +2526,9 @@ function renderScheduleTeacher() {
   const iso = state.currentDate;
   document.getElementById('schedCurrentDate').textContent = formatDate(iso);
   document.getElementById('schedCurrentWeekday').textContent = getWeekdayName(getWeekday(iso));
-
   const status = getDayStatus(iso);
   const statusCard = document.getElementById('schedHolidayCard');
   const statusValue = document.getElementById('schedCurrentStatus');
-
   statusCard.classList.remove('holiday-card');
   if (status === 'weekend') {
     statusValue.textContent = '🎉 Выходной';
@@ -2698,7 +2539,6 @@ function renderScheduleTeacher() {
   } else {
     statusValue.textContent = '✅ Учебный день';
   }
-
   const tabsEl = document.getElementById('weekdayTabs');
   tabsEl.innerHTML = '';
   WEEKDAYS.forEach(wd => {
@@ -2706,35 +2546,25 @@ function renderScheduleTeacher() {
     btn.className = 'weekday-tab' + (wd.id === state.schedSelectedWeekday ? ' active' : '');
     const count = getScheduleForWeekday(wd.id).length;
     btn.innerHTML = wd.short + '<span class="subj-count">' + count + ' ур.</span>';
-    btn.onclick = () => {
-      state.schedSelectedWeekday = wd.id;
-      renderScheduleTeacher();
-    };
+    btn.onclick = () => { state.schedSelectedWeekday = wd.id; renderScheduleTeacher(); };
     tabsEl.appendChild(btn);
   });
-
   const wdInfo = WEEKDAYS.find(x => x.id === state.schedSelectedWeekday);
   document.getElementById('schedDayTitle').textContent = wdInfo.name;
-
   const rowsEl = document.getElementById('scheduleRows');
   rowsEl.innerHTML = '';
-
   const daySchedule = getScheduleForWeekday(state.schedSelectedWeekday);
-
   if (daySchedule.length === 0) {
     rowsEl.innerHTML = '<div class="empty-msg"><span class="emoji">🗓</span>В этот день нет уроков. Нажмите «Добавить урок».</div>';
   } else {
     daySchedule.forEach((subjId, idx) => {
       const row = document.createElement('div');
       row.className = 'schedule-row';
-
       const num = document.createElement('div');
       num.className = 'row-num';
       num.textContent = idx + 1;
-
       const content = document.createElement('div');
       content.className = 'row-content';
-
       const sel = document.createElement('select');
       sel.innerHTML = '<option value="">— Выберите предмет —</option>';
       BASE_SUBJECTS.forEach(s => {
@@ -2746,25 +2576,15 @@ function renderScheduleTeacher() {
       });
       sel.onchange = async () => {
         const newVal = sel.value;
-        if (!newVal) {
-          await removeScheduleSlot(idx);
-          return;
-        }
-        setSync('syncing', 'Сохранение...');
-        try {
-          await fbSetScheduleSlot(state.schedSelectedWeekday, idx, newVal);
-          setSync('online', 'Сохранено');
-        } catch (e) {
-          console.error(e);
-          setSync('offline', 'Ошибка');
-        }
+        if (!newVal) { await removeScheduleSlot(idx); return; }
+        pulseSync('Сохранение...');
+        try { await fbSetScheduleSlot(state.schedSelectedWeekday, idx, newVal); }
+        catch (e) { console.error(e); setSync('offline', 'Ошибка'); }
       };
-
       const delBtn = document.createElement('button');
       delBtn.className = 'btn btn-danger btn-sm';
       delBtn.textContent = '🗑';
       delBtn.onclick = () => removeScheduleSlot(idx);
-
       content.appendChild(sel);
       row.appendChild(num);
       row.appendChild(content);
@@ -2772,48 +2592,28 @@ function renderScheduleTeacher() {
       rowsEl.appendChild(row);
     });
   }
-
   renderHolidayList();
 }
-
 async function addScheduleSlot() {
   const daySchedule = getScheduleForWeekday(state.schedSelectedWeekday);
-  const used = daySchedule;
-  const available = BASE_SUBJECTS.find(s => !used.includes(s.id));
-  const newArr = [...used, available ? available.id : 'rus'];
-  setSync('syncing', 'Сохранение...');
-  try {
-    await fbSetSchedule(state.schedSelectedWeekday, newArr);
-    setSync('online', 'Сохранено');
-  } catch (e) {
-    console.error(e);
-    setSync('offline', 'Ошибка');
-  }
+  const available = BASE_SUBJECTS.find(s => !daySchedule.includes(s.id));
+  const newArr = [...daySchedule, available ? available.id : 'rus'];
+  pulseSync('Сохранение...');
+  try { await fbSetSchedule(state.schedSelectedWeekday, newArr); }
+  catch (e) { console.error(e); setSync('offline', 'Ошибка'); }
 }
-
 async function removeScheduleSlot(idx) {
   const daySchedule = getScheduleForWeekday(state.schedSelectedWeekday);
   daySchedule.splice(idx, 1);
-  setSync('syncing', 'Сохранение...');
-  try {
-    await fbSetSchedule(state.schedSelectedWeekday, daySchedule);
-    setSync('online', 'Сохранено');
-  } catch (e) {
-    console.error(e);
-    setSync('offline', 'Ошибка');
-  }
+  pulseSync('Сохранение...');
+  try { await fbSetSchedule(state.schedSelectedWeekday, daySchedule); }
+  catch (e) { console.error(e); setSync('offline', 'Ошибка'); }
 }
-
 async function clearScheduleDay() {
   if (!confirm('Очистить расписание на этот день?')) return;
-  setSync('syncing', 'Сохранение...');
-  try {
-    await fbSetSchedule(state.schedSelectedWeekday, []);
-    setSync('online', 'Сохранено');
-  } catch (e) {
-    console.error(e);
-    setSync('offline', 'Ошибка');
-  }
+  pulseSync('Сохранение...');
+  try { await fbSetSchedule(state.schedSelectedWeekday, []); }
+  catch (e) { console.error(e); setSync('offline', 'Ошибка'); }
 }
 
 /* ============================================================
@@ -2823,79 +2623,50 @@ async function addHoliday() {
   const title = document.getElementById('holidayTitle').value.trim() || 'Каникулы';
   const start = document.getElementById('holidayStart').value;
   const end = document.getElementById('holidayEnd').value;
-
-  if (!start || !end) {
-    alert('Укажите даты начала и окончания');
-    return;
-  }
-  if (start > end) {
-    alert('Дата начала не может быть позже даты окончания');
-    return;
-  }
-
-  setSync('syncing', 'Сохранение...');
+  if (!start || !end) { alert('Укажите даты начала и окончания'); return; }
+  if (start > end) { alert('Дата начала не может быть позже даты окончания'); return; }
+  pulseSync('Сохранение...');
   try {
     await fbAddHoliday({ id: uid(), title, start, end });
     document.getElementById('holidayTitle').value = '';
     document.getElementById('holidayStart').value = '';
     document.getElementById('holidayEnd').value = '';
-    setSync('online', 'Сохранено');
-  } catch (e) {
-    console.error(e);
-    setSync('offline', 'Ошибка');
-  }
+  } catch (e) { console.error(e); setSync('offline', 'Ошибка'); }
 }
-
 async function deleteHoliday(id) {
   if (!confirm('Удалить каникулы?')) return;
-  setSync('syncing', 'Удаление...');
-  try {
-    await fbDeleteHoliday(id);
-    setSync('online', 'Удалено');
-  } catch (e) {
-    console.error(e);
-    setSync('offline', 'Ошибка');
-  }
+  pulseSync('Удаление...');
+  try { await fbDeleteHoliday(id); }
+  catch (e) { console.error(e); setSync('offline', 'Ошибка'); }
 }
-
 function renderHolidayList() {
   const list = document.getElementById('holidayList');
   list.innerHTML = '';
-
   const holidays = Object.values(fb.holidays || {}).sort((a, b) => a.start.localeCompare(b.start));
-
   if (holidays.length === 0) {
     list.innerHTML = '<div class="empty-msg"><span class="emoji">🏖</span>Каникулы не заданы.</div>';
     return;
   }
-
   holidays.forEach(h => {
     const div = document.createElement('div');
     div.className = 'holiday-item';
-
     const icon = document.createElement('div');
     icon.className = 'holiday-icon';
     icon.textContent = '🏖';
-
     const info = document.createElement('div');
     info.className = 'holiday-info';
-
     const title = document.createElement('div');
     title.className = 'holiday-title';
     title.textContent = h.title || 'Каникулы';
-
     const dates = document.createElement('div');
     dates.className = 'holiday-dates';
     dates.textContent = formatDate(h.start) + ' — ' + formatDate(h.end);
-
     info.appendChild(title);
     info.appendChild(dates);
-
     const delBtn = document.createElement('button');
     delBtn.className = 'btn btn-danger btn-sm';
     delBtn.textContent = '✕';
     delBtn.onclick = () => deleteHoliday(h.id);
-
     div.appendChild(icon);
     div.appendChild(info);
     div.appendChild(delBtn);
@@ -2909,9 +2680,7 @@ function renderHolidayList() {
 function renderStudentView() {
   const picker = document.getElementById('studentPicker');
   if (picker.value) state.currentStudent = picker.value;
-
   document.getElementById('studentNameTitle').textContent = '🎓 ' + state.currentStudent;
-
   const allMarks = [];
   Object.keys(fb.marks || {}).forEach(subjectId => {
     const byStudent = fb.marks[subjectId][studentKey(state.currentStudent)];
@@ -2921,40 +2690,31 @@ function renderStudentView() {
       Object.keys(marksOnDate).forEach(markId => {
         const m = marksOnDate[markId];
         allMarks.push({
-          ...m,
-          id: markId,
-          date,
-          subjectId,
+          ...m, id: markId, date, subjectId,
           subjectName: getSubjectName(subjectId)
         });
       });
     });
   });
-
   allMarks.sort((a, b) => b.date.localeCompare(a.date));
-
   const list = document.getElementById('studentMarksList');
   list.innerHTML = '';
   if (allMarks.length === 0) {
     list.innerHTML = '<div class="empty-msg"><span class="emoji">📝</span>Оценок пока нет.</div>';
     return;
   }
-
   allMarks.forEach(m => {
     const item = document.createElement('div');
     item.className = 'student-mark-item';
     item.onclick = () => openViewModal(m);
-
     const badge = document.createElement('span');
     badge.className = 'mark-badge mark-' + m.mark;
     badge.textContent = m.mark;
-
     const info = document.createElement('div');
     info.className = 'mark-info';
     info.innerHTML = '<div class="type">' + escapeHtml(m.type || '') + '</div>' +
                      '<div class="date">' + formatDate(m.date) + '</div>' +
                      '<span class="subject-chip">' + getSubjectIconById(m.subjectId) + ' ' + escapeHtml(m.subjectName) + '</span>';
-
     item.appendChild(badge);
     item.appendChild(info);
     if (m.comment) {
@@ -2966,7 +2726,6 @@ function renderStudentView() {
     list.appendChild(item);
   });
 }
-
 function openViewModal(m) {
   const content = document.getElementById('viewMarkContent');
   content.innerHTML = `
@@ -2981,39 +2740,35 @@ function openViewModal(m) {
       <span class="info-label">Тип работы</span>
       <span class="info-value">${escapeHtml(m.type || '')}</span>
     </div>
-   учени <div class="кinfo-row">
-      <span class="info-label)
-">Дата</span>
-      <span class="  info-value">${formatDate(m.date)}</span>
-    </ =div>
     <div class="info-row">
-================================      <span class="info-label">Комментарий</span>
-     ======================== <span class="info-value" style="===color:${m.comment ? 'var(--text)' : ' */
-var(--text-muted)'};">
-        ${mfunction.comment ? escapeHtml(m.comment) : '—'}
-      render </span>
+      <span class="info-label">Дата</span>
+      <span class="info-value">${formatDate(m.date)}</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">Комментарий</span>
+      <span class="info-value" style="color:${m.comment ? 'var(--text)' : 'var(--text-muted)'};">
+        ${m.comment ? escapeHtml(m.comment) : '—'}
+      </span>
     </div>
   `;
- Schedule document.getElementById('viewMarkModal').classList.remove('Studenthidden');
-  document.body.style.overflow =() 'hidden';
+  document.getElementById('viewMarkModal').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
 }
-
 function closeViewModal() {
-  {
- document.getElementById('viewMarkModal').classList.add(' hidden');
+  document.getElementById('viewMarkModal').classList.add('hidden');
   document.body.style.overflow = '';
 }
 
-/* const ============================================================
-   РАСПИСАНИ isoЕ ( = state.currentDate;
+/* ============================================================
+   РАСПИСАНИЕ (ученик)
+   ============================================================ */
+function renderScheduleStudent() {
+  const iso = state.currentDate;
   const wd = getWeekday(iso);
-
   document.getElementById('studentSchedSubtitle').textContent =
     formatDate(iso) + ' · ' + getWeekdayName(wd);
-
   const todayEl = document.getElementById('studentSchedToday');
   todayEl.innerHTML = '';
-
   const status = getDayStatus(iso);
   if (status === 'weekend' || status === 'holiday') {
     const h = getHolidayForDate(iso);
@@ -3029,35 +2784,28 @@ function closeViewModal() {
       scheduleIds.forEach((subjId, idx) => {
         const row = document.createElement('div');
         row.className = 'sched-today-row';
-
         const num = document.createElement('div');
         num.className = 'num';
         num.textContent = idx + 1;
-
         const name = document.createElement('div');
         name.className = 'subj-name';
         name.textContent = getSubjectIconById(subjId) + ' ' + getSubjectName(subjId);
-
         row.appendChild(num);
         row.appendChild(name);
         todayEl.appendChild(row);
       });
     }
   }
-
   const weekEl = document.getElementById('studentSchedWeek');
   weekEl.innerHTML = '';
-
   let hasAny = false;
   WEEKDAYS.forEach(wdInfo => {
     if (wdInfo.id === 0 || wdInfo.id === 6) return;
     const subs = getScheduleForWeekday(wdInfo.id);
     if (subs.length === 0) return;
     hasAny = true;
-
     const block = document.createElement('div');
     block.style.marginBottom = '16px';
-
     const title = document.createElement('div');
     title.style.fontWeight = '700';
     title.style.fontSize = '14px';
@@ -3065,28 +2813,22 @@ function closeViewModal() {
     title.style.marginBottom = '8px';
     title.textContent = wdInfo.name;
     block.appendChild(title);
-
     subs.forEach((subjId, idx) => {
       const row = document.createElement('div');
       row.className = 'sched-today-row';
       row.style.marginBottom = '6px';
-
       const num = document.createElement('div');
       num.className = 'num';
       num.textContent = idx + 1;
-
       const name = document.createElement('div');
       name.className = 'subj-name';
       name.textContent = getSubjectIconById(subjId) + ' ' + getSubjectName(subjId);
-
       row.appendChild(num);
       row.appendChild(name);
       block.appendChild(row);
     });
-
     weekEl.appendChild(block);
   });
-
   if (!hasAny) {
     weekEl.innerHTML = '<div class="empty-msg"><span class="emoji">🗓</span>Расписание не задано.</div>';
   }
@@ -3098,7 +2840,6 @@ function closeViewModal() {
 function initUI() {
   const dp = document.getElementById('datePicker');
   dp.value = state.currentDate || todayStr();
-
   const sp = document.getElementById('studentPicker');
   sp.innerHTML = '';
   STUDENTS.forEach(s => {
@@ -3108,7 +2849,6 @@ function initUI() {
     sp.appendChild(opt);
   });
   sp.value = state.currentStudent;
-
   const hwSel = document.getElementById('hwStudentSelect');
   hwSel.innerHTML = '';
   STUDENTS.forEach(s => {
@@ -3117,15 +2857,13 @@ function initUI() {
     opt.textContent = s;
     hwSel.appendChild(opt);
   });
-
   lastRoleIndex = 0;
   lastTabIndex = 0;
-
   document.getElementById('tabJournal').classList.add('active');
   document.getElementById('btnTeacher').classList.add('active');
 }
 
-/* Делаем функции доступными из HTML */
+/* Экспорт функций в window */
 window.setRole = setRole;
 window.setTab = setTab;
 window.setHwTab = setHwTab;
@@ -3148,11 +2886,9 @@ window.openProfileModal = openProfileModal;
 window.closeProfileModal = closeProfileModal;
 window.saveProfile = saveProfile;
 
-/* Старт */
 initUI();
 subscribeAll();
 
-/* Закрытие модалок */
 document.querySelectorAll('.modal-overlay').forEach(overlay => {
   overlay.addEventListener('click', () => {
     if (overlay.id === 'markModal') closeMarkModal();
@@ -3160,7 +2896,6 @@ document.querySelectorAll('.modal-overlay').forEach(overlay => {
     else if (overlay.id === 'profileModal') closeProfileModal();
   });
 });
-
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') {
     if (!document.getElementById('markModal').classList.contains('hidden')) closeMarkModal();
