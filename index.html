@@ -4,6 +4,20 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Школьный журнал</title>
+
+<!-- PWA -->
+<meta name="application-name" content="Школьный журнал">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Журнал">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#6366f1">
+<meta name="description" content="Электронный школьный журнал">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+
 <style>
   :root {
     --primary: #6366f1;
@@ -41,7 +55,6 @@
 
   .container { max-width: 1100px; margin: 0 auto; }
 
-  /* ============ SYNC STATUS ============ */
   .sync-status {
     position: fixed;
     bottom: 16px;
@@ -59,7 +72,6 @@
     transition: all 0.3s;
     border: 1.5px solid var(--border);
   }
-
   .sync-status.online { color: var(--green); border-color: #a7f3d0; }
   .sync-status.syncing { color: var(--orange); border-color: #fcd34d; }
   .sync-status.offline { color: var(--red); border-color: #fca5a5; }
@@ -70,13 +82,11 @@
     background: currentColor;
     animation: pulse 2s infinite;
   }
-
   @keyframes pulse {
     0%, 100% { opacity: 1; transform: scale(1); }
     50% { opacity: 0.5; transform: scale(0.85); }
   }
 
-  /* ============ LOADER ============ */
   .loader-overlay {
     position: fixed;
     inset: 0;
@@ -90,7 +100,6 @@
     z-index: 2000;
     gap: 16px;
   }
-
   .loader-spinner {
     width: 52px;
     height: 52px;
@@ -99,23 +108,10 @@
     border-radius: 50%;
     animation: spin 0.9s linear infinite;
   }
-
   @keyframes spin { to { transform: rotate(360deg); } }
+  .loader-text { font-size: 15px; font-weight: 700; color: var(--text-muted); }
+  .loader-detail { font-size: 12px; color: var(--text-muted); font-weight: 500; opacity: 0.75; }
 
-  .loader-text {
-    font-size: 15px;
-    font-weight: 700;
-    color: var(--text-muted);
-  }
-
-  .loader-detail {
-    font-size: 12px;
-    color: var(--text-muted);
-    font-weight: 500;
-    opacity: 0.75;
-  }
-
-  /* ============ HEADER ============ */
   .app-header {
     background: var(--card);
     border-radius: var(--radius);
@@ -123,7 +119,6 @@
     padding: 18px 20px;
     margin-bottom: 16px;
   }
-
   .app-header-top {
     display: flex;
     align-items: center;
@@ -131,7 +126,6 @@
     gap: 12px;
     flex-wrap: wrap;
   }
-
   .logo {
     display: flex;
     align-items: center;
@@ -141,7 +135,6 @@
     color: var(--text);
     letter-spacing: -0.5px;
   }
-
   .logo-icon {
     width: 40px;
     height: 40px;
@@ -153,13 +146,7 @@
     font-size: 20px;
     box-shadow: 0 6px 16px rgba(99, 102, 241, 0.35);
   }
-
-  .header-right {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
-  }
+  .header-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 
   .profile-btn {
     display: flex;
@@ -173,16 +160,13 @@
     transition: all 0.2s;
     font-family: inherit;
   }
-
   .profile-btn:hover {
     border-color: var(--primary-light);
     box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15);
     transform: translateY(-1px);
   }
-
   .profile-avatar {
-    width: 34px;
-    height: 34px;
+    width: 34px; height: 34px;
     border-radius: 50%;
     background: linear-gradient(135deg, var(--primary), var(--primary-light));
     color: #fff;
@@ -193,7 +177,6 @@
     font-size: 14px;
     flex-shrink: 0;
   }
-
   .profile-info-text {
     display: flex;
     flex-direction: column;
@@ -201,7 +184,6 @@
     line-height: 1.2;
     text-align: left;
   }
-
   .profile-info-text .p-name {
     font-size: 13px;
     font-weight: 700;
@@ -211,20 +193,9 @@
     overflow: hidden;
     text-overflow: ellipsis;
   }
+  .profile-info-text .p-class { font-size: 11px; font-weight: 600; color: var(--primary); }
+  .profile-info-text .p-empty { font-size: 13px; font-weight: 700; color: var(--text-muted); }
 
-  .profile-info-text .p-class {
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--primary);
-  }
-
-  .profile-info-text .p-empty {
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--text-muted);
-  }
-
-  /* ============ ROLE SWITCH ============ */
   .role-switch {
     position: relative;
     display: flex;
@@ -234,7 +205,6 @@
     gap: 4px;
     isolation: isolate;
   }
-
   .role-switch button {
     position: relative;
     z-index: 1;
@@ -250,15 +220,11 @@
     white-space: nowrap;
     font-family: inherit;
   }
-
   .role-switch button.active { color: var(--primary); }
-
   .role-switch::before {
     content: '';
     position: absolute;
-    top: 4px;
-    bottom: 4px;
-    left: 4px;
+    top: 4px; bottom: 4px; left: 4px;
     width: calc(50% - 4px);
     background: var(--card);
     border-radius: 9px;
@@ -266,10 +232,8 @@
     transition: transform 0.35s cubic-bezier(0.34, 1.4, 0.64, 1);
     z-index: 0;
   }
-
   .role-switch.student::before { transform: translateX(calc(100% + 4px)); }
 
-  /* ============ TABS ============ */
   .tabs {
     position: relative;
     display: flex;
@@ -280,7 +244,6 @@
     padding: 4px;
     isolation: isolate;
   }
-
   .tab {
     position: relative;
     z-index: 1;
@@ -300,15 +263,11 @@
     gap: 6px;
     font-family: inherit;
   }
-
   .tab.active { color: var(--primary); }
-
   .tabs::before {
     content: '';
     position: absolute;
-    top: 4px;
-    bottom: 4px;
-    left: 4px;
+    top: 4px; bottom: 4px; left: 4px;
     width: calc((100% - 8px) / 3);
     background: var(--card);
     border-radius: 9px;
@@ -316,11 +275,9 @@
     transition: transform 0.35s cubic-bezier(0.34, 1.4, 0.64, 1);
     z-index: 0;
   }
-
   .tabs.tab-homework::before { transform: translateX(calc(100% + 4px)); }
   .tabs.tab-schedule::before { transform: translateX(calc(200% + 8px)); }
 
-  /* ============ SUBJECT PICKER ============ */
   .subject-bar {
     display: flex;
     align-items: center;
@@ -330,7 +287,6 @@
     border-top: 1px solid var(--border);
     flex-wrap: wrap;
   }
-
   .subject-bar-label {
     font-size: 13px;
     font-weight: 700;
@@ -340,14 +296,7 @@
     gap: 5px;
     flex-shrink: 0;
   }
-
-  .subject-pills {
-    display: flex;
-    gap: 6px;
-    flex-wrap: wrap;
-    flex: 1;
-  }
-
+  .subject-pills { display: flex; gap: 6px; flex-wrap: wrap; flex: 1; }
   .subject-pill {
     padding: 8px 14px;
     border-radius: 20px;
@@ -364,13 +313,11 @@
     align-items: center;
     gap: 6px;
   }
-
   .subject-pill:hover {
     border-color: var(--primary-light);
     color: var(--primary);
     transform: translateY(-2px);
   }
-
   .subject-pill.active {
     background: linear-gradient(135deg, var(--primary), var(--primary-light));
     color: #fff;
@@ -388,14 +335,8 @@
     padding-top: 12px;
     border-top: 1px solid var(--border);
   }
-
   .control-group { display: flex; align-items: center; gap: 8px; }
-
-  .control-group label {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--text-muted);
-  }
+  .control-group label { font-size: 13px; font-weight: 600; color: var(--text-muted); }
 
   select, input[type="text"], input[type="date"], textarea {
     padding: 9px 12px;
@@ -408,15 +349,12 @@
     color: var(--text);
     transition: border-color 0.15s, box-shadow 0.15s;
   }
-
   select:focus, input:focus, textarea:focus {
     border-color: var(--primary);
     box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
   }
-
   input[type="date"] { cursor: pointer; }
 
-  /* ============ BUTTONS ============ */
   .btn {
     padding: 9px 16px;
     border: none;
@@ -431,24 +369,18 @@
     white-space: nowrap;
     font-family: inherit;
   }
-
   .btn:active { transform: scale(0.97); }
-
   .btn-primary {
     background: linear-gradient(135deg, var(--primary), var(--primary-light));
     color: #fff;
     box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
   }
   .btn-primary:hover { box-shadow: 0 6px 18px rgba(99, 102, 241, 0.45); }
-
   .btn-ghost { background: var(--bg); color: var(--text-muted); }
   .btn-ghost:hover { background: var(--border); color: var(--text); }
-
   .btn-danger { background: #fef2f2; color: var(--red); }
   .btn-danger:hover { background: #fee2e2; }
-
   .btn-sm { padding: 6px 12px; font-size: 13px; }
-
   .btn-holiday {
     background: linear-gradient(135deg, #fbbf24, #f59e0b);
     color: #fff;
@@ -456,7 +388,6 @@
   }
   .btn-holiday:hover { box-shadow: 0 6px 18px rgba(245, 158, 11, 0.45); }
 
-  /* ============ CARD ============ */
   .card {
     background: var(--card);
     border-radius: var(--radius);
@@ -464,7 +395,6 @@
     padding: 20px;
     margin-bottom: 16px;
   }
-
   .card-title {
     font-size: 17px;
     font-weight: 700;
@@ -475,7 +405,6 @@
     gap: 8px;
     flex-wrap: wrap;
   }
-
   .subject-tag {
     background: linear-gradient(135deg, var(--primary), var(--primary-light));
     color: #fff;
@@ -484,18 +413,15 @@
     font-size: 12px;
     font-weight: 700;
   }
-
   .card-subtitle {
     font-size: 13px;
     color: var(--text-muted);
     margin-bottom: 16px;
   }
 
-  /* ============ АНИМАЦИИ ============ */
   .view-panel { animation: panelIn 0.42s cubic-bezier(0.22, 1, 0.36, 1); }
   .view-panel.slide-left { animation: panelInLeft 0.42s cubic-bezier(0.22, 1, 0.36, 1); }
   .view-panel.slide-right { animation: panelInRight 0.42s cubic-bezier(0.22, 1, 0.36, 1); }
-
   @keyframes panelIn {
     from { opacity: 0; transform: translateY(14px) scale(0.985); }
     to { opacity: 1; transform: translateY(0) scale(1); }
@@ -509,20 +435,17 @@
     to { opacity: 1; transform: translateX(0) scale(1); }
   }
 
-  /* ============ JOURNAL TABLE ============ */
   .journal-wrapper {
     overflow-x: auto;
     border-radius: var(--radius-sm);
     -webkit-overflow-scrolling: touch;
   }
-
   table.journal {
     border-collapse: separate;
     border-spacing: 0;
     width: 100%;
     min-width: 520px;
   }
-
   table.journal th {
     background: var(--bg);
     font-weight: 700;
@@ -536,27 +459,22 @@
     top: 0;
     z-index: 2;
   }
-
   table.journal th:first-child {
     border-top-left-radius: var(--radius-sm);
     position: sticky;
     left: 0;
     z-index: 3;
   }
-
   table.journal th:last-child {
     border-top-right-radius: var(--radius-sm);
     text-align: center;
   }
-
   table.journal td {
     padding: 10px;
     border-bottom: 1px solid var(--border);
     font-size: 14px;
   }
-
   table.journal tr:last-child td { border-bottom: none; }
-
   table.journal td.name-col {
     font-weight: 600;
     background: var(--card);
@@ -566,11 +484,9 @@
     min-width: 160px;
     border-right: 1px solid var(--border);
   }
-
   table.journal tbody tr { transition: background 0.15s; }
   table.journal tbody tr:hover td { background: #fafbff; }
   table.journal tbody tr:hover td.name-col { background: #fafbff; }
-
   .cell-marks {
     display: flex;
     flex-wrap: wrap;
@@ -580,7 +496,6 @@
     min-height: 30px;
   }
 
-  /* ============ MARK BADGES ============ */
   .mark-badge {
     display: inline-flex;
     align-items: center;
@@ -598,12 +513,10 @@
     border: none;
     font-family: inherit;
   }
-
   .mark-badge:hover {
     transform: translateY(-2px) scale(1.1);
     box-shadow: 0 4px 10px rgba(0,0,0,0.18);
   }
-
   .mark-5 { background: linear-gradient(135deg, #10b981, #34d399); }
   .mark-4 { background: linear-gradient(135deg, #3b82f6, #60a5fa); }
   .mark-3 { background: linear-gradient(135deg, #f59e0b, #fbbf24); }
@@ -627,7 +540,6 @@
     transition: all 0.18s;
     font-family: inherit;
   }
-
   .add-mark-btn:hover {
     border-color: var(--primary);
     color: var(--primary);
@@ -635,7 +547,6 @@
     transform: scale(1.15) rotate(90deg);
   }
 
-  /* ============ СТАТУСЫ ДНЯ ============ */
   .day-status {
     display: flex;
     align-items: center;
@@ -646,29 +557,24 @@
     font-size: 14px;
     font-weight: 600;
   }
-
   .day-status.weekend {
     background: linear-gradient(90deg, #fef3c7, #fffbeb);
     color: #92400e;
     border-left: 4px solid #f59e0b;
   }
-
   .day-status.holiday {
     background: linear-gradient(90deg, #dbeafe, #eff6ff);
     color: #1e40af;
     border-left: 4px solid #3b82f6;
   }
-
   .day-status .status-emoji { font-size: 20px; }
 
-  /* ============ РАСПИСАНИЕ ============ */
   .schedule-info {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
     margin-bottom: 16px;
   }
-
   .schedule-info-card {
     flex: 1;
     min-width: 160px;
@@ -677,7 +583,6 @@
     border-radius: var(--radius-sm);
     border-left: 4px solid var(--primary);
   }
-
   .schedule-info-card .label {
     font-size: 11px;
     font-weight: 700;
@@ -686,13 +591,11 @@
     letter-spacing: 0.5px;
     margin-bottom: 4px;
   }
-
   .schedule-info-card .value {
     font-size: 16px;
     font-weight: 800;
     color: var(--text);
   }
-
   .schedule-info-card.holiday-card { border-left-color: var(--orange); }
   .schedule-info-card.holiday-card .value { color: var(--orange); }
 
@@ -705,7 +608,6 @@
     margin-bottom: 18px;
     overflow-x: auto;
   }
-
   .weekday-tab {
     flex: 1;
     min-width: 60px;
@@ -721,13 +623,11 @@
     font-family: inherit;
     white-space: nowrap;
   }
-
   .weekday-tab.active {
     background: var(--card);
     color: var(--primary);
     box-shadow: 0 2px 8px rgba(15, 23, 42, 0.1);
   }
-
   .weekday-tab .subj-count {
     display: block;
     font-size: 10px;
@@ -742,7 +642,6 @@
     gap: 8px;
     margin-bottom: 16px;
   }
-
   .schedule-row {
     display: flex;
     align-items: center;
@@ -751,10 +650,8 @@
     background: var(--bg);
     border-radius: var(--radius-sm);
   }
-
   .schedule-row .row-num {
-    width: 32px;
-    height: 32px;
+    width: 32px; height: 32px;
     border-radius: 50%;
     background: linear-gradient(135deg, var(--primary), var(--primary-light));
     color: #fff;
@@ -765,11 +662,9 @@
     font-size: 14px;
     flex-shrink: 0;
   }
-
   .schedule-row .row-content { flex: 1; min-width: 0; }
   .schedule-row select { width: 100%; }
 
-  /* ============ КАНИКУЛЫ ============ */
   .holiday-form {
     display: flex;
     gap: 10px;
@@ -777,19 +672,12 @@
     margin-bottom: 18px;
     align-items: flex-end;
   }
-
   .holiday-form .form-group {
     margin-bottom: 0;
     flex: 1;
     min-width: 140px;
   }
-
-  .holiday-list {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-
+  .holiday-list { display: flex; flex-direction: column; gap: 8px; }
   .holiday-item {
     display: flex;
     align-items: center;
@@ -799,16 +687,13 @@
     border-radius: var(--radius-sm);
     border-left: 4px solid var(--orange);
   }
-
   .holiday-item .holiday-icon { font-size: 20px; flex-shrink: 0; }
   .holiday-item .holiday-info { flex: 1; min-width: 0; }
-
   .holiday-item .holiday-title {
     font-weight: 700;
     font-size: 14px;
     color: #92400e;
   }
-
   .holiday-item .holiday-dates {
     font-size: 12px;
     color: #a16207;
@@ -816,7 +701,6 @@
     margin-top: 2px;
   }
 
-  /* ============ MODAL ============ */
   .modal-overlay {
     position: fixed;
     inset: 0;
@@ -830,14 +714,11 @@
     padding: 16px;
     animation: fadeIn 0.22s ease;
   }
-
   @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
   @keyframes slideUp {
     from { opacity: 0; transform: translateY(20px) scale(0.96); }
     to { opacity: 1; transform: translateY(0) scale(1); }
   }
-
   .modal {
     background: var(--card);
     border-radius: 20px;
@@ -851,7 +732,6 @@
     position: relative;
     z-index: 1001;
   }
-
   .modal-header {
     display: flex;
     align-items: flex-start;
@@ -859,24 +739,20 @@
     gap: 12px;
     margin-bottom: 20px;
   }
-
   .modal h2 {
     font-size: 19px;
     font-weight: 800;
     color: var(--text);
     letter-spacing: -0.3px;
   }
-
   .modal-sub {
     font-size: 13px;
     color: var(--text-muted);
     margin-top: 2px;
     font-weight: 500;
   }
-
   .modal-close {
-    width: 34px;
-    height: 34px;
+    width: 34px; height: 34px;
     border-radius: 10px;
     border: none;
     background: var(--bg);
@@ -894,7 +770,6 @@
   .modal-close:hover { background: var(--border); color: var(--text); transform: rotate(90deg); }
 
   .form-group { margin-bottom: 16px; }
-
   .form-group label {
     display: block;
     font-size: 13px;
@@ -902,11 +777,9 @@
     color: var(--text);
     margin-bottom: 8px;
   }
-
   .form-group select,
   .form-group input,
   .form-group textarea { width: 100%; }
-
   .form-group textarea {
     resize: vertical;
     min-height: 72px;
@@ -918,7 +791,6 @@
     grid-template-columns: repeat(6, 1fr);
     gap: 8px;
   }
-
   .mark-choice button {
     aspect-ratio: 1;
     min-height: 48px;
@@ -932,9 +804,7 @@
     font-family: inherit;
     box-shadow: 0 3px 8px rgba(0,0,0,0.12);
   }
-
   .mark-choice button:hover { transform: translateY(-3px) scale(1.05); }
-
   .mark-choice button.selected {
     border-color: var(--text);
     transform: scale(1.1);
@@ -948,7 +818,6 @@
     margin-top: 22px;
     flex-wrap: wrap;
   }
-
   .modal-actions .btn { flex: 1; justify-content: center; }
   .modal-actions .btn-danger { flex: 0 0 auto; }
 
@@ -958,10 +827,8 @@
     align-items: center;
     padding: 8px 0 20px;
   }
-
   .profile-hero .big-avatar {
-    width: 84px;
-    height: 84px;
+    width: 84px; height: 84px;
     border-radius: 50%;
     background: linear-gradient(135deg, var(--primary), var(--primary-light));
     color: #fff;
@@ -972,7 +839,6 @@
     font-weight: 800;
     box-shadow: 0 8px 24px rgba(99, 102, 241, 0.35);
   }
-
   .profile-hero .p-hero-sub {
     margin-top: 12px;
     font-size: 13px;
@@ -981,7 +847,6 @@
     text-align: center;
   }
 
-  /* ============ HOMEWORK ============ */
   .hw-tabs {
     position: relative;
     display: flex;
@@ -992,7 +857,6 @@
     margin-bottom: 18px;
     isolation: isolate;
   }
-
   .hw-tab {
     position: relative;
     z-index: 1;
@@ -1012,15 +876,11 @@
     gap: 6px;
     font-family: inherit;
   }
-
   .hw-tab.active { color: var(--primary); }
-
   .hw-tabs::before {
     content: '';
     position: absolute;
-    top: 4px;
-    bottom: 4px;
-    left: 4px;
+    top: 4px; bottom: 4px; left: 4px;
     width: calc(50% - 4px);
     background: var(--card);
     border-radius: 9px;
@@ -1028,7 +888,6 @@
     transition: transform 0.35s cubic-bezier(0.34, 1.4, 0.64, 1);
     z-index: 0;
   }
-
   .hw-tabs.individual::before { transform: translateX(calc(100% + 4px)); }
 
   .hw-form {
@@ -1038,16 +897,13 @@
     margin-bottom: 18px;
     align-items: flex-end;
   }
-
   .hw-form .form-group {
     margin-bottom: 0;
     flex: 1;
     min-width: 160px;
   }
-
   .hw-form .hw-text-input { flex: 2; min-width: 240px; }
 
-  /* Инфо-карточка с днём недели */
   .hw-day-info {
     background: linear-gradient(90deg, #eef2ff, #f8fafc);
     border-radius: var(--radius-sm);
@@ -1062,7 +918,6 @@
     gap: 8px;
     flex-wrap: wrap;
   }
-
   .hw-day-info .badge {
     background: var(--primary);
     color: #fff;
@@ -1072,12 +927,7 @@
     font-weight: 700;
   }
 
-  .hw-list {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-
+  .hw-list { display: flex; flex-direction: column; gap: 10px; }
   .hw-item {
     display: flex;
     align-items: center;
@@ -1088,39 +938,30 @@
     border-left: 4px solid var(--primary);
     font-size: 14px;
   }
-
   .hw-item.individual {
     border-left-color: var(--pink);
     background: linear-gradient(90deg, #fdf2f8, #f8fafc);
   }
-
   .hw-item.done {
     border-left-color: var(--green);
     background: linear-gradient(90deg, #f0fdf4, #f8fafc);
   }
-
   .hw-item.individual.done { border-left-color: var(--green); }
-
   .hw-item input[type="checkbox"] {
-    width: 22px;
-    height: 22px;
+    width: 22px; height: 22px;
     cursor: pointer;
     accent-color: var(--green);
     flex-shrink: 0;
   }
-
   .hw-content { flex: 1; min-width: 0; }
-
   .hw-item .hw-text {
     font-weight: 500;
     word-break: break-word;
   }
-
   .hw-item .hw-text.done-text {
     text-decoration: line-through;
     color: var(--text-muted);
   }
-
   .hw-meta {
     display: flex;
     flex-wrap: wrap;
@@ -1129,13 +970,11 @@
     font-size: 11px;
     font-weight: 700;
   }
-
   .hw-badge { padding: 2px 8px; border-radius: 6px; white-space: nowrap; }
   .hw-badge.individual { background: #fce7f3; color: var(--pink); }
   .hw-badge.for-student { background: #e0e7ff; color: var(--primary-dark); }
   .hw-badge.date-badge { background: #fef3c7; color: #92400e; }
   .hw-badge.subject-badge { background: #dbeafe; color: #1e40af; }
-
   .hw-counter {
     font-size: 12px;
     font-weight: 700;
@@ -1146,13 +985,7 @@
     white-space: nowrap;
   }
 
-  /* ============ STUDENT MARKS ============ */
-  .student-marks-list {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-
+  .student-marks-list { display: flex; flex-direction: column; gap: 10px; }
   .student-mark-item {
     display: flex;
     align-items: center;
@@ -1164,28 +997,23 @@
     transition: all 0.22s cubic-bezier(0.34, 1.3, 0.64, 1);
     border: 1.5px solid transparent;
   }
-
   .student-mark-item:hover {
     background: #eef2ff;
     border-color: var(--primary-light);
     transform: translateX(5px);
     box-shadow: 0 4px 14px rgba(99, 102, 241, 0.15);
   }
-
   .student-mark-item .mark-info { flex: 1; min-width: 0; }
-
   .student-mark-item .mark-info .type {
     font-weight: 700;
     font-size: 14px;
     color: var(--text);
   }
-
   .student-mark-item .mark-info .date {
     font-size: 12px;
     color: var(--text-muted);
     margin-top: 2px;
   }
-
   .subject-chip {
     display: inline-block;
     font-size: 11px;
@@ -1197,13 +1025,7 @@
     margin-top: 4px;
   }
 
-  /* ============ РАСПИСАНИЕ УЧЕНИКА ============ */
-  .sched-today {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-
+  .sched-today { display: flex; flex-direction: column; gap: 8px; }
   .sched-today-row {
     display: flex;
     align-items: center;
@@ -1213,10 +1035,8 @@
     border-radius: var(--radius-sm);
     border-left: 4px solid var(--primary);
   }
-
   .sched-today-row .num {
-    width: 30px;
-    height: 30px;
+    width: 30px; height: 30px;
     border-radius: 50%;
     background: linear-gradient(135deg, var(--primary), var(--primary-light));
     color: #fff;
@@ -1227,14 +1047,12 @@
     font-size: 13px;
     flex-shrink: 0;
   }
-
   .sched-today-row .subj-name {
     font-weight: 700;
     font-size: 14px;
     color: var(--text);
   }
 
-  /* ============ EMPTY ============ */
   .empty-msg {
     color: var(--text-muted);
     font-size: 14px;
@@ -1244,7 +1062,6 @@
     border-radius: var(--radius-sm);
     font-weight: 500;
   }
-
   .empty-msg .emoji {
     font-size: 32px;
     display: block;
@@ -1254,12 +1071,10 @@
 
   .hidden { display: none !important; }
 
-  /* ============ VIEW MARK MODAL ============ */
   .view-mark-hero {
     text-align: center;
     padding: 20px 0 24px;
   }
-
   .view-mark-hero .mark-badge {
     font-size: 40px;
     min-width: 84px;
@@ -1269,7 +1084,6 @@
     cursor: default;
     box-shadow: 0 8px 24px rgba(0,0,0,0.15);
   }
-
   .view-mark-hero .mark-badge:hover { transform: none; }
 
   .info-row {
@@ -1280,16 +1094,13 @@
     padding: 12px 0;
     border-bottom: 1px solid var(--border);
   }
-
   .info-row:last-child { border-bottom: none; }
-
   .info-row .info-label {
     font-size: 13px;
     font-weight: 600;
     color: var(--text-muted);
     flex-shrink: 0;
   }
-
   .info-row .info-value {
     font-size: 14px;
     font-weight: 600;
@@ -1298,7 +1109,6 @@
     word-break: break-word;
   }
 
-  /* ============ MOBILE ============ */
   @media (max-width: 640px) {
     body { padding: 10px; font-size: 14px; }
     .app-header { padding: 14px; border-radius: 16px; }
@@ -1310,7 +1120,6 @@
       align-items: stretch;
       gap: 10px;
     }
-
     .header-right { width: 100%; flex-direction: column-reverse; gap: 8px; }
     .role-switch { width: 100%; }
     .role-switch button { flex: 1; padding: 10px; font-size: 13px; }
@@ -1331,7 +1140,6 @@
     }
     .subject-pills::-webkit-scrollbar { height: 4px; }
     .subject-pills::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
-
     .subject-pill { flex-shrink: 0; }
 
     .controls {
@@ -1339,12 +1147,10 @@
       align-items: stretch;
       gap: 10px;
     }
-
     .control-group {
       justify-content: space-between;
       width: 100%;
     }
-
     .control-group input,
     .control-group select { flex: 1; }
 
@@ -1363,7 +1169,6 @@
     .add-mark-btn { width: 26px; height: 26px; font-size: 16px; }
 
     .modal-overlay { align-items: flex-end; padding: 0; }
-
     .modal {
       max-width: 100%;
       width: 100%;
@@ -1372,12 +1177,10 @@
       padding: 22px 18px calc(22px + env(safe-area-inset-bottom));
       animation: slideUpMobile 0.35s cubic-bezier(0.34, 1.2, 0.64, 1);
     }
-
     @keyframes slideUpMobile {
       from { transform: translateY(100%); }
       to { transform: translateY(0); }
     }
-
     .modal::before {
       content: '';
       position: absolute;
@@ -1389,12 +1192,9 @@
       background: var(--border);
       border-radius: 2px;
     }
-
     .modal-header { margin-top: 4px; }
-
     .mark-choice { gap: 6px; }
     .mark-choice button { min-height: 46px; font-size: 17px; border-radius: 11px; }
-
     .modal-actions { flex-direction: column-reverse; gap: 8px; }
     .modal-actions .btn { width: 100%; padding: 13px; font-size: 15px; }
     .modal-actions .btn-danger { order: 1; }
@@ -1404,13 +1204,10 @@
     .hw-form .btn { width: 100%; justify-content: center; padding: 12px; }
 
     .student-mark-item { padding: 12px 14px; }
-
     .weekday-tab { font-size: 12px; padding: 8px 6px; min-width: 50px; }
-
     .holiday-form { flex-direction: column; }
     .holiday-form .form-group { width: 100%; }
     .holiday-form .btn { width: 100%; justify-content: center; }
-
     .sync-status { bottom: 10px; right: 10px; font-size: 11px; padding: 6px 12px; }
   }
 
@@ -1425,14 +1222,12 @@
 </head>
 <body>
 
-<!-- ============ LOADER ============ -->
 <div class="loader-overlay" id="loader">
   <div class="loader-spinner"></div>
   <div class="loader-text">Подключение к Firebase...</div>
   <div class="loader-detail" id="loaderDetail">Инициализация</div>
 </div>
 
-<!-- ============ SYNC STATUS ============ -->
 <div class="sync-status syncing" id="syncStatus">
   <span class="sync-dot"></span>
   <span id="syncText">Синхронизация...</span>
@@ -1440,7 +1235,6 @@
 
 <div class="container">
 
-  <!-- ============ HEADER ============ -->
   <div class="app-header">
     <div class="app-header-top">
       <div class="logo">
@@ -1486,7 +1280,6 @@
     </div>
   </div>
 
-  <!-- ============ УЧИТЕЛЬ: ЖУРНАЛ ============ -->
   <div id="teacherJournalView" class="view-panel">
     <div class="card">
       <div class="card-title">
@@ -1509,7 +1302,6 @@
     </div>
   </div>
 
-  <!-- ============ УЧИТЕЛЬ: Д/З ============ -->
   <div id="teacherHomeworkView" class="view-panel hidden">
     <div class="card">
       <div class="card-title">
@@ -1547,7 +1339,6 @@
     </div>
   </div>
 
-  <!-- ============ УЧИТЕЛЬ: РАСПИСАНИЕ ============ -->
   <div id="teacherScheduleView" class="view-panel hidden">
     <div class="card">
       <div class="card-title">🗓 Расписание уроков</div>
@@ -1605,7 +1396,6 @@
     </div>
   </div>
 
-  <!-- ============ УЧЕНИК: ЖУРНАЛ ============ -->
   <div id="studentJournalView" class="view-panel hidden">
     <div class="card">
       <div class="card-title" id="studentNameTitle">🎓 Ученик</div>
@@ -1614,7 +1404,6 @@
     </div>
   </div>
 
-  <!-- ============ УЧЕНИК: Д/З ============ -->
   <div id="studentHomeworkView" class="view-panel hidden">
     <div class="card">
       <div class="card-title">
@@ -1625,7 +1414,6 @@
     </div>
   </div>
 
-  <!-- ============ УЧЕНИК: РАСПИСАНИЕ ============ -->
   <div id="studentScheduleView" class="view-panel hidden">
     <div class="card">
       <div class="card-title">🗓 Расписание на сегодня</div>
@@ -1642,7 +1430,6 @@
 
 </div>
 
-<!-- ============ МОДАЛЬНОЕ ОКНО: ПРОФИЛЬ ============ -->
 <div class="modal-overlay hidden" id="profileModal">
   <div class="modal" onclick="event.stopPropagation()">
     <div class="modal-header">
@@ -1675,7 +1462,6 @@
   </div>
 </div>
 
-<!-- ============ МОДАЛЬНОЕ ОКНО: ОЦЕНКА ============ -->
 <div class="modal-overlay hidden" id="markModal">
   <div class="modal" onclick="event.stopPropagation()">
     <div class="modal-header">
@@ -1726,7 +1512,6 @@
   </div>
 </div>
 
-<!-- ============ МОДАЛЬНОЕ ОКНО: ПРОСМОТР ОЦЕНКИ ============ -->
 <div class="modal-overlay hidden" id="viewMarkModal">
   <div class="modal" onclick="event.stopPropagation()">
     <div class="modal-header">
@@ -1741,9 +1526,6 @@
 </div>
 
 <script type="module">
-/* ============================================================
-   FIREBASE
-   ============================================================ */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
   getDatabase, ref, onValue, set, update, remove
@@ -1771,9 +1553,6 @@ const PATHS = {
   holidays: ROOT_PATH + '/holidays'
 };
 
-/* ============================================================
-   ДАННЫЕ
-   ============================================================ */
 const STUDENTS = [
   "Абрамов Артём", "Белова Мария", "Волков Дмитрий", "Григорьева Анна",
   "Дмитриев Иван", "Егорова София", "Жуков Максим", "Зайцева Елизавета",
@@ -1843,9 +1622,6 @@ const ready = {
   meta: false
 };
 
-/* ============================================================
-   УТИЛИТЫ
-   ============================================================ */
 function todayStr() {
   const d = new Date();
   return d.getFullYear() + '-' +
@@ -1910,9 +1686,6 @@ function getMarks(subjectId, studentName, date) {
   return Object.keys(byDate).map(id => ({ id, ...byDate[id] }));
 }
 
-/* ============================================================
-   FIREBASE: ЗАПИСЬ
-   ============================================================ */
 async function fbSetMark(subjectId, studentName, date, markObj) {
   const path = `${PATHS.marks}/${subjectId}/${studentKey(studentName)}/${date}/${markObj.id}`;
   await set(ref(db, path), {
@@ -1981,9 +1754,6 @@ async function fbSaveProfile(profile) {
   await set(ref(db, `${PATHS.meta}/teacherProfile`), profile);
 }
 
-/* ============================================================
-   СТАТУС
-   ============================================================ */
 let syncTimer = null;
 function setSync(status, text) {
   const el = document.getElementById('syncStatus');
@@ -1997,16 +1767,27 @@ function pulseSync(text = 'Сохранение...') {
   syncTimer = setTimeout(() => setSync('online', 'Синхронизировано'), 1500);
 }
 
-/* ============================================================
-   ПОДПИСКИ
-   ============================================================ */
+let allDataReady = false;
+let connected = false;
+
+function checkReady() {
+  if (allDataReady && connected) {
+    hideLoader();
+    setSync('online', 'Синхронизировано');
+  }
+}
+
 function updateLoaderDetail() {
   const items = ['marks', 'schedule', 'homework', 'holidays', 'meta'];
   const done = items.filter(k => ready[k]).length;
   const el = document.getElementById('loaderDetail');
   if (el) el.textContent = `Загружено ${done} из ${items.length}`;
-  if (done === items.length) hideLoader();
+  if (done === items.length) {
+    allDataReady = true;
+    checkReady();
+  }
 }
+
 function hideLoader() {
   const loader = document.getElementById('loader');
   if (!loader || loader.classList.contains('hidden')) return;
@@ -2015,10 +1796,27 @@ function hideLoader() {
   setTimeout(() => loader.classList.add('hidden'), 300);
 }
 
+let statusInterval = setInterval(() => {
+  if (allDataReady && connected) {
+    clearInterval(statusInterval);
+    return;
+  }
+  const items = ['marks', 'schedule', 'homework', 'holidays', 'meta'];
+  const done = items.filter(k => ready[k]).length;
+  if (!connected) {
+    setSync('syncing', 'Подключение к серверу...');
+  } else if (done < items.length) {
+    setSync('syncing', `Загрузка ${done}/${items.length}...`);
+  }
+}, 600);
+
 setTimeout(() => {
-  hideLoader();
-  setSync('offline', 'Долгое подключение');
-}, 6000);
+  if (!allDataReady) {
+    clearInterval(statusInterval);
+    hideLoader();
+    setSync('offline', 'Оффлайн-режим');
+  }
+}, 30000);
 
 function subscribeAll() {
   onValue(ref(db, PATHS.marks), snap => {
@@ -2057,18 +1855,16 @@ function subscribeAll() {
   }, err => { ready.meta = true; updateLoaderDetail(); console.error(err); });
 
   onValue(ref(db, '.info/connected'), snap => {
-    if (snap.val() === true) {
-      setSync('online', 'Синхронизировано');
-      if (Object.values(ready).every(Boolean)) hideLoader();
+    connected = snap.val() === true;
+    if (connected) {
+      setSync('syncing', 'Загрузка данных...');
+      checkReady();
     } else {
-      setSync('offline', 'Подключение...');
+      setSync('syncing', 'Подключение...');
     }
   });
 }
 
-/* ============================================================
-   АНИМАЦИЯ
-   ============================================================ */
 let lastTabIndex = 0;
 let lastRoleIndex = 0;
 
@@ -2087,9 +1883,6 @@ function animatePanel(panelId, visible, direction) {
   }
 }
 
-/* ============================================================
-   РОЛЬ И ВКЛАДКИ
-   ============================================================ */
 function setRole(role) {
   const newRoleIndex = role === 'teacher' ? 0 : 1;
   const direction = newRoleIndex > lastRoleIndex ? 'right' :
@@ -2154,9 +1947,6 @@ function renderAll(direction = null) {
   }
 }
 
-/* ============================================================
-   ПРОФИЛЬ
-   ============================================================ */
 function renderProfileButton() {
   const p = (fb.meta && fb.meta.teacherProfile) || { name: '', className: '' };
   const nameEl = document.getElementById('profileBtnName');
@@ -2202,9 +1992,6 @@ async function saveProfile() {
   closeProfileModal();
 }
 
-/* ============================================================
-   ПРЕДМЕТЫ
-   ============================================================ */
 function renderSubjectPills() {
   const container = document.getElementById('subjectPills');
   container.innerHTML = '';
@@ -2230,9 +2017,6 @@ function renderSubjectPills() {
   }
 }
 
-/* ============================================================
-   ЖУРНАЛ
-   ============================================================ */
 function onDateChange() {
   state.currentDate = document.getElementById('datePicker').value || todayStr();
   renderAll();
@@ -2315,9 +2099,6 @@ function renderJournal() {
   });
 }
 
-/* ============================================================
-   МОДАЛЬНОЕ ОКНО ОЦЕНКИ
-   ============================================================ */
 let editing = { subject: null, student: null, date: null, markId: null, selectedMark: null };
 
 function openMarkModal(student, date, markId) {
@@ -2424,9 +2205,6 @@ async function deleteMark() {
   closeMarkModal();
 }
 
-/* ============================================================
-   Д/З
-   ============================================================ */
 async function addHomework() {
   const text = document.getElementById('hwInput').value.trim();
   if (!text) { alert('Введите текст задания'); return; }
@@ -2452,7 +2230,7 @@ async function addHomework() {
       text: text,
       individualFor: individualFor,
       dueDate: dueDate,
-      lessonDate: state.currentDate, // дата, когда был урок
+      lessonDate: state.currentDate,
       done: {},
       createdAt: Date.now()
     });
@@ -2469,31 +2247,22 @@ async function deleteHomework(id) {
   catch (e) { console.error(e); setSync('offline', 'Ошибка'); }
 }
 
-/* Д/З, относящееся к указанной дате (урок в этот день) */
 function getHomeworkForLessonDate(lessonDate, subjectId = null) {
   return Object.values(fb.homework || {}).filter(h => {
     if (subjectId && h.subjectId !== subjectId) return false;
     return h.lessonDate === lessonDate;
   });
 }
-
-/* Д/З, у которых dueDate == указанной дате (ученик видит, что сдать) */
-function getHomeworkForDueDate(dueDate) {
-  return Object.values(fb.homework || {}).filter(h => h.dueDate === dueDate);
-}
-
 function getHomeworkList() {
   return Object.values(fb.homework || {}).sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
 }
 
-/* Рендер панели учителя Д/З */
 function renderHomeworkTeacher() {
   const iso = state.currentDate;
   const wd = getWeekday(iso);
   const scheduleIds = getScheduleForDate(iso);
   const status = getDayStatus(iso);
 
-  // Информация о дне
   const info = document.getElementById('hwDayInfo');
   if (status === 'weekend') {
     info.innerHTML = '<span class="badge" style="background:var(--orange);">🎉 Выходной</span> В этот день уроков нет — Д/З задать нельзя.';
@@ -2507,7 +2276,6 @@ function renderHomeworkTeacher() {
       scheduleIds.map(id => getSubjectIconById(id) + ' ' + getSubjectName(id)).join(', ');
   }
 
-  // Заполняем список предметов в селекте (только для этого дня недели)
   const subjSel = document.getElementById('hwSubjectSelect');
   const prevVal = subjSel.value;
   subjSel.innerHTML = '';
@@ -2529,13 +2297,9 @@ function renderHomeworkTeacher() {
     else subjSel.value = scheduleIds[0];
   }
 
-  // Ставим дату задания по умолчанию
   const dueInput = document.getElementById('hwDueDate');
-  if (!dueInput.value) {
-    dueInput.value = state.currentDate;
-  }
+  if (!dueInput.value) dueInput.value = state.currentDate;
 
-  // Список Д/З заданных в этот день (по всем предметам дня)
   const list = document.getElementById('hwListTeacher');
   list.innerHTML = '';
 
@@ -2546,14 +2310,12 @@ function renderHomeworkTeacher() {
     return;
   }
 
-  // Группируем по предмету
   const bySubject = {};
   todaysHw.forEach(hw => {
     if (!bySubject[hw.subjectId]) bySubject[hw.subjectId] = [];
     bySubject[hw.subjectId].push(hw);
   });
 
-  // Выводим в порядке расписания
   scheduleIds.forEach(subjId => {
     if (!bySubject[subjId]) return;
     const group = document.createElement('div');
@@ -2570,7 +2332,6 @@ function renderHomeworkTeacher() {
     bySubject[subjId].forEach(hw => {
       group.appendChild(renderHwItemTeacher(hw));
     });
-
     list.appendChild(group);
   });
 }
@@ -2643,14 +2404,11 @@ function renderHwItemTeacher(hw) {
   return div;
 }
 
-/* Рендер Д/З для ученика — все Д/З по всем предметам */
 function renderHomeworkStudent() {
   const list = document.getElementById('hwListStudent');
   list.innerHTML = '';
 
   const student = state.currentStudent;
-
-  // Все Д/З, которые видит ученик
   const hwForStudent = getHomeworkList().filter(h =>
     h.individualFor === null ||
     h.individualFor === undefined ||
@@ -2662,7 +2420,6 @@ function renderHomeworkStudent() {
     return;
   }
 
-  // Группируем по дате сдачи (dueDate)
   const byDue = {};
   hwForStudent.forEach(hw => {
     const key = hw.dueDate || 'no-date';
@@ -2698,7 +2455,7 @@ function renderHomeworkStudent() {
     }
     group.appendChild(title);
 
-    byDue[dueKey].sort((a, b) => (a.subjectId > b.subjectId ? 1 : -1)).forEach(hw => {
+    byDue[dueKey].forEach(hw => {
       group.appendChild(renderHwItemStudent(hw, student));
     });
 
@@ -2752,9 +2509,6 @@ function renderHwItemStudent(hw, student) {
   return div;
 }
 
-/* ============================================================
-   РАСПИСАНИЕ (учитель)
-   ============================================================ */
 function renderScheduleTeacher() {
   const iso = state.currentDate;
   document.getElementById('schedCurrentDate').textContent = formatDate(iso);
@@ -2849,9 +2603,6 @@ async function clearScheduleDay() {
   catch (e) { console.error(e); setSync('offline', 'Ошибка'); }
 }
 
-/* ============================================================
-   КАНИКУЛЫ
-   ============================================================ */
 async function addHoliday() {
   const title = document.getElementById('holidayTitle').value.trim() || 'Каникулы';
   const start = document.getElementById('holidayStart').value;
@@ -2907,9 +2658,6 @@ function renderHolidayList() {
   });
 }
 
-/* ============================================================
-   УЧЕНИК
-   ============================================================ */
 function renderStudentView() {
   const picker = document.getElementById('studentPicker');
   if (picker.value) state.currentStudent = picker.value;
@@ -2992,9 +2740,6 @@ function closeViewModal() {
   document.body.style.overflow = '';
 }
 
-/* ============================================================
-   РАСПИСАНИЕ (ученик)
-   ============================================================ */
 function renderScheduleStudent() {
   const iso = state.currentDate;
   const wd = getWeekday(iso);
@@ -3067,9 +2812,6 @@ function renderScheduleStudent() {
   }
 }
 
-/* ============================================================
-   ИНИЦИАЛИЗАЦИЯ
-   ============================================================ */
 function initUI() {
   const dp = document.getElementById('datePicker');
   dp.value = state.currentDate || todayStr();
@@ -3094,8 +2836,6 @@ function initUI() {
   lastTabIndex = 0;
   document.getElementById('tabJournal').classList.add('active');
   document.getElementById('btnTeacher').classList.add('active');
-
-  // Дата Д/З по умолчанию — текущая
   document.getElementById('hwDueDate').value = state.currentDate;
 }
 
@@ -3135,11 +2875,21 @@ document.addEventListener('keydown', e => {
   if (e.key === 'Escape') {
     if (!document.getElementById('markModal').classList.contains('hidden')) closeMarkModal();
     if (!document.getElementById('viewMarkModal').classList.contains('hidden')) closeViewModal();
-    if (!documentмени.getElementById('profileModal').classList.contains('hidden'))лось closeProfileModal();
+    if (!document.getElementById('profileModal').classList.contains('hidden')) closeProfileModal();
   }
 });
-</
+</script>
 
-script>
+<!-- Регистрация Service Worker для PWA -->
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(err => {
+      console.log('SW registration failed:', err);
+    });
+  });
+}
+</script>
+
 </body>
 </html>
