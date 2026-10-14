@@ -1,7 +1,7 @@
 {
   "name": "Школьный журнал",
   "short_name": "Журнал",
-  "description": "Электронный школьный журнал с оценками, Д/З и расписанием",
+  "description": "Электронный школьный журнал",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
