@@ -55,6 +55,7 @@
 
   .container { max-width: 1100px; margin: 0 auto; }
 
+  /* ============ SYNC STATUS ============ */
   .sync-status {
     position: fixed;
     bottom: 16px;
@@ -87,6 +88,7 @@
     50% { opacity: 0.5; transform: scale(0.85); }
   }
 
+  /* ============ LOADER ============ */
   .loader-overlay {
     position: fixed;
     inset: 0;
@@ -112,6 +114,206 @@
   .loader-text { font-size: 15px; font-weight: 700; color: var(--text-muted); }
   .loader-detail { font-size: 12px; color: var(--text-muted); font-weight: 500; opacity: 0.75; }
 
+  /* ============ LOGIN SCREEN ============ */
+  .login-screen {
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(135deg, #eef2ff 0%, #f1f5f9 50%, #ecfeff 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 1500;
+    overflow-y: auto;
+  }
+
+  .login-card {
+    background: var(--card);
+    border-radius: 24px;
+    box-shadow: 0 20px 60px rgba(99, 102, 241, 0.15), 0 0 0 1px rgba(99, 102, 241, 0.05);
+    padding: 32px 28px;
+    width: 100%;
+    max-width: 400px;
+    animation: loginIn 0.5s cubic-bezier(0.34, 1.4, 0.64, 1);
+  }
+
+  @keyframes loginIn {
+    from { opacity: 0; transform: translateY(24px) scale(0.96); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .login-logo {
+    width: 72px;
+    height: 72px;
+    margin: 0 auto 16px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 36px;
+    box-shadow: 0 10px 28px rgba(99, 102, 241, 0.35);
+    animation: logoFloat 3s ease-in-out infinite;
+  }
+
+  @keyframes logoFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+
+  .login-title {
+    font-size: 24px;
+    font-weight: 800;
+    text-align: center;
+    color: var(--text);
+    letter-spacing: -0.5px;
+    margin-bottom: 4px;
+  }
+
+  .login-subtitle {
+    font-size: 14px;
+    color: var(--text-muted);
+    text-align: center;
+    margin-bottom: 24px;
+    font-weight: 500;
+  }
+
+  /* Переключатель ученик/учитель */
+  .login-tabs {
+    position: relative;
+    display: flex;
+    background: var(--bg);
+    border-radius: 12px;
+    padding: 4px;
+    margin-bottom: 22px;
+    isolation: isolate;
+  }
+
+  .login-tab {
+    position: relative;
+    z-index: 1;
+    flex: 1;
+    padding: 11px 14px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-muted);
+    border-radius: 9px;
+    transition: color 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-family: inherit;
+  }
+
+  .login-tab.active { color: var(--primary); }
+
+  .login-tabs::before {
+    content: '';
+    position: absolute;
+    top: 4px;
+    bottom: 4px;
+    left: 4px;
+    width: calc(50% - 4px);
+    background: var(--card);
+    border-radius: 9px;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.1);
+    transition: transform 0.35s cubic-bezier(0.34, 1.4, 0.64, 1);
+    z-index: 0;
+  }
+
+  .login-tabs.teacher::before { transform: translateX(calc(100% + 4px)); }
+
+  .login-form-group { margin-bottom: 16px; }
+
+  .login-form-group label {
+    display: block;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+
+  .login-form-group input,
+  .login-form-group select {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    font-size: 15px;
+    font-family: inherit;
+    outline: none;
+    background: var(--bg);
+    color: var(--text);
+    transition: all 0.15s;
+  }
+
+  .login-form-group input:focus,
+  .login-form-group select:focus {
+    border-color: var(--primary);
+    background: var(--card);
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.12);
+  }
+
+  .login-hint {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 6px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .login-error {
+    background: #fef2f2;
+    color: var(--red);
+    border: 1.5px solid #fecaca;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    display: none;
+    align-items: center;
+    gap: 8px;
+    animation: shake 0.4s ease;
+  }
+
+  .login-error.visible { display: flex; }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-6px); }
+    40%, 80% { transform: translateX(6px); }
+  }
+
+  .login-btn {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    color: #fff;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+    box-shadow: 0 6px 18px rgba(99, 102, 241, 0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .login-btn:hover { box-shadow: 0 8px 24px rgba(99, 102, 241, 0.5); transform: translateY(-1px); }
+  .login-btn:active { transform: scale(0.98); }
+
+  /* ============ HEADER ============ */
   .app-header {
     background: var(--card);
     border-radius: var(--radius);
@@ -119,6 +321,7 @@
     padding: 18px 20px;
     margin-bottom: 16px;
   }
+
   .app-header-top {
     display: flex;
     align-items: center;
@@ -126,6 +329,7 @@
     gap: 12px;
     flex-wrap: wrap;
   }
+
   .logo {
     display: flex;
     align-items: center;
@@ -135,6 +339,7 @@
     color: var(--text);
     letter-spacing: -0.5px;
   }
+
   .logo-icon {
     width: 40px;
     height: 40px;
@@ -146,7 +351,13 @@
     font-size: 20px;
     box-shadow: 0 6px 16px rgba(99, 102, 241, 0.35);
   }
-  .header-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
 
   .profile-btn {
     display: flex;
@@ -160,13 +371,16 @@
     transition: all 0.2s;
     font-family: inherit;
   }
+
   .profile-btn:hover {
     border-color: var(--primary-light);
     box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15);
     transform: translateY(-1px);
   }
+
   .profile-avatar {
-    width: 34px; height: 34px;
+    width: 34px;
+    height: 34px;
     border-radius: 50%;
     background: linear-gradient(135deg, var(--primary), var(--primary-light));
     color: #fff;
@@ -177,6 +391,7 @@
     font-size: 14px;
     flex-shrink: 0;
   }
+
   .profile-info-text {
     display: flex;
     flex-direction: column;
@@ -184,6 +399,7 @@
     line-height: 1.2;
     text-align: left;
   }
+
   .profile-info-text .p-name {
     font-size: 13px;
     font-weight: 700;
@@ -193,47 +409,43 @@
     overflow: hidden;
     text-overflow: ellipsis;
   }
-  .profile-info-text .p-class { font-size: 11px; font-weight: 600; color: var(--primary); }
-  .profile-info-text .p-empty { font-size: 13px; font-weight: 700; color: var(--text-muted); }
 
-  .role-switch {
-    position: relative;
-    display: flex;
-    background: var(--bg);
-    border-radius: 12px;
-    padding: 4px;
-    gap: 4px;
-    isolation: isolate;
-  }
-  .role-switch button {
-    position: relative;
-    z-index: 1;
-    padding: 9px 18px;
-    border: none;
-    background: transparent;
-    cursor: pointer;
-    font-size: 14px;
+  .profile-info-text .p-class {
+    font-size: 11px;
     font-weight: 600;
+    color: var(--primary);
+  }
+
+  .profile-info-text .p-empty {
+    font-size: 13px;
+    font-weight: 700;
     color: var(--text-muted);
-    border-radius: 9px;
-    transition: color 0.3s ease;
-    white-space: nowrap;
+  }
+
+  /* Кнопка выхода */
+  .logout-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 14px;
+    border: 1.5px solid #fecaca;
+    background: #fef2f2;
+    color: var(--red);
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
     font-family: inherit;
   }
-  .role-switch button.active { color: var(--primary); }
-  .role-switch::before {
-    content: '';
-    position: absolute;
-    top: 4px; bottom: 4px; left: 4px;
-    width: calc(50% - 4px);
-    background: var(--card);
-    border-radius: 9px;
-    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.1);
-    transition: transform 0.35s cubic-bezier(0.34, 1.4, 0.64, 1);
-    z-index: 0;
-  }
-  .role-switch.student::before { transform: translateX(calc(100% + 4px)); }
 
+  .logout-btn:hover {
+    background: #fee2e2;
+    border-color: #fca5a5;
+    transform: translateY(-1px);
+  }
+
+  /* ============ TABS ============ */
   .tabs {
     position: relative;
     display: flex;
@@ -244,6 +456,7 @@
     padding: 4px;
     isolation: isolate;
   }
+
   .tab {
     position: relative;
     z-index: 1;
@@ -263,11 +476,15 @@
     gap: 6px;
     font-family: inherit;
   }
+
   .tab.active { color: var(--primary); }
+
   .tabs::before {
     content: '';
     position: absolute;
-    top: 4px; bottom: 4px; left: 4px;
+    top: 4px;
+    bottom: 4px;
+    left: 4px;
     width: calc((100% - 8px) / 3);
     background: var(--card);
     border-radius: 9px;
@@ -275,9 +492,11 @@
     transition: transform 0.35s cubic-bezier(0.34, 1.4, 0.64, 1);
     z-index: 0;
   }
+
   .tabs.tab-homework::before { transform: translateX(calc(100% + 4px)); }
   .tabs.tab-schedule::before { transform: translateX(calc(200% + 8px)); }
 
+  /* ============ SUBJECT PICKER ============ */
   .subject-bar {
     display: flex;
     align-items: center;
@@ -287,6 +506,7 @@
     border-top: 1px solid var(--border);
     flex-wrap: wrap;
   }
+
   .subject-bar-label {
     font-size: 13px;
     font-weight: 700;
@@ -296,7 +516,9 @@
     gap: 5px;
     flex-shrink: 0;
   }
+
   .subject-pills { display: flex; gap: 6px; flex-wrap: wrap; flex: 1; }
+
   .subject-pill {
     padding: 8px 14px;
     border-radius: 20px;
@@ -313,11 +535,13 @@
     align-items: center;
     gap: 6px;
   }
+
   .subject-pill:hover {
     border-color: var(--primary-light);
     color: var(--primary);
     transform: translateY(-2px);
   }
+
   .subject-pill.active {
     background: linear-gradient(135deg, var(--primary), var(--primary-light));
     color: #fff;
@@ -335,7 +559,9 @@
     padding-top: 12px;
     border-top: 1px solid var(--border);
   }
+
   .control-group { display: flex; align-items: center; gap: 8px; }
+
   .control-group label { font-size: 13px; font-weight: 600; color: var(--text-muted); }
 
   select, input[type="text"], input[type="date"], textarea {
@@ -1120,11 +1346,14 @@
       align-items: stretch;
       gap: 10px;
     }
-    .header-right { width: 100%; flex-direction: column-reverse; gap: 8px; }
-    .role-switch { width: 100%; }
-    .role-switch button { flex: 1; padding: 10px; font-size: 13px; }
-    .profile-btn { width: 100%; justify-content: flex-start; }
+    .header-right { width: 100%; flex-wrap: wrap; gap: 8px; }
+    .header-right > button,
+    .header-right > .profile-btn { flex: 1; min-width: 0; }
     .profile-info-text .p-name { max-width: none; }
+
+    .login-card { padding: 26px 20px; border-radius: 20px; }
+    .login-title { font-size: 21px; }
+    .login-logo { width: 64px; height: 64px; font-size: 30px; }
 
     .tabs { gap: 3px; }
     .tab { padding: 10px 4px; font-size: 11px; gap: 3px; }
@@ -1222,18 +1451,62 @@
 </head>
 <body>
 
-<div class="loader-overlay" id="loader">
+<!-- ============ ЭКРАН ВХОДА ============ -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-card">
+    <div class="login-logo">📓</div>
+    <div class="login-title">Школьный журнал</div>
+    <div class="login-subtitle" id="loginSubtitle">Выберите, кто вы</div>
+
+    <div class="login-tabs" id="loginTabs">
+      <button class="login-tab active" id="loginTabStudent" onclick="switchLoginTab('student')">🎓 Ученик</button>
+      <button class="login-tab" id="loginTabTeacher" onclick="switchLoginTab('teacher')">👨‍🏫 Учитель</button>
+    </div>
+
+    <!-- Форма ученика -->
+    <div id="loginStudentForm">
+      <div class="login-form-group">
+        <label>Выберите себя</label>
+        <select id="loginStudentSelect"></select>
+      </div>
+      <div class="login-form-group">
+        <label>Пароль</label>
+        <input type="password" id="loginStudentPass" placeholder="Введите пароль" autocomplete="off" onkeydown="if(event.key==='Enter')doStudentLogin()">
+      </div>
+      <div class="login-error" id="loginStudentError"></div>
+      <button class="login-btn" onclick="doStudentLogin()">Войти как ученик</button>
+    </div>
+
+    <!-- Форма учителя -->
+    <div id="loginTeacherForm" class="hidden">
+      <div class="login-form-group">
+        <label>Логин</label>
+        <input type="text" id="loginTeacherLogin" placeholder="Введите логин" autocomplete="off">
+        <div class="login-hint">🔒 Логин только для учителя</div>
+      </div>
+      <div class="login-form-group">
+        <label>Пароль</label>
+        <input type="password" id="loginTeacherPass" placeholder="Введите пароль" autocomplete="off" onkeydown="if(event.key==='Enter')doTeacherLogin()">
+      </div>
+      <div class="login-error" id="loginTeacherError"></div>
+      <button class="login-btn" onclick="doTeacherLogin()">Войти как учитель</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ LOADER ============ -->
+<div class="loader-overlay hidden" id="loader">
   <div class="loader-spinner"></div>
   <div class="loader-text">Подключение к Firebase...</div>
   <div class="loader-detail" id="loaderDetail">Инициализация</div>
 </div>
 
-<div class="sync-status syncing" id="syncStatus">
+<div class="sync-status syncing hidden" id="syncStatus">
   <span class="sync-dot"></span>
   <span id="syncText">Синхронизация...</span>
 </div>
 
-<div class="container">
+<div class="container hidden" id="appContainer">
 
   <div class="app-header">
     <div class="app-header-top">
@@ -1249,10 +1522,14 @@
             <div class="p-class" id="profileBtnClass"></div>
           </div>
         </button>
-        <div class="role-switch" id="roleSwitch">
-          <button id="btnTeacher" class="active" onclick="setRole('teacher')">👨‍🏫 Учитель</button>
-          <button id="btnStudent" onclick="setRole('student')">🎓 Ученик</button>
-        </div>
+        <button class="profile-btn hidden" id="studentBadgeBtn" style="cursor:default;">
+          <div class="profile-avatar" style="background:linear-gradient(135deg,#10b981,#34d399);">🎓</div>
+          <div class="profile-info-text">
+            <div class="p-name" id="studentBadgeName">Ученик</div>
+            <div class="p-class" style="color:var(--green);">Ученик</div>
+          </div>
+        </button>
+        <button class="logout-btn" onclick="logout()">🚪 Выход</button>
       </div>
     </div>
 
@@ -1271,11 +1548,6 @@
       <div class="control-group" id="teacherDateBlock">
         <label>📅 Дата</label>
         <input type="date" id="datePicker" onchange="onDateChange()">
-      </div>
-
-      <div class="control-group hidden" id="studentSelectBlock">
-        <label>🎓 Ученик</label>
-        <select id="studentPicker" onchange="onStudentChange()"></select>
       </div>
     </div>
   </div>
@@ -1553,6 +1825,17 @@ const PATHS = {
   holidays: ROOT_PATH + '/holidays'
 };
 
+/* ============================================================
+   ЛОГИНЫ И ПАРОЛИ
+   ============================================================ */
+const TEACHER_LOGIN = '2347';
+const TEACHER_PASSWORD = '2203';
+const STUDENT_PASSWORD = '1';
+const AUTH_STORAGE_KEY = 'school_journal_auth';
+
+/* ============================================================
+   ДАННЫЕ
+   ============================================================ */
 const STUDENTS = [
   "Абрамов Артём", "Белова Мария", "Волков Дмитрий", "Григорьева Анна",
   "Дмитриев Иван", "Егорова София", "Жуков Максим", "Зайцева Елизавета",
@@ -1622,6 +1905,9 @@ const ready = {
   meta: false
 };
 
+/* ============================================================
+   УТИЛИТЫ
+   ============================================================ */
 function todayStr() {
   const d = new Date();
   return d.getFullYear() + '-' +
@@ -1686,6 +1972,91 @@ function getMarks(subjectId, studentName, date) {
   return Object.keys(byDate).map(id => ({ id, ...byDate[id] }));
 }
 
+/* ============================================================
+   АВТОРИЗАЦИЯ
+   ============================================================ */
+function saveAuth(data) {
+  try { localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(data)); } catch (e) {}
+}
+function loadAuth() {
+  try {
+    const raw = localStorage.getItem(AUTH_STORAGE_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch (e) { return null; }
+}
+function clearAuth() {
+  try { localStorage.removeItem(AUTH_STORAGE_KEY); } catch (e) {}
+}
+
+let loginCurrentTab = 'student';
+
+function switchLoginTab(tab) {
+  loginCurrentTab = tab;
+  document.getElementById('loginTabs').classList.toggle('teacher', tab === 'teacher');
+  document.getElementById('loginTabStudent').classList.toggle('active', tab === 'student');
+  document.getElementById('loginTabTeacher').classList.toggle('active', tab === 'teacher');
+  document.getElementById('loginStudentForm').classList.toggle('hidden', tab !== 'student');
+  document.getElementById('loginTeacherForm').classList.toggle('hidden', tab !== 'teacher');
+  document.getElementById('loginSubtitle').textContent = tab === 'student'
+    ? 'Выберите себя и введите пароль'
+    : 'Введите логин и пароль';
+}
+
+function showLoginError(which, text) {
+  const el = document.getElementById(which === 'student' ? 'loginStudentError' : 'loginTeacherError');
+  el.textContent = '❌ ' + text;
+  el.classList.add('visible');
+}
+
+function hideLoginErrors() {
+  document.getElementById('loginStudentError').classList.remove('visible');
+  document.getElementById('loginTeacherError').classList.remove('visible');
+}
+
+function doStudentLogin() {
+  hideLoginErrors();
+  const name = document.getElementById('loginStudentSelect').value;
+  const pass = document.getElementById('loginStudentPass').value.trim();
+
+  if (!name) { showLoginError('student', 'Выберите себя из списка'); return; }
+  if (pass !== STUDENT_PASSWORD) {
+    showLoginError('student', 'Неверный пароль');
+    document.getElementById('loginStudentPass').value = '';
+    document.getElementById('loginStudentPass').focus();
+    return;
+  }
+
+  saveAuth({ role: 'student', student: name });
+  document.getElementById('loginScreen').classList.add('hidden');
+  startApp('student', name);
+}
+
+function doTeacherLogin() {
+  hideLoginErrors();
+  const login = document.getElementById('loginTeacherLogin').value.trim();
+  const pass = document.getElementById('loginTeacherPass').value.trim();
+
+  if (login !== TEACHER_LOGIN || pass !== TEACHER_PASSWORD) {
+    showLoginError('teacher', 'Неверный логин или пароль');
+    document.getElementById('loginTeacherPass').value = '';
+    document.getElementById('loginTeacherPass').focus();
+    return;
+  }
+
+  saveAuth({ role: 'teacher' });
+  document.getElementById('loginScreen').classList.add('hidden');
+  startApp('teacher', null);
+}
+
+function logout() {
+  if (!confirm('Выйти из журнала?')) return;
+  clearAuth();
+  location.reload();
+}
+
+/* ============================================================
+   FIREBASE ЗАПИСЬ
+   ============================================================ */
 async function fbSetMark(subjectId, studentName, date, markObj) {
   const path = `${PATHS.marks}/${subjectId}/${studentKey(studentName)}/${date}/${markObj.id}`;
   await set(ref(db, path), {
@@ -1754,6 +2125,9 @@ async function fbSaveProfile(profile) {
   await set(ref(db, `${PATHS.meta}/teacherProfile`), profile);
 }
 
+/* ============================================================
+   СТАТУС
+   ============================================================ */
 let syncTimer = null;
 function setSync(status, text) {
   const el = document.getElementById('syncStatus');
@@ -1767,6 +2141,9 @@ function pulseSync(text = 'Сохранение...') {
   syncTimer = setTimeout(() => setSync('online', 'Синхронизировано'), 1500);
 }
 
+/* ============================================================
+   ПОДПИСКИ
+   ============================================================ */
 let allDataReady = false;
 let connected = false;
 
@@ -1865,8 +2242,10 @@ function subscribeAll() {
   });
 }
 
+/* ============================================================
+   АНИМАЦИЯ
+   ============================================================ */
 let lastTabIndex = 0;
-let lastRoleIndex = 0;
 
 function animatePanel(panelId, visible, direction) {
   const el = document.getElementById(panelId);
@@ -1883,20 +2262,6 @@ function animatePanel(panelId, visible, direction) {
   }
 }
 
-function setRole(role) {
-  const newRoleIndex = role === 'teacher' ? 0 : 1;
-  const direction = newRoleIndex > lastRoleIndex ? 'right' :
-                    newRoleIndex < lastRoleIndex ? 'left' : null;
-  lastRoleIndex = newRoleIndex;
-  state.role = role;
-  document.getElementById('roleSwitch').classList.toggle('student', role === 'student');
-  document.getElementById('btnTeacher').classList.toggle('active', role === 'teacher');
-  document.getElementById('btnStudent').classList.toggle('active', role === 'student');
-  document.getElementById('teacherDateBlock').classList.toggle('hidden', role !== 'teacher');
-  document.getElementById('studentSelectBlock').classList.toggle('hidden', role !== 'student');
-  document.getElementById('profileBtn').classList.toggle('hidden', role !== 'teacher');
-  renderAll(direction);
-}
 function setTab(tab) {
   const idx = tab === 'journal' ? 0 : tab === 'homework' ? 1 : 2;
   const direction = idx > lastTabIndex ? 'right' : idx < lastTabIndex ? 'left' : null;
@@ -1911,6 +2276,7 @@ function setTab(tab) {
   document.getElementById('tabSchedule').classList.toggle('active', tab === 'schedule');
   renderAll(direction);
 }
+
 function setHwTab(tab) {
   state.hwTab = tab;
   document.getElementById('hwTabsNav').classList.toggle('individual', tab === 'individual');
@@ -1919,23 +2285,28 @@ function setHwTab(tab) {
   document.getElementById('hwStudentGroup').classList.toggle('hidden', tab !== 'individual');
   renderAll();
 }
+
 function renderAll(direction = null) {
   const isTeacher = state.role === 'teacher';
   const isJournal = state.tab === 'journal';
   const isHw = state.tab === 'homework';
   const isSched = state.tab === 'schedule';
+
   animatePanel('teacherJournalView',  isTeacher && isJournal,   direction);
   animatePanel('teacherHomeworkView', isTeacher && isHw,        direction);
   animatePanel('teacherScheduleView', isTeacher && isSched,     direction);
   animatePanel('studentJournalView',  !isTeacher && isJournal,  direction);
   animatePanel('studentHomeworkView', !isTeacher && isHw,       direction);
   animatePanel('studentScheduleView', !isTeacher && isSched,    direction);
+
   renderSubjectPills();
   renderProfileButton();
+
   const subjectName = getSubjectName(state.currentSubject);
   document.getElementById('journalSubjectTag').textContent = subjectName;
   document.getElementById('hwSubjectTagTeacher').textContent = subjectName;
   document.getElementById('hwSubjectTagStudent').textContent = subjectName;
+
   if (isTeacher) {
     if (isJournal) renderJournal();
     else if (isHw) renderHomeworkTeacher();
@@ -1947,6 +2318,9 @@ function renderAll(direction = null) {
   }
 }
 
+/* ============================================================
+   ПРОФИЛЬ
+   ============================================================ */
 function renderProfileButton() {
   const p = (fb.meta && fb.meta.teacherProfile) || { name: '', className: '' };
   const nameEl = document.getElementById('profileBtnName');
@@ -1968,7 +2342,14 @@ function renderProfileButton() {
     classEl.textContent = '';
     classEl.classList.add('hidden');
   }
+
+  // Бейдж ученика
+  if (state.role === 'student') {
+    document.getElementById('studentBadgeName').textContent = state.currentStudent;
+    document.getElementById('studentBadgeBtn').classList.remove('hidden');
+  }
 }
+
 function openProfileModal() {
   const p = (fb.meta && fb.meta.teacherProfile) || { name: '', className: '' };
   document.getElementById('profileNameInput').value = p.name || '';
@@ -1992,6 +2373,9 @@ async function saveProfile() {
   closeProfileModal();
 }
 
+/* ============================================================
+   ПРЕДМЕТЫ
+   ============================================================ */
 function renderSubjectPills() {
   const container = document.getElementById('subjectPills');
   container.innerHTML = '';
@@ -2017,14 +2401,14 @@ function renderSubjectPills() {
   }
 }
 
+/* ============================================================
+   ЖУРНАЛ
+   ============================================================ */
 function onDateChange() {
   state.currentDate = document.getElementById('datePicker').value || todayStr();
   renderAll();
 }
-function onStudentChange() {
-  state.currentStudent = document.getElementById('studentPicker').value;
-  renderAll();
-}
+
 function renderJournal() {
   state.currentDate = document.getElementById('datePicker').value || todayStr();
   const iso = state.currentDate;
@@ -2099,6 +2483,9 @@ function renderJournal() {
   });
 }
 
+/* ============================================================
+   МОДАЛЬНОЕ ОКНО ОЦЕНКИ
+   ============================================================ */
 let editing = { subject: null, student: null, date: null, markId: null, selectedMark: null };
 
 function openMarkModal(student, date, markId) {
@@ -2205,6 +2592,9 @@ async function deleteMark() {
   closeMarkModal();
 }
 
+/* ============================================================
+   Д/З
+   ============================================================ */
 async function addHomework() {
   const text = document.getElementById('hwInput').value.trim();
   if (!text) { alert('Введите текст задания'); return; }
@@ -2509,6 +2899,9 @@ function renderHwItemStudent(hw, student) {
   return div;
 }
 
+/* ============================================================
+   РАСПИСАНИЕ (учитель)
+   ============================================================ */
 function renderScheduleTeacher() {
   const iso = state.currentDate;
   document.getElementById('schedCurrentDate').textContent = formatDate(iso);
@@ -2603,6 +2996,9 @@ async function clearScheduleDay() {
   catch (e) { console.error(e); setSync('offline', 'Ошибка'); }
 }
 
+/* ============================================================
+   КАНИКУЛЫ
+   ============================================================ */
 async function addHoliday() {
   const title = document.getElementById('holidayTitle').value.trim() || 'Каникулы';
   const start = document.getElementById('holidayStart').value;
@@ -2658,9 +3054,10 @@ function renderHolidayList() {
   });
 }
 
+/* ============================================================
+   УЧЕНИК
+   ============================================================ */
 function renderStudentView() {
-  const picker = document.getElementById('studentPicker');
-  if (picker.value) state.currentStudent = picker.value;
   document.getElementById('studentNameTitle').textContent = '🎓 ' + state.currentStudent;
   const allMarks = [];
   Object.keys(fb.marks || {}).forEach(subjectId => {
@@ -2740,6 +3137,9 @@ function closeViewModal() {
   document.body.style.overflow = '';
 }
 
+/* ============================================================
+   РАСПИСАНИЕ (ученик)
+   ============================================================ */
 function renderScheduleStudent() {
   const iso = state.currentDate;
   const wd = getWeekday(iso);
@@ -2812,18 +3212,24 @@ function renderScheduleStudent() {
   }
 }
 
-function initUI() {
-  const dp = document.getElementById('datePicker');
-  dp.value = state.currentDate || todayStr();
-  const sp = document.getElementById('studentPicker');
-  sp.innerHTML = '';
+/* ============================================================
+   ИНИЦИАЛИЗАЦИЯ
+   ============================================================ */
+function initLogin() {
+  const sel = document.getElementById('loginStudentSelect');
+  sel.innerHTML = '';
   STUDENTS.forEach(s => {
     const opt = document.createElement('option');
     opt.value = s;
     opt.textContent = s;
-    sp.appendChild(opt);
+    sel.appendChild(opt);
   });
-  sp.value = state.currentStudent;
+}
+
+function initUI() {
+  const dp = document.getElementById('datePicker');
+  dp.value = state.currentDate || todayStr();
+
   const hwSel = document.getElementById('hwStudentSelect');
   hwSel.innerHTML = '';
   STUDENTS.forEach(s => {
@@ -2832,18 +3238,63 @@ function initUI() {
     opt.textContent = s;
     hwSel.appendChild(opt);
   });
-  lastRoleIndex = 0;
+
   lastTabIndex = 0;
   document.getElementById('tabJournal').classList.add('active');
-  document.getElementById('btnTeacher').classList.add('active');
   document.getElementById('hwDueDate').value = state.currentDate;
 }
 
-window.setRole = setRole;
+function startApp(role, studentName) {
+  state.role = role;
+  if (role === 'student' && studentName) {
+    state.currentStudent = studentName;
+  }
+
+  document.getElementById('appContainer').classList.remove('hidden');
+  document.getElementById('loader').classList.remove('hidden');
+  document.getElementById('syncStatus').classList.remove('hidden');
+
+  // Кнопки в шапке
+  if (role === 'teacher') {
+    document.getElementById('profileBtn').classList.remove('hidden');
+    document.getElementById('studentBadgeBtn').classList.add('hidden');
+  } else {
+    document.getElementById('profileBtn').classList.add('hidden');
+    document.getElementById('studentBadgeBtn').classList.remove('hidden');
+  }
+
+  initUI();
+
+  // Для учителя показываем дату, для ученика тоже (чтобы видеть расписание и Д/З)
+  // Оставляем как есть, но ученик не может ставить оценки
+
+  subscribeAll();
+}
+
+function autoLogin() {
+  const auth = loadAuth();
+  if (!auth) {
+    initLogin();
+    return;
+  }
+  if (auth.role === 'teacher') {
+    document.getElementById('loginScreen').classList.add('hidden');
+    startApp('teacher', null);
+  } else if (auth.role === 'student' && auth.student) {
+    document.getElementById('loginScreen').classList.add('hidden');
+    startApp('student', auth.student);
+  } else {
+    initLogin();
+  }
+}
+
+window.switchLoginTab = switchLoginTab;
+window.doStudentLogin = doStudentLogin;
+window.doTeacherLogin = doTeacherLogin;
+window.logout = logout;
 window.setTab = setTab;
 window.setHwTab = setHwTab;
 window.onDateChange = onDateChange;
-window.onStudentChange = onStudentChange;
 window.openMarkModal = openMarkModal;
 window.closeMarkModal = closeMarkModal;
 window.saveMark = saveMark;
@@ -2861,8 +3312,8 @@ window.openProfileModal = openProfileModal;
 window.closeProfileModal = closeProfileModal;
 window.saveProfile = saveProfile;
 
-initUI();
-subscribeAll();
+initLogin();
+autoLogin();
 
 document.querySelectorAll('.modal-overlay').forEach(overlay => {
   overlay.addEventListener('click', () => {
@@ -2880,7 +3331,6 @@ document.addEventListener('keydown', e => {
 });
 </script>
 
-<!-- Регистрация Service Worker для PWA -->
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
