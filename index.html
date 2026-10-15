@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Школьный журнал</title>
 
-<!-- PWA -->
 <meta name="application-name" content="Школьный журнал">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -55,7 +54,6 @@
 
   .container { max-width: 1100px; margin: 0 auto; }
 
-  /* ============ SYNC STATUS ============ */
   .sync-status {
     position: fixed;
     bottom: 16px;
@@ -88,7 +86,6 @@
     50% { opacity: 0.5; transform: scale(0.85); }
   }
 
-  /* ============ LOADER ============ */
   .loader-overlay {
     position: fixed;
     inset: 0;
@@ -114,7 +111,6 @@
   .loader-text { font-size: 15px; font-weight: 700; color: var(--text-muted); }
   .loader-detail { font-size: 12px; color: var(--text-muted); font-weight: 500; opacity: 0.75; }
 
-  /* ============ LOGIN SCREEN ============ */
   .login-screen {
     position: fixed;
     inset: 0;
@@ -155,7 +151,6 @@
     box-shadow: 0 10px 28px rgba(99, 102, 241, 0.35);
     animation: logoFloat 3s ease-in-out infinite;
   }
-
   @keyframes logoFloat {
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-6px); }
@@ -169,7 +164,6 @@
     letter-spacing: -0.5px;
     margin-bottom: 4px;
   }
-
   .login-subtitle {
     font-size: 14px;
     color: var(--text-muted);
@@ -178,7 +172,6 @@
     font-weight: 500;
   }
 
-  /* Переключатель ученик/учитель */
   .login-tabs {
     position: relative;
     display: flex;
@@ -188,7 +181,6 @@
     margin-bottom: 22px;
     isolation: isolate;
   }
-
   .login-tab {
     position: relative;
     z-index: 1;
@@ -208,9 +200,7 @@
     gap: 6px;
     font-family: inherit;
   }
-
   .login-tab.active { color: var(--primary); }
-
   .login-tabs::before {
     content: '';
     position: absolute;
@@ -224,11 +214,9 @@
     transition: transform 0.35s cubic-bezier(0.34, 1.4, 0.64, 1);
     z-index: 0;
   }
-
   .login-tabs.teacher::before { transform: translateX(calc(100% + 4px)); }
 
   .login-form-group { margin-bottom: 16px; }
-
   .login-form-group label {
     display: block;
     font-size: 13px;
@@ -236,7 +224,6 @@
     color: var(--text);
     margin-bottom: 8px;
   }
-
   .login-form-group input,
   .login-form-group select {
     width: 100%;
@@ -250,14 +237,12 @@
     color: var(--text);
     transition: all 0.15s;
   }
-
   .login-form-group input:focus,
   .login-form-group select:focus {
     border-color: var(--primary);
     background: var(--card);
     box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.12);
   }
-
   .login-hint {
     font-size: 11px;
     color: var(--text-muted);
@@ -267,7 +252,6 @@
     align-items: center;
     gap: 4px;
   }
-
   .login-error {
     background: #fef2f2;
     color: var(--red);
@@ -282,15 +266,12 @@
     gap: 8px;
     animation: shake 0.4s ease;
   }
-
   .login-error.visible { display: flex; }
-
   @keyframes shake {
     0%, 100% { transform: translateX(0); }
     20%, 60% { transform: translateX(-6px); }
     40%, 80% { transform: translateX(6px); }
   }
-
   .login-btn {
     width: 100%;
     padding: 14px;
@@ -304,16 +285,10 @@
     transition: all 0.2s;
     font-family: inherit;
     box-shadow: 0 6px 18px rgba(99, 102, 241, 0.35);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
   }
-
   .login-btn:hover { box-shadow: 0 8px 24px rgba(99, 102, 241, 0.5); transform: translateY(-1px); }
   .login-btn:active { transform: scale(0.98); }
 
-  /* ============ HEADER ============ */
   .app-header {
     background: var(--card);
     border-radius: var(--radius);
@@ -321,7 +296,6 @@
     padding: 18px 20px;
     margin-bottom: 16px;
   }
-
   .app-header-top {
     display: flex;
     align-items: center;
@@ -329,7 +303,6 @@
     gap: 12px;
     flex-wrap: wrap;
   }
-
   .logo {
     display: flex;
     align-items: center;
@@ -339,7 +312,6 @@
     color: var(--text);
     letter-spacing: -0.5px;
   }
-
   .logo-icon {
     width: 40px;
     height: 40px;
@@ -351,13 +323,7 @@
     font-size: 20px;
     box-shadow: 0 6px 16px rgba(99, 102, 241, 0.35);
   }
-
-  .header-right {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
-  }
+  .header-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 
   .profile-btn {
     display: flex;
@@ -371,16 +337,13 @@
     transition: all 0.2s;
     font-family: inherit;
   }
-
   .profile-btn:hover {
     border-color: var(--primary-light);
     box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15);
     transform: translateY(-1px);
   }
-
   .profile-avatar {
-    width: 34px;
-    height: 34px;
+    width: 34px; height: 34px;
     border-radius: 50%;
     background: linear-gradient(135deg, var(--primary), var(--primary-light));
     color: #fff;
@@ -391,7 +354,6 @@
     font-size: 14px;
     flex-shrink: 0;
   }
-
   .profile-info-text {
     display: flex;
     flex-direction: column;
@@ -399,7 +361,6 @@
     line-height: 1.2;
     text-align: left;
   }
-
   .profile-info-text .p-name {
     font-size: 13px;
     font-weight: 700;
@@ -409,20 +370,9 @@
     overflow: hidden;
     text-overflow: ellipsis;
   }
+  .profile-info-text .p-class { font-size: 11px; font-weight: 600; color: var(--primary); }
+  .profile-info-text .p-empty { font-size: 13px; font-weight: 700; color: var(--text-muted); }
 
-  .profile-info-text .p-class {
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--primary);
-  }
-
-  .profile-info-text .p-empty {
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--text-muted);
-  }
-
-  /* Кнопка выхода */
   .logout-btn {
     display: flex;
     align-items: center;
@@ -438,14 +388,12 @@
     transition: all 0.2s;
     font-family: inherit;
   }
-
   .logout-btn:hover {
     background: #fee2e2;
     border-color: #fca5a5;
     transform: translateY(-1px);
   }
 
-  /* ============ TABS ============ */
   .tabs {
     position: relative;
     display: flex;
@@ -456,7 +404,6 @@
     padding: 4px;
     isolation: isolate;
   }
-
   .tab {
     position: relative;
     z-index: 1;
@@ -476,9 +423,7 @@
     gap: 6px;
     font-family: inherit;
   }
-
   .tab.active { color: var(--primary); }
-
   .tabs::before {
     content: '';
     position: absolute;
@@ -492,21 +437,18 @@
     transition: transform 0.35s cubic-bezier(0.34, 1.4, 0.64, 1);
     z-index: 0;
   }
-
   .tabs.tab-homework::before { transform: translateX(calc(100% + 4px)); }
   .tabs.tab-schedule::before { transform: translateX(calc(200% + 8px)); }
 
-  /* ============ SUBJECT PICKER ============ */
   .subject-bar {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 10px;
     margin-top: 16px;
     padding-top: 16px;
     border-top: 1px solid var(--border);
     flex-wrap: wrap;
   }
-
   .subject-bar-label {
     font-size: 13px;
     font-weight: 700;
@@ -515,9 +457,10 @@
     align-items: center;
     gap: 5px;
     flex-shrink: 0;
+    padding-top: 8px;
   }
-
-  .subject-pills { display: flex; gap: 6px; flex-wrap: wrap; flex: 1; }
+  .subject-pills-wrap { flex: 1; min-width: 0; }
+  .subject-pills { display: flex; gap: 6px; flex-wrap: wrap; }
 
   .subject-pill {
     padding: 8px 14px;
@@ -535,19 +478,29 @@
     align-items: center;
     gap: 6px;
   }
-
   .subject-pill:hover {
     border-color: var(--primary-light);
     color: var(--primary);
     transform: translateY(-2px);
   }
-
   .subject-pill.active {
     background: linear-gradient(135deg, var(--primary), var(--primary-light));
     color: #fff;
     border-color: transparent;
     box-shadow: 0 4px 12px rgba(99, 102, 241, 0.35);
     transform: translateY(-1px);
+  }
+
+  .subject-days-info {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--primary-dark);
+    background: rgba(99, 102, 241, 0.08);
+    padding: 6px 12px;
+    border-radius: 10px;
+    margin-top: 10px;
+    display: block;
+    width: 100%;
   }
 
   .controls {
@@ -559,9 +512,7 @@
     padding-top: 12px;
     border-top: 1px solid var(--border);
   }
-
   .control-group { display: flex; align-items: center; gap: 8px; }
-
   .control-group label { font-size: 13px; font-weight: 600; color: var(--text-muted); }
 
   select, input[type="text"], input[type="date"], textarea {
@@ -825,71 +776,67 @@
   .schedule-info-card.holiday-card { border-left-color: var(--orange); }
   .schedule-info-card.holiday-card .value { color: var(--orange); }
 
-  .weekday-tabs {
-    display: flex;
-    gap: 4px;
-    background: var(--bg);
-    border-radius: 12px;
-    padding: 4px;
-    margin-bottom: 18px;
-    overflow-x: auto;
-  }
-  .weekday-tab {
-    flex: 1;
-    min-width: 60px;
-    padding: 10px 8px;
-    border: none;
-    background: transparent;
-    cursor: pointer;
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--text-muted);
-    border-radius: 9px;
-    transition: all 0.25s;
-    font-family: inherit;
-    white-space: nowrap;
-  }
-  .weekday-tab.active {
-    background: var(--card);
-    color: var(--primary);
-    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.1);
-  }
-  .weekday-tab .subj-count {
-    display: block;
-    font-size: 10px;
-    font-weight: 600;
-    opacity: 0.7;
-    margin-top: 2px;
-  }
-
-  .schedule-rows {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+  .subject-days-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 12px;
     margin-bottom: 16px;
   }
-  .schedule-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 12px 14px;
+
+  .subject-days-card {
     background: var(--bg);
     border-radius: var(--radius-sm);
+    padding: 14px;
+    border-left: 4px solid var(--border);
+    transition: all 0.2s;
   }
-  .schedule-row .row-num {
-    width: 32px; height: 32px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, var(--primary), var(--primary-light));
-    color: #fff;
+  .subject-days-card.has-days {
+    border-left-color: var(--primary);
+    background: linear-gradient(90deg, #eef2ff, #f8fafc);
+  }
+
+  .subject-days-card-header {
     display: flex;
     align-items: center;
-    justify-content: center;
-    font-weight: 800;
+    gap: 8px;
+    margin-bottom: 10px;
     font-size: 14px;
-    flex-shrink: 0;
+    font-weight: 700;
+    color: var(--text);
   }
-  .schedule-row .row-content { flex: 1; min-width: 0; }
-  .schedule-row select { width: 100%; }
+
+  .subject-days-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .day-chip {
+    padding: 6px 12px;
+    border-radius: 20px;
+    border: 1.5px solid var(--border);
+    background: var(--card);
+    color: var(--text-muted);
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.18s;
+    font-family: inherit;
+    user-select: none;
+  }
+
+  .day-chip:hover {
+    border-color: var(--primary-light);
+    color: var(--primary);
+    transform: translateY(-1px);
+  }
+
+  .day-chip.active {
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    color: #fff;
+    border-color: transparent;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.35);
+  }
 
   .holiday-form {
     display: flex;
@@ -898,11 +845,7 @@
     margin-bottom: 18px;
     align-items: flex-end;
   }
-  .holiday-form .form-group {
-    margin-bottom: 0;
-    flex: 1;
-    min-width: 140px;
-  }
+  .holiday-form .form-group { margin-bottom: 0; flex: 1; min-width: 140px; }
   .holiday-list { display: flex; flex-direction: column; gap: 8px; }
   .holiday-item {
     display: flex;
@@ -1359,7 +1302,7 @@
     .tab { padding: 10px 4px; font-size: 11px; gap: 3px; }
 
     .subject-bar { gap: 8px; }
-    .subject-bar-label { width: 100%; }
+    .subject-bar-label { width: 100%; padding-top: 0; }
     .subject-pills {
       width: 100%;
       flex-wrap: nowrap;
@@ -1433,7 +1376,7 @@
     .hw-form .btn { width: 100%; justify-content: center; padding: 12px; }
 
     .student-mark-item { padding: 12px 14px; }
-    .weekday-tab { font-size: 12px; padding: 8px 6px; min-width: 50px; }
+    .subject-days-grid { grid-template-columns: 1fr; }
     .holiday-form { flex-direction: column; }
     .holiday-form .form-group { width: 100%; }
     .holiday-form .btn { width: 100%; justify-content: center; }
@@ -1463,7 +1406,6 @@
       <button class="login-tab" id="loginTabTeacher" onclick="switchLoginTab('teacher')">👨‍🏫 Учитель</button>
     </div>
 
-    <!-- Форма ученика -->
     <div id="loginStudentForm">
       <div class="login-form-group">
         <label>Выберите себя</label>
@@ -1477,7 +1419,6 @@
       <button class="login-btn" onclick="doStudentLogin()">Войти как ученик</button>
     </div>
 
-    <!-- Форма учителя -->
     <div id="loginTeacherForm" class="hidden">
       <div class="login-form-group">
         <label>Логин</label>
@@ -1535,7 +1476,10 @@
 
     <div class="subject-bar">
       <div class="subject-bar-label">📖 Предмет:</div>
-      <div class="subject-pills" id="subjectPills"></div>
+      <div class="subject-pills-wrap">
+        <div class="subject-pills" id="subjectPills"></div>
+        <div class="subject-days-info" id="subjectDaysInfo" style="display:none;"></div>
+      </div>
     </div>
 
     <div class="tabs" id="tabsNav">
@@ -1552,6 +1496,7 @@
     </div>
   </div>
 
+  <!-- УЧИТЕЛЬ: ЖУРНАЛ -->
   <div id="teacherJournalView" class="view-panel">
     <div class="card">
       <div class="card-title">
@@ -1574,12 +1519,13 @@
     </div>
   </div>
 
+  <!-- УЧИТЕЛЬ: Д/З -->
   <div id="teacherHomeworkView" class="view-panel hidden">
     <div class="card">
       <div class="card-title">
         📚 Домашнее задание · <span class="subject-tag" id="hwSubjectTagTeacher"></span>
       </div>
-      <div class="card-subtitle">Задайте общее или индивидуальное Д/З. Д/З задаётся только по предметам, которые есть в расписании выбранного дня.</div>
+      <div class="card-subtitle">Д/З можно задать на любой день, независимо от расписания.</div>
 
       <div class="hw-day-info" id="hwDayInfo">—</div>
 
@@ -1594,7 +1540,7 @@
           <select id="hwSubjectSelect"></select>
         </div>
         <div class="form-group">
-          <label style="font-size:12px;">Задано на число</label>
+          <label style="font-size:12px;">Сдать к числу</label>
           <input type="date" id="hwDueDate">
         </div>
         <div class="form-group hw-text-input">
@@ -1611,10 +1557,11 @@
     </div>
   </div>
 
+  <!-- УЧИТЕЛЬ: РАСПИСАНИЕ -->
   <div id="teacherScheduleView" class="view-panel hidden">
     <div class="card">
-      <div class="card-title">🗓 Расписание уроков</div>
-      <div class="card-subtitle">Настройте порядок предметов для каждого дня недели.</div>
+      <div class="card-title">🗓 Дни недели для предметов</div>
+      <div class="card-subtitle">Отметьте дни недели, в которые идёт каждый предмет. Порядок предметов в дне — по списку ниже.</div>
 
       <div class="schedule-info">
         <div class="schedule-info-card">
@@ -1631,17 +1578,12 @@
         </div>
       </div>
 
-      <div class="weekday-tabs" id="weekdayTabs"></div>
-
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:10px;">
-        <div style="font-size:14px;font-weight:700;color:var(--text);" id="schedDayTitle">—</div>
-        <div style="display:flex;gap:8px;">
-          <button class="btn btn-ghost btn-sm" onclick="clearScheduleDay()">🗑 Очистить день</button>
-          <button class="btn btn-primary btn-sm" onclick="addScheduleSlot()">➕ Добавить урок</button>
-        </div>
+        <div style="font-size:15px;font-weight:700;color:var(--text);">📖 Предметы и их дни недели</div>
+        <button class="btn btn-ghost btn-sm" onclick="clearAllSubjectDays()">🗑 Очистить все дни</button>
       </div>
 
-      <div class="schedule-rows" id="scheduleRows"></div>
+      <div class="subject-days-grid" id="subjectDaysGrid"></div>
     </div>
 
     <div class="card">
@@ -1668,6 +1610,7 @@
     </div>
   </div>
 
+  <!-- УЧЕНИК: ЖУРНАЛ -->
   <div id="studentJournalView" class="view-panel hidden">
     <div class="card">
       <div class="card-title" id="studentNameTitle">🎓 Ученик</div>
@@ -1676,16 +1619,18 @@
     </div>
   </div>
 
+  <!-- УЧЕНИК: Д/З -->
   <div id="studentHomeworkView" class="view-panel hidden">
     <div class="card">
       <div class="card-title">
         📚 Домашнее задание · <span class="subject-tag" id="hwSubjectTagStudent"></span>
       </div>
-      <div class="card-subtitle">Все задания — по всем предметам. Отметьте выполненные галочкой.</div>
+      <div class="card-subtitle">Все задания по всем предметам. Отметьте выполненные галочкой.</div>
       <div class="hw-list" id="hwListStudent"></div>
     </div>
   </div>
 
+  <!-- УЧЕНИК: РАСПИСАНИЕ -->
   <div id="studentScheduleView" class="view-panel hidden">
     <div class="card">
       <div class="card-title">🗓 Расписание на сегодня</div>
@@ -1702,6 +1647,7 @@
 
 </div>
 
+<!-- МОДАЛЬНОЕ ОКНО: ПРОФИЛЬ -->
 <div class="modal-overlay hidden" id="profileModal">
   <div class="modal" onclick="event.stopPropagation()">
     <div class="modal-header">
@@ -1734,6 +1680,7 @@
   </div>
 </div>
 
+<!-- МОДАЛЬНОЕ ОКНО: ОЦЕНКА -->
 <div class="modal-overlay hidden" id="markModal">
   <div class="modal" onclick="event.stopPropagation()">
     <div class="modal-header">
@@ -1784,6 +1731,7 @@
   </div>
 </div>
 
+<!-- МОДАЛЬНОЕ ОКНО: ПРОСМОТР ОЦЕНКИ -->
 <div class="modal-overlay hidden" id="viewMarkModal">
   <div class="modal" onclick="event.stopPropagation()">
     <div class="modal-header">
@@ -1816,13 +1764,15 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
+/* ВАЖНО: тот же путь, что и раньше — данные сохраняются */
 const ROOT_PATH = 'school_journal_v2';
 const PATHS = {
-  meta:     ROOT_PATH + '/meta',
-  marks:    ROOT_PATH + '/marks',
-  homework: ROOT_PATH + '/homework',
-  schedule: ROOT_PATH + '/schedule',
-  holidays: ROOT_PATH + '/holidays'
+  meta:        ROOT_PATH + '/meta',
+  marks:       ROOT_PATH + '/marks',
+  homework:    ROOT_PATH + '/homework',
+  schedule:    ROOT_PATH + '/schedule',
+  subjectDays: ROOT_PATH + '/subjectDays',
+  holidays:    ROOT_PATH + '/holidays'
 };
 
 /* ============================================================
@@ -1875,6 +1825,9 @@ const WEEKDAYS = [
   { id: 0, name: 'Воскресенье', short: 'Вс' }
 ];
 
+/* Дни недели, доступные для предметов — Пн-Сб */
+const WEEKDAYS_FOR_SUBJECTS = WEEKDAYS.filter(w => w.id !== 0);
+
 function studentKey(name) {
   return name.replace(/[.#$/\[\]]/g, '_');
 }
@@ -1885,14 +1838,14 @@ let state = {
   hwTab: 'common',
   currentDate: todayStr(),
   currentStudent: STUDENTS[0],
-  currentSubject: 'rus',
-  schedSelectedWeekday: 1
+  currentSubject: 'rus'
 };
 
 let fb = {
   marks: {},
   homework: {},
   schedule: {},
+  subjectDays: {},
   holidays: {},
   meta: {}
 };
@@ -1901,6 +1854,7 @@ const ready = {
   marks: false,
   homework: false,
   schedule: false,
+  subjectDays: false,
   holidays: false,
   meta: false
 };
@@ -1935,21 +1889,17 @@ function getWeekdayName(wd) {
   const w = WEEKDAYS.find(x => x.id === wd);
   return w ? w.name : '—';
 }
+function getWeekdayShort(wd) {
+  const w = WEEKDAYS.find(x => x.id === wd);
+  return w ? w.short : '—';
+}
 function getHolidayForDate(iso) {
   const list = Object.values(fb.holidays || {});
   return list.find(h => iso >= h.start && iso <= h.end);
 }
-function getScheduleForWeekday(wd) {
-  const raw = fb.schedule && fb.schedule[wd];
-  if (!raw) return [];
-  return Object.keys(raw).sort((a, b) => Number(a) - Number(b)).map(k => raw[k]).filter(Boolean);
-}
-function getScheduleForDate(iso) {
-  return getScheduleForWeekday(getWeekday(iso));
-}
 function getDayStatus(iso) {
   const wd = getWeekday(iso);
-  if (wd === 0 || wd === 6) return 'weekend';
+  if (wd === 0) return 'weekend';
   if (getHolidayForDate(iso)) return 'holiday';
   return 'ok';
 }
@@ -1970,6 +1920,30 @@ function getMarks(subjectId, studentName, date) {
   const byDate = byStudent[date];
   if (!byDate) return [];
   return Object.keys(byDate).map(id => ({ id, ...byDate[id] }));
+}
+
+/* ============================================================
+   ДНИ НЕДЕЛИ ДЛЯ ПРЕДМЕТОВ
+   ============================================================ */
+function getSubjectDays(subjectId) {
+  const raw = fb.subjectDays && fb.subjectDays[subjectId];
+  if (!raw) return [];
+  return Object.keys(raw).map(Number).filter(d => raw[d]).sort((a, b) => a - b);
+}
+
+function getSubjectsForWeekday(wd) {
+  if (wd === 0) return [];
+  return BASE_SUBJECTS.filter(s => getSubjectDays(s.id).includes(wd));
+}
+
+function getSubjectsForDate(iso) {
+  return getSubjectsForWeekday(getWeekday(iso));
+}
+
+function getSubjectDaysText(subjectId) {
+  const days = getSubjectDays(subjectId);
+  if (days.length === 0) return 'не задано';
+  return days.map(d => getWeekdayShort(d)).join(', ');
 }
 
 /* ============================================================
@@ -2007,7 +1981,6 @@ function showLoginError(which, text) {
   el.textContent = '❌ ' + text;
   el.classList.add('visible');
 }
-
 function hideLoginErrors() {
   document.getElementById('loginStudentError').classList.remove('visible');
   document.getElementById('loginTeacherError').classList.remove('visible');
@@ -2017,7 +1990,6 @@ function doStudentLogin() {
   hideLoginErrors();
   const name = document.getElementById('loginStudentSelect').value;
   const pass = document.getElementById('loginStudentPass').value.trim();
-
   if (!name) { showLoginError('student', 'Выберите себя из списка'); return; }
   if (pass !== STUDENT_PASSWORD) {
     showLoginError('student', 'Неверный пароль');
@@ -2025,7 +1997,6 @@ function doStudentLogin() {
     document.getElementById('loginStudentPass').focus();
     return;
   }
-
   saveAuth({ role: 'student', student: name });
   document.getElementById('loginScreen').classList.add('hidden');
   startApp('student', name);
@@ -2035,14 +2006,12 @@ function doTeacherLogin() {
   hideLoginErrors();
   const login = document.getElementById('loginTeacherLogin').value.trim();
   const pass = document.getElementById('loginTeacherPass').value.trim();
-
   if (login !== TEACHER_LOGIN || pass !== TEACHER_PASSWORD) {
     showLoginError('teacher', 'Неверный логин или пароль');
     document.getElementById('loginTeacherPass').value = '';
     document.getElementById('loginTeacherPass').focus();
     return;
   }
-
   saveAuth({ role: 'teacher' });
   document.getElementById('loginScreen').classList.add('hidden');
   startApp('teacher', null);
@@ -2069,11 +2038,11 @@ async function fbDeleteMark(subjectId, studentName, date, markId) {
   await remove(ref(db, `${PATHS.marks}/${subjectId}/${studentKey(studentName)}/${date}/${markId}`));
 }
 async function fbRemoveBFromDay(studentName, date) {
-  const scheduleIds = getScheduleForDate(date);
-  const subjectsForDay = scheduleIds.length > 0 ? scheduleIds : BASE_SUBJECTS.map(s => s.id);
+  const subjectsForDay = getSubjectsForDate(date).map(s => s.id);
+  const subjectsToClear = subjectsForDay.length > 0 ? subjectsForDay : BASE_SUBJECTS.map(s => s.id);
   const updates = {};
   const skey = studentKey(studentName);
-  subjectsForDay.forEach(subjId => {
+  subjectsToClear.forEach(subjId => {
     const subjMarks = getMarks(subjId, studentName, date);
     subjMarks.forEach(m => {
       if (m.mark === 'б') updates[`${PATHS.marks}/${subjId}/${skey}/${date}/${m.id}`] = null;
@@ -2099,19 +2068,13 @@ async function fbDeleteHomework(id) {
 async function fbToggleHomeworkDone(hwId, studentName, value) {
   await set(ref(db, `${PATHS.homework}/${hwId}/done/${studentKey(studentName)}`), value);
 }
-async function fbSetScheduleSlot(weekday, index, subjectId) {
-  const path = `${PATHS.schedule}/${weekday}/${index}`;
-  if (subjectId) await set(ref(db, path), subjectId);
+async function fbSetSubjectDay(subjectId, weekday, value) {
+  const path = `${PATHS.subjectDays}/${subjectId}/${weekday}`;
+  if (value) await set(ref(db, path), true);
   else await remove(ref(db, path));
 }
-async function fbSetSchedule(weekday, arr) {
-  const path = `${PATHS.schedule}/${weekday}`;
-  if (arr.length === 0) await remove(ref(db, path));
-  else {
-    const obj = {};
-    arr.forEach((v, i) => { obj[i] = v; });
-    await set(ref(db, path), obj);
-  }
+async function fbClearSubjectDays(subjectId) {
+  await remove(ref(db, `${PATHS.subjectDays}/${subjectId}`));
 }
 async function fbAddHoliday(h) {
   await set(ref(db, `${PATHS.holidays}/${h.id}`), {
@@ -2155,7 +2118,7 @@ function checkReady() {
 }
 
 function updateLoaderDetail() {
-  const items = ['marks', 'schedule', 'homework', 'holidays', 'meta'];
+  const items = ['marks', 'subjectDays', 'homework', 'holidays', 'meta'];
   const done = items.filter(k => ready[k]).length;
   const el = document.getElementById('loaderDetail');
   if (el) el.textContent = `Загружено ${done} из ${items.length}`;
@@ -2178,13 +2141,10 @@ let statusInterval = setInterval(() => {
     clearInterval(statusInterval);
     return;
   }
-  const items = ['marks', 'schedule', 'homework', 'holidays', 'meta'];
+  const items = ['marks', 'subjectDays', 'homework', 'holidays', 'meta'];
   const done = items.filter(k => ready[k]).length;
-  if (!connected) {
-    setSync('syncing', 'Подключение к серверу...');
-  } else if (done < items.length) {
-    setSync('syncing', `Загрузка ${done}/${items.length}...`);
-  }
+  if (!connected) setSync('syncing', 'Подключение к серверу...');
+  else if (done < items.length) setSync('syncing', `Загрузка ${done}/${items.length}...`);
 }, 600);
 
 setTimeout(() => {
@@ -2216,6 +2176,13 @@ function subscribeAll() {
     updateLoaderDetail();
     renderAll();
   }, err => { ready.schedule = true; updateLoaderDetail(); console.error(err); });
+
+  onValue(ref(db, PATHS.subjectDays), snap => {
+    fb.subjectDays = snap.val() || {};
+    ready.subjectDays = true;
+    updateLoaderDetail();
+    renderAll();
+  }, err => { ready.subjectDays = true; updateLoaderDetail(); console.error(err); });
 
   onValue(ref(db, PATHS.holidays), snap => {
     fb.holidays = snap.val() || {};
@@ -2343,7 +2310,6 @@ function renderProfileButton() {
     classEl.classList.add('hidden');
   }
 
-  // Бейдж ученика
   if (state.role === 'student') {
     document.getElementById('studentBadgeName').textContent = state.currentStudent;
     document.getElementById('studentBadgeBtn').classList.remove('hidden');
@@ -2374,30 +2340,49 @@ async function saveProfile() {
 }
 
 /* ============================================================
-   ПРЕДМЕТЫ
+   ПРЕДМЕТНЫЕ ПИЛЮЛИ
    ============================================================ */
 function renderSubjectPills() {
   const container = document.getElementById('subjectPills');
   container.innerHTML = '';
   const iso = state.currentDate;
-  const scheduleIds = getScheduleForDate(iso);
-  const subjectsToShow = scheduleIds.length > 0
-    ? scheduleIds.map(id => getSubjectById(id)).filter(Boolean)
+  const subjectsForDate = getSubjectsForDate(iso);
+  const subjectIdsForDate = subjectsForDate.map(s => s.id);
+
+  const subjectsToShow = subjectsForDate.length > 0
+    ? subjectsForDate
     : BASE_SUBJECTS;
-  if (scheduleIds.length > 0 && !scheduleIds.includes(state.currentSubject)) {
-    state.currentSubject = scheduleIds[0];
+
+  if (subjectsForDate.length > 0 && !subjectIdsForDate.includes(state.currentSubject)) {
+    state.currentSubject = subjectsForDate[0].id;
   }
+
   subjectsToShow.forEach(s => {
     const btn = document.createElement('button');
     btn.className = 'subject-pill' + (s.id === state.currentSubject ? ' active' : '');
-    const num = scheduleIds.indexOf(s.id);
+    const num = subjectIdsForDate.indexOf(s.id);
     const numBadge = num >= 0 ? (num + 1) + '. ' : '';
     btn.innerHTML = numBadge + (s.icon || '📘') + ' ' + escapeHtml(s.name);
+    btn.title = 'Дни: ' + getSubjectDaysText(s.id);
     btn.onclick = () => { state.currentSubject = s.id; renderAll('right'); };
     container.appendChild(btn);
   });
+
   if (subjectsToShow.length === 0) {
-    container.innerHTML = '<div style="font-size:13px;color:var(--text-muted);font-weight:600;padding:8px 0;">Расписание не задано. Настройте его во вкладке «Расписание».</div>';
+    container.innerHTML = '<div style="font-size:13px;color:var(--text-muted);font-weight:600;padding:8px 0;">Предметы не заданы. Настройте дни недели во вкладке «Расписание».</div>';
+  }
+
+  // Подпись с днями недели текущего предмета
+  const info = document.getElementById('subjectDaysInfo');
+  if (info) {
+    const days = getSubjectDays(state.currentSubject);
+    if (days.length > 0) {
+      info.textContent = '📅 ' + getSubjectName(state.currentSubject) + ': ' + getSubjectDaysText(state.currentSubject);
+      info.style.display = 'block';
+    } else {
+      info.textContent = '⚠️ ' + getSubjectName(state.currentSubject) + ': дни недели не заданы (настройте во вкладке «Расписание»)';
+      info.style.display = 'block';
+    }
   }
 }
 
@@ -2427,7 +2412,9 @@ function renderJournal() {
     statusEl.innerHTML = '';
   }
 
-  const scheduleIds = getScheduleForDate(iso);
+  const subjectsForDate = getSubjectsForDate(iso);
+  const subjectIdsForDate = subjectsForDate.map(s => s.id);
+
   if (status === 'weekend' || status === 'holiday') {
     document.getElementById('journalSubtitle').textContent = 'В этот день занятия не проводятся.';
     document.getElementById('journalBody').innerHTML =
@@ -2437,18 +2424,23 @@ function renderJournal() {
       '</div></td></tr>';
     return;
   }
-  if (scheduleIds.length === 0) {
-    document.getElementById('journalSubtitle').textContent = 'Расписание на этот день не задано.';
+
+  if (subjectsForDate.length === 0) {
+    document.getElementById('journalSubtitle').textContent = 'В этот день нет предметов по расписанию. Настройте дни недели во вкладке «Расписание».';
     document.getElementById('journalBody').innerHTML =
-      '<tr><td colspan="2"><div class="empty-msg"><span class="emoji">🗓</span>Расписание не задано</div></td></tr>';
+      '<tr><td colspan="2"><div class="empty-msg"><span class="emoji">🗓</span>Нет предметов на этот день</div></td></tr>';
     return;
   }
-  if (!scheduleIds.includes(state.currentSubject)) {
-    state.currentSubject = scheduleIds[0];
+
+  if (!subjectIdsForDate.includes(state.currentSubject)) {
+    state.currentSubject = subjectsForDate[0].id;
     document.getElementById('journalSubjectTag').textContent = getSubjectName(state.currentSubject);
   }
+
+  const lessonNumber = subjectIdsForDate.indexOf(state.currentSubject) + 1;
   document.getElementById('journalSubtitle').textContent =
-    'Урок №' + (scheduleIds.indexOf(state.currentSubject) + 1) + ' · Нажмите «+», чтобы поставить оценку.';
+    'Урок №' + lessonNumber + ' · ' + getSubjectDaysText(state.currentSubject) +
+    ' · Нажмите «+», чтобы поставить оценку.';
 
   const tbody = document.getElementById('journalBody');
   tbody.innerHTML = '';
@@ -2503,12 +2495,13 @@ function openMarkModal(student, date, markId) {
   markChoice.querySelectorAll('button').forEach(b => b.classList.remove('selected'));
   editing.selectedMark = null;
   const subjectName = getSubjectName(state.currentSubject);
+  const daysText = getSubjectDaysText(state.currentSubject);
   if (markId) {
     const marks = getMarks(state.currentSubject, student, date);
     const m = marks.find(x => x.id === markId);
     if (!m) return;
     title.textContent = 'Редактировать оценку';
-    sub.textContent = student + ' · ' + formatDate(date) + ' · ' + subjectName;
+    sub.textContent = student + ' · ' + formatDate(date) + ' · ' + subjectName + ' (' + daysText + ')';
     delBtn.classList.remove('hidden');
     editing.selectedMark = m.mark;
     const btn = markChoice.querySelector('button[data-mark="' + m.mark + '"]');
@@ -2517,7 +2510,7 @@ function openMarkModal(student, date, markId) {
     commentInput.value = m.comment || '';
   } else {
     title.textContent = 'Новая оценка';
-    sub.textContent = student + ' · ' + formatDate(date) + ' · ' + subjectName;
+    sub.textContent = student + ' · ' + formatDate(date) + ' · ' + subjectName + ' (' + daysText + ')';
     delBtn.classList.add('hidden');
     typeSelect.value = 'Классная работа';
     commentInput.value = '';
@@ -2544,12 +2537,12 @@ async function saveMark() {
   pulseSync('Сохранение...');
   try {
     if (editing.selectedMark === 'б') {
-      const scheduleIds = getScheduleForDate(editing.date);
-      const subjectsForDay = scheduleIds.length > 0 ? scheduleIds : BASE_SUBJECTS.map(s => s.id);
+      const subjectsForDay = getSubjectsForDate(editing.date).map(s => s.id);
+      const subjectsToUse = subjectsForDay.length > 0 ? subjectsForDay : BASE_SUBJECTS.map(s => s.id);
       await fbRemoveBFromDay(editing.student, editing.date);
       const updates = {};
       const skey = studentKey(editing.student);
-      subjectsForDay.forEach(subjId => {
+      subjectsToUse.forEach(subjId => {
         const markId = uid();
         updates[`${PATHS.marks}/${subjId}/${skey}/${editing.date}/${markId}`] = {
           mark: 'б', type: type, comment: comment
@@ -2637,12 +2630,6 @@ async function deleteHomework(id) {
   catch (e) { console.error(e); setSync('offline', 'Ошибка'); }
 }
 
-function getHomeworkForLessonDate(lessonDate, subjectId = null) {
-  return Object.values(fb.homework || {}).filter(h => {
-    if (subjectId && h.subjectId !== subjectId) return false;
-    return h.lessonDate === lessonDate;
-  });
-}
 function getHomeworkList() {
   return Object.values(fb.homework || {}).sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
 }
@@ -2650,64 +2637,61 @@ function getHomeworkList() {
 function renderHomeworkTeacher() {
   const iso = state.currentDate;
   const wd = getWeekday(iso);
-  const scheduleIds = getScheduleForDate(iso);
+  const subjectsForDate = getSubjectsForDate(iso);
   const status = getDayStatus(iso);
 
   const info = document.getElementById('hwDayInfo');
-  if (status === 'weekend') {
-    info.innerHTML = '<span class="badge" style="background:var(--orange);">🎉 Выходной</span> В этот день уроков нет — Д/З задать нельзя.';
-  } else if (status === 'holiday') {
+  if (status === 'holiday') {
     const h = getHolidayForDate(iso);
-    info.innerHTML = '<span class="badge" style="background:var(--orange);">🏖 ' + escapeHtml(h.title || 'Каникулы') + '</span> В каникулы Д/З не задаётся.';
-  } else if (scheduleIds.length === 0) {
-    info.innerHTML = '<span class="badge" style="background:var(--gray);">🗓 Пусто</span> В этот день нет уроков по расписанию. Сначала задайте расписание.';
+    info.innerHTML = '<span class="badge" style="background:var(--orange);">🏖 ' + escapeHtml(h.title || 'Каникулы') + '</span> Сейчас каникулы, но Д/З всё равно можно задать.';
+  } else if (subjectsForDate.length === 0) {
+    info.innerHTML = '<span class="badge" style="background:var(--gray);">🗓 ' + getWeekdayName(wd) + '</span> В этот день уроков нет, но Д/З можно задать на любой другой день.';
   } else {
     info.innerHTML = '<span class="badge">' + getWeekdayName(wd) + '</span> Предметы этого дня: ' +
-      scheduleIds.map(id => getSubjectIconById(id) + ' ' + getSubjectName(id)).join(', ');
+      subjectsForDate.map(s => s.icon + ' ' + s.name).join(', ');
   }
 
+  // ВАЖНО: для Д/З показываем ВСЕ предметы, а не только текущего дня
   const subjSel = document.getElementById('hwSubjectSelect');
   const prevVal = subjSel.value;
   subjSel.innerHTML = '';
-  if (scheduleIds.length === 0) {
+  BASE_SUBJECTS.forEach(s => {
     const opt = document.createElement('option');
-    opt.value = '';
-    opt.textContent = '— нет предметов —';
+    opt.value = s.id;
+    const daysText = getSubjectDaysText(s.id);
+    opt.textContent = s.icon + ' ' + s.name + ' (' + daysText + ')';
     subjSel.appendChild(opt);
-    subjSel.disabled = true;
+  });
+  subjSel.disabled = false;
+  if (prevVal && BASE_SUBJECTS.find(s => s.id === prevVal)) {
+    subjSel.value = prevVal;
   } else {
-    subjSel.disabled = false;
-    scheduleIds.forEach(id => {
-      const opt = document.createElement('option');
-      opt.value = id;
-      opt.textContent = getSubjectIconById(id) + ' ' + getSubjectName(id);
-      subjSel.appendChild(opt);
-    });
-    if (prevVal && scheduleIds.includes(prevVal)) subjSel.value = prevVal;
-    else subjSel.value = scheduleIds[0];
+    subjSel.value = state.currentSubject || BASE_SUBJECTS[0].id;
   }
 
   const dueInput = document.getElementById('hwDueDate');
   if (!dueInput.value) dueInput.value = state.currentDate;
 
+  // Показываем ВСЕ Д/З, не только заданные в этот день
   const list = document.getElementById('hwListTeacher');
   list.innerHTML = '';
 
-  const todaysHw = getHomeworkForLessonDate(iso);
+  const allHw = getHomeworkList();
 
-  if (todaysHw.length === 0) {
-    list.innerHTML = '<div class="empty-msg"><span class="emoji">📭</span>На этот день Д/З не задано.</div>';
+  if (allHw.length === 0) {
+    list.innerHTML = '<div class="empty-msg"><span class="emoji">📭</span>Домашнее задание ещё не задано.</div>';
     return;
   }
 
+  // Группируем по предметам
   const bySubject = {};
-  todaysHw.forEach(hw => {
+  allHw.forEach(hw => {
     if (!bySubject[hw.subjectId]) bySubject[hw.subjectId] = [];
     bySubject[hw.subjectId].push(hw);
   });
 
-  scheduleIds.forEach(subjId => {
-    if (!bySubject[subjId]) return;
+  BASE_SUBJECTS.forEach(subj => {
+    if (!bySubject[subj.id]) return;
     const group = document.createElement('div');
     group.style.marginBottom = '16px';
 
@@ -2716,10 +2700,11 @@ function renderHomeworkTeacher() {
     groupTitle.style.fontSize = '14px';
     groupTitle.style.color = 'var(--text)';
     groupTitle.style.marginBottom = '8px';
-    groupTitle.textContent = getSubjectIconById(subjId) + ' ' + getSubjectName(subjId);
+    groupTitle.innerHTML = subj.icon + ' ' + escapeHtml(subj.name) +
+      ' <span style="font-size:12px;color:var(--text-muted);font-weight:600;">· ' + getSubjectDaysText(subj.id) + '</span>';
     group.appendChild(groupTitle);
 
-    bySubject[subjId].forEach(hw => {
+    bySubject[subj.id].forEach(hw => {
       group.appendChild(renderHwItemTeacher(hw));
     });
     list.appendChild(group);
@@ -2764,6 +2749,15 @@ function renderHwItemTeacher(hw) {
   dueBadge.className = 'hw-badge date-badge';
   dueBadge.textContent = '📅 Сдать: ' + formatDate(hw.dueDate);
   meta.appendChild(dueBadge);
+
+  if (hw.lessonDate) {
+    const lessonBadge = document.createElement('span');
+    lessonBadge.className = 'hw-badge';
+    lessonBadge.style.background = '#f1f5f9';
+    lessonBadge.style.color = 'var(--text-muted)';
+    lessonBadge.textContent = 'Задано: ' + formatDate(hw.lessonDate);
+    meta.appendChild(lessonBadge);
+  }
 
   content.appendChild(meta);
   div.appendChild(content);
@@ -2900,7 +2894,7 @@ function renderHwItemStudent(hw, student) {
 }
 
 /* ============================================================
-   РАСПИСАНИЕ (учитель)
+   РАСПИСАНИЕ (учитель) — сетка предметов × дни недели
    ============================================================ */
 function renderScheduleTeacher() {
   const iso = state.currentDate;
@@ -2919,81 +2913,57 @@ function renderScheduleTeacher() {
   } else {
     statusValue.textContent = '✅ Учебный день';
   }
-  const tabsEl = document.getElementById('weekdayTabs');
-  tabsEl.innerHTML = '';
-  WEEKDAYS.forEach(wd => {
-    const btn = document.createElement('button');
-    btn.className = 'weekday-tab' + (wd.id === state.schedSelectedWeekday ? ' active' : '');
-    const count = getScheduleForWeekday(wd.id).length;
-    btn.innerHTML = wd.short + '<span class="subj-count">' + count + ' ур.</span>';
-    btn.onclick = () => { state.schedSelectedWeekday = wd.id; renderScheduleTeacher(); };
-    tabsEl.appendChild(btn);
-  });
-  const wdInfo = WEEKDAYS.find(x => x.id === state.schedSelectedWeekday);
-  document.getElementById('schedDayTitle').textContent = wdInfo.name;
-  const rowsEl = document.getElementById('scheduleRows');
-  rowsEl.innerHTML = '';
-  const daySchedule = getScheduleForWeekday(state.schedSelectedWeekday);
-  if (daySchedule.length === 0) {
-    rowsEl.innerHTML = '<div class="empty-msg"><span class="emoji">🗓</span>В этот день нет уроков. Нажмите «Добавить урок».</div>';
-  } else {
-    daySchedule.forEach((subjId, idx) => {
-      const row = document.createElement('div');
-      row.className = 'schedule-row';
-      const num = document.createElement('div');
-      num.className = 'row-num';
-      num.textContent = idx + 1;
-      const content = document.createElement('div');
-      content.className = 'row-content';
-      const sel = document.createElement('select');
-      sel.innerHTML = '<option value="">— Выберите предмет —</option>';
-      BASE_SUBJECTS.forEach(s => {
-        const opt = document.createElement('option');
-        opt.value = s.id;
-        opt.textContent = s.icon + ' ' + s.name;
-        if (s.id === subjId) opt.selected = true;
-        sel.appendChild(opt);
-      });
-      sel.onchange = async () => {
-        const newVal = sel.value;
-        if (!newVal) { await removeScheduleSlot(idx); return; }
+
+  const grid = document.getElementById('subjectDaysGrid');
+  grid.innerHTML = '';
+
+  BASE_SUBJECTS.forEach(subj => {
+    const days = getSubjectDays(subj.id);
+    const card = document.createElement('div');
+    card.className = 'subject-days-card' + (days.length > 0 ? ' has-days' : '');
+
+    const header = document.createElement('div');
+    header.className = 'subject-days-card-header';
+    header.textContent = subj.icon + ' ' + subj.name;
+    card.appendChild(header);
+
+    const chips = document.createElement('div');
+    chips.className = 'subject-days-chips';
+
+    WEEKDAYS_FOR_SUBJECTS.forEach(wd => {
+      const chip = document.createElement('button');
+      chip.className = 'day-chip' + (days.includes(wd.id) ? ' active' : '');
+      chip.textContent = wd.short;
+      chip.title = wd.name;
+      chip.onclick = async () => {
+        const isActive = days.includes(wd.id);
         pulseSync('Сохранение...');
-        try { await fbSetScheduleSlot(state.schedSelectedWeekday, idx, newVal); }
-        catch (e) { console.error(e); setSync('offline', 'Ошибка'); }
+        try {
+          await fbSetSubjectDay(subj.id, wd.id, !isActive);
+        } catch (e) {
+          console.error(e);
+          setSync('offline', 'Ошибка');
+        }
       };
-      const delBtn = document.createElement('button');
-      delBtn.className = 'btn btn-danger btn-sm';
-      delBtn.textContent = '🗑';
-      delBtn.onclick = () => removeScheduleSlot(idx);
-      content.appendChild(sel);
-      row.appendChild(num);
-      row.appendChild(content);
-      row.appendChild(delBtn);
-      rowsEl.appendChild(row);
+      chips.appendChild(chip);
     });
-  }
+
+    card.appendChild(chips);
+    grid.appendChild(card);
+  });
+
   renderHolidayList();
 }
-async function addScheduleSlot() {
-  const daySchedule = getScheduleForWeekday(state.schedSelectedWeekday);
-  const available = BASE_SUBJECTS.find(s => !daySchedule.includes(s.id));
-  const newArr = [...daySchedule, available ? available.id : 'rus'];
-  pulseSync('Сохранение...');
-  try { await fbSetSchedule(state.schedSelectedWeekday, newArr); }
-  catch (e) { console.error(e); setSync('offline', 'Ошибка'); }
-}
-async function removeScheduleSlot(idx) {
-  const daySchedule = getScheduleForWeekday(state.schedSelectedWeekday);
-  daySchedule.splice(idx, 1);
-  pulseSync('Сохранение...');
-  try { await fbSetSchedule(state.schedSelectedWeekday, daySchedule); }
-  catch (e) { console.error(e); setSync('offline', 'Ошибка'); }
-}
-async function clearScheduleDay() {
-  if (!confirm('Очистить расписание на этот день?')) return;
-  pulseSync('Сохранение...');
-  try { await fbSetSchedule(state.schedSelectedWeekday, []); }
-  catch (e) { console.error(e); setSync('offline', 'Ошибка'); }
+
+async function clearAllSubjectDays() {
+  if (!confirm('Убрать все дни недели у всех предметов?')) return;
+  pulseSync('Очистка...');
+  try {
+    await remove(ref(db, PATHS.subjectDays));
+  } catch (e) {
+    console.error(e);
+    setSync('offline', 'Ошибка');
+  }
 }
 
 /* ============================================================
@@ -3155,11 +3125,11 @@ function renderScheduleStudent() {
       (status === 'weekend' ? 'Выходной день' : (h.title || 'Каникулы')) +
       '</div>';
   } else {
-    const scheduleIds = getScheduleForDate(iso);
-    if (scheduleIds.length === 0) {
+    const subjectsForDate = getSubjectsForDate(iso);
+    if (subjectsForDate.length === 0) {
       todayEl.innerHTML = '<div class="empty-msg"><span class="emoji">🗓</span>Расписание на этот день не задано.</div>';
     } else {
-      scheduleIds.forEach((subjId, idx) => {
+      subjectsForDate.forEach((s, idx) => {
         const row = document.createElement('div');
         row.className = 'sched-today-row';
         const num = document.createElement('div');
@@ -3167,7 +3137,7 @@ function renderScheduleStudent() {
         num.textContent = idx + 1;
         const name = document.createElement('div');
         name.className = 'subj-name';
-        name.textContent = getSubjectIconById(subjId) + ' ' + getSubjectName(subjId);
+        name.textContent = s.icon + ' ' + s.name;
         row.appendChild(num);
         row.appendChild(name);
         todayEl.appendChild(row);
@@ -3178,8 +3148,8 @@ function renderScheduleStudent() {
   weekEl.innerHTML = '';
   let hasAny = false;
   WEEKDAYS.forEach(wdInfo => {
-    if (wdInfo.id === 0 || wdInfo.id === 6) return;
-    const subs = getScheduleForWeekday(wdInfo.id);
+    if (wdInfo.id === 0) return;
+    const subs = getSubjectsForWeekday(wdInfo.id);
     if (subs.length === 0) return;
     hasAny = true;
     const block = document.createElement('div');
@@ -3191,7 +3161,7 @@ function renderScheduleStudent() {
     title.style.marginBottom = '8px';
     title.textContent = wdInfo.name;
     block.appendChild(title);
-    subs.forEach((subjId, idx) => {
+    subs.forEach((s, idx) => {
       const row = document.createElement('div');
       row.className = 'sched-today-row';
       row.style.marginBottom = '6px';
@@ -3200,7 +3170,7 @@ function renderScheduleStudent() {
       num.textContent = idx + 1;
       const name = document.createElement('div');
       name.className = 'subj-name';
-      name.textContent = getSubjectIconById(subjId) + ' ' + getSubjectName(subjId);
+      name.textContent = s.icon + ' ' + s.name;
       row.appendChild(num);
       row.appendChild(name);
       block.appendChild(row);
@@ -3254,7 +3224,6 @@ function startApp(role, studentName) {
   document.getElementById('loader').classList.remove('hidden');
   document.getElementById('syncStatus').classList.remove('hidden');
 
-  // Кнопки в шапке
   if (role === 'teacher') {
     document.getElementById('profileBtn').classList.remove('hidden');
     document.getElementById('studentBadgeBtn').classList.add('hidden');
@@ -3264,10 +3233,6 @@ function startApp(role, studentName) {
   }
 
   initUI();
-
-  // Для учителя показываем дату, для ученика тоже (чтобы видеть расписание и Д/З)
-  // Оставляем как есть, но ученик не может ставить оценки
-
   subscribeAll();
 }
 
@@ -3301,9 +3266,7 @@ window.saveMark = saveMark;
 window.deleteMark = deleteMark;
 window.addHomework = addHomework;
 window.deleteHomework = deleteHomework;
-window.addScheduleSlot = addScheduleSlot;
-window.removeScheduleSlot = removeScheduleSlot;
-window.clearScheduleDay = clearScheduleDay;
+window.clearAllSubjectDays = clearAllSubjectDays;
 window.addHoliday = addHoliday;
 window.deleteHoliday = deleteHoliday;
 window.openViewModal = openViewModal;
