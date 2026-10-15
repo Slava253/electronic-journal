@@ -408,11 +408,11 @@
     position: relative;
     z-index: 1;
     flex: 1;
-    padding: 10px 12px;
+    padding: 10px 8px;
     border: none;
     background: transparent;
     cursor: pointer;
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 600;
     color: var(--text-muted);
     border-radius: 9px;
@@ -420,7 +420,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
+    gap: 4px;
     font-family: inherit;
   }
   .tab.active { color: var(--primary); }
@@ -439,6 +439,11 @@
   }
   .tabs.tab-homework::before { transform: translateX(calc(100% + 4px)); }
   .tabs.tab-schedule::before { transform: translateX(calc(200% + 8px)); }
+
+  .tabs.tabs-4::before { width: calc((100% - 8px) / 4); }
+  .tabs.tabs-4.tab-homework::before { transform: translateX(calc(100% + 4px)); }
+  .tabs.tabs-4.tab-schedule::before { transform: translateX(calc(200% + 8px)); }
+  .tabs.tabs-4.tab-quarters::before { transform: translateX(calc(300% + 12px)); }
 
   .subject-bar {
     display: flex;
@@ -782,7 +787,6 @@
     gap: 12px;
     margin-bottom: 16px;
   }
-
   .subject-days-card {
     background: var(--bg);
     border-radius: var(--radius-sm);
@@ -794,7 +798,6 @@
     border-left-color: var(--primary);
     background: linear-gradient(90deg, #eef2ff, #f8fafc);
   }
-
   .subject-days-card-header {
     display: flex;
     align-items: center;
@@ -804,13 +807,11 @@
     font-weight: 700;
     color: var(--text);
   }
-
   .subject-days-chips {
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
   }
-
   .day-chip {
     padding: 6px 12px;
     border-radius: 20px;
@@ -824,13 +825,11 @@
     font-family: inherit;
     user-select: none;
   }
-
   .day-chip:hover {
     border-color: var(--primary-light);
     color: var(--primary);
     transform: translateY(-1px);
   }
-
   .day-chip.active {
     background: linear-gradient(135deg, var(--primary), var(--primary-light));
     color: #fff;
@@ -979,6 +978,9 @@
     transform: scale(1.1);
     box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.25), 0 6px 14px rgba(0,0,0,0.2);
   }
+  #quarterMarkChoice {
+    grid-template-columns: repeat(5, 1fr);
+  }
 
   .modal-actions {
     display: flex;
@@ -1058,6 +1060,10 @@
     z-index: 0;
   }
   .hw-tabs.individual::before { transform: translateX(calc(100% + 4px)); }
+  #quarterTabsNav::before { width: calc(25% - 4px); }
+  #quarterTabsNav.q2::before { transform: translateX(calc(100% + 4px)); }
+  #quarterTabsNav.q3::before { transform: translateX(calc(200% + 8px)); }
+  #quarterTabsNav.q4::before { transform: translateX(calc(300% + 12px)); }
 
   .hw-form {
     display: flex;
@@ -1278,6 +1284,106 @@
     word-break: break-word;
   }
 
+  /* Четверти: таблица */
+  .quarters-table { min-width: 900px; }
+  .quarters-table th.subject-th {
+    text-align: center;
+    min-width: 80px;
+    padding: 10px 4px;
+    font-size: 10px;
+  }
+  .quarters-table th.subject-th .subj-ico { display:block; font-size:16px; margin-bottom:2px; }
+  .quarters-table th.subject-th .subj-nm {
+    display:block;
+    font-size: 9px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: none;
+    letter-spacing: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 80px;
+    margin: 0 auto;
+  }
+  .quarters-table td {
+    text-align: center;
+    padding: 8px 4px;
+    vertical-align: middle;
+  }
+  .quarters-table td.name-col {
+    text-align: left;
+    min-width: 140px;
+    padding-left: 10px;
+  }
+  .quarter-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 8px;
+    transition: background 0.15s;
+    min-height: 54px;
+    justify-content: center;
+  }
+  .quarter-cell:hover { background: rgba(99,102,241,0.06); }
+  .quarter-avg {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-muted);
+    background: var(--bg);
+    padding: 1px 6px;
+    border-radius: 8px;
+    min-width: 28px;
+    text-align: center;
+  }
+  .quarter-avg.good { background: #dcfce7; color: #15803d; }
+  .quarter-avg.mid { background: #fef3c7; color: #b45309; }
+  .quarter-avg.low { background: #fee2e2; color: #b91c1c; }
+  .quarter-avg.empty { background: var(--bg); color: var(--text-muted); opacity: 0.5; }
+
+  /* Средний балл ученика */
+  .student-avg-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+  }
+  .student-avg-card {
+    background: var(--bg);
+    border-radius: 12px;
+    padding: 12px 14px;
+    border-left: 4px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .student-avg-card.has-marks { border-left-color: var(--primary); background: linear-gradient(90deg,#eef2ff,#f8fafc); }
+  .student-avg-card .sa-icon { font-size: 24px; flex-shrink: 0; }
+  .student-avg-card .sa-body { flex: 1; min-width: 0; }
+  .student-avg-card .sa-name { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 2px; }
+  .student-avg-card .sa-meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .student-avg-card .sa-avg {
+    font-size: 15px; font-weight: 800; color: var(--primary);
+  }
+  .student-avg-card .sa-count { font-size: 11px; color: var(--text-muted); font-weight: 600; }
+  .student-avg-card .sa-quarter {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 22px; height: 22px;
+    padding: 0 6px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 800;
+    color: #fff;
+  }
+  .student-avg-card .sa-quarter.Q1 { background: #6366f1; }
+  .student-avg-card .sa-quarter.Q2 { background: #8b5cf6; }
+  .student-avg-card .sa-quarter.Q3 { background: #ec4899; }
+  .student-avg-card .sa-quarter.Q4 { background: #f59e0b; }
+
   @media (max-width: 640px) {
     body { padding: 10px; font-size: 14px; }
     .app-header { padding: 14px; border-radius: 16px; }
@@ -1299,7 +1405,7 @@
     .login-logo { width: 64px; height: 64px; font-size: 30px; }
 
     .tabs { gap: 3px; }
-    .tab { padding: 10px 4px; font-size: 11px; gap: 3px; }
+    .tab { padding: 10px 4px; font-size: 10px; gap: 3px; }
 
     .subject-bar { gap: 8px; }
     .subject-bar-label { width: 100%; padding-top: 0; }
@@ -1367,6 +1473,7 @@
     .modal-header { margin-top: 4px; }
     .mark-choice { gap: 6px; }
     .mark-choice button { min-height: 46px; font-size: 17px; border-radius: 11px; }
+    #quarterMarkChoice { grid-template-columns: repeat(5, 1fr); }
     .modal-actions { flex-direction: column-reverse; gap: 8px; }
     .modal-actions .btn { width: 100%; padding: 13px; font-size: 15px; }
     .modal-actions .btn-danger { order: 1; }
@@ -1381,10 +1488,16 @@
     .holiday-form .form-group { width: 100%; }
     .holiday-form .btn { width: 100%; justify-content: center; }
     .sync-status { bottom: 10px; right: 10px; font-size: 11px; padding: 6px 12px; }
+
+    .quarters-table { min-width: 800px; }
+    .quarters-table th.subject-th { min-width: 64px; font-size: 9px; padding: 8px 3px; }
+    .quarters-table th.subject-th .subj-nm { font-size: 8px; max-width: 60px; }
+    .student-avg-grid { grid-template-columns: 1fr; }
   }
 
   @media (max-width: 380px) {
     .mark-choice { grid-template-columns: repeat(3, 1fr); }
+    #quarterMarkChoice { grid-template-columns: repeat(3, 1fr); }
   }
 
   ::-webkit-scrollbar { width: 8px; height: 8px; }
@@ -1394,7 +1507,7 @@
 </head>
 <body>
 
-<!-- ============ ЭКРАН ВХОДА ============ -->
+<!-- ЭКРАН ВХОДА -->
 <div class="login-screen" id="loginScreen">
   <div class="login-card">
     <div class="login-logo">📓</div>
@@ -1435,7 +1548,7 @@
   </div>
 </div>
 
-<!-- ============ LOADER ============ -->
+<!-- LOADER -->
 <div class="loader-overlay hidden" id="loader">
   <div class="loader-spinner"></div>
   <div class="loader-text">Подключение к Firebase...</div>
@@ -1482,10 +1595,11 @@
       </div>
     </div>
 
-    <div class="tabs" id="tabsNav">
+    <div class="tabs tabs-4" id="tabsNav">
       <button class="tab active" id="tabJournal" onclick="setTab('journal')">📊 Журнал</button>
       <button class="tab" id="tabHomework" onclick="setTab('homework')">📚 Д/З</button>
       <button class="tab" id="tabSchedule" onclick="setTab('schedule')">🗓 Расписание</button>
+      <button class="tab hidden" id="tabQuarters" onclick="setTab('quarters')">📈 Четверти</button>
     </div>
 
     <div class="controls">
@@ -1561,7 +1675,7 @@
   <div id="teacherScheduleView" class="view-panel hidden">
     <div class="card">
       <div class="card-title">🗓 Дни недели для предметов</div>
-      <div class="card-subtitle">Отметьте дни недели, в которые идёт каждый предмет. Порядок предметов в дне — по списку ниже.</div>
+      <div class="card-subtitle">Отметьте дни недели, в которые идёт каждый предмет.</div>
 
       <div class="schedule-info">
         <div class="schedule-info-card">
@@ -1610,10 +1724,53 @@
     </div>
   </div>
 
+  <!-- УЧИТЕЛЬ: ЧЕТВЕРТИ -->
+  <div id="teacherQuartersView" class="view-panel hidden">
+    <div class="card">
+      <div class="card-title">📈 Четвертные оценки</div>
+      <div class="card-subtitle">Выберите четверть и выставьте оценки. Средний балл считается автоматически по всем оценкам ученика по предмету за этот период.</div>
+
+      <div class="hw-tabs" id="quarterTabsNav" style="max-width:520px;">
+        <button class="hw-tab active" id="quarterTab1" onclick="setQuarter(1)">I четв.</button>
+        <button class="hw-tab" id="quarterTab2" onclick="setQuarter(2)">II четв.</button>
+        <button class="hw-tab" id="quarterTab3" onclick="setQuarter(3)">III четв.</button>
+        <button class="hw-tab" id="quarterTab4" onclick="setQuarter(4)">IV четв.</button>
+      </div>
+
+      <div class="schedule-info">
+        <div class="schedule-info-card">
+          <div class="label">Выбранная четверть</div>
+          <div class="value" id="quarterCurrentLabel">I четверть</div>
+        </div>
+        <div class="schedule-info-card">
+          <div class="label">Период</div>
+          <div class="value" id="quarterPeriodLabel">—</div>
+        </div>
+        <div class="schedule-info-card">
+          <div class="label">Всего оценок</div>
+          <div class="value" id="quarterMarksCount">—</div>
+        </div>
+      </div>
+
+      <div class="journal-wrapper">
+        <table class="journal quarters-table" id="quartersTable">
+          <thead id="quartersHead"></thead>
+          <tbody id="quartersBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
   <!-- УЧЕНИК: ЖУРНАЛ -->
   <div id="studentJournalView" class="view-panel hidden">
     <div class="card">
       <div class="card-title" id="studentNameTitle">🎓 Ученик</div>
+      <div class="card-subtitle">Средний балл по всем предметам (за всё время). Четвертные оценки показывает учитель.</div>
+      <div id="studentAveragesBlock"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📝 Мои оценки</div>
       <div class="card-subtitle">Нажмите на оценку, чтобы посмотреть детали.</div>
       <div class="student-marks-list" id="studentMarksList"></div>
     </div>
@@ -1745,6 +1902,47 @@
   </div>
 </div>
 
+<!-- МОДАЛЬНОЕ ОКНО: ЧЕТВЕРТНАЯ ОЦЕНКА -->
+<div class="modal-overlay hidden" id="quarterModal">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <div>
+        <h2 id="quarterModalTitle">Четвертная оценка</h2>
+        <div class="modal-sub" id="quarterModalSub"></div>
+      </div>
+      <button class="modal-close" onclick="closeQuarterModal()">✕</button>
+    </div>
+
+    <div style="background:linear-gradient(90deg,#eef2ff,#f8fafc);padding:14px;border-radius:12px;margin-bottom:16px;border-left:4px solid var(--primary);">
+      <div style="font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Средний балл</div>
+      <div style="font-size:24px;font-weight:800;color:var(--primary);" id="quarterAvgValue">—</div>
+      <div style="font-size:12px;color:var(--text-muted);margin-top:4px;" id="quarterAvgCount">—</div>
+    </div>
+
+    <div class="form-group">
+      <label>Четвертная оценка</label>
+      <div class="mark-choice" id="quarterMarkChoice">
+        <button type="button" data-mark="5" class="mark-5">5</button>
+        <button type="button" data-mark="4" class="mark-4">4</button>
+        <button type="button" data-mark="3" class="mark-3">3</button>
+        <button type="button" data-mark="2" class="mark-2">2</button>
+        <button type="button" data-mark="н" class="mark-н">н</button>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Комментарий (необязательно)</label>
+      <textarea id="quarterComment" placeholder="Комментарий..."></textarea>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn btn-danger hidden" id="deleteQuarterBtn" onclick="deleteQuarterMark()">🗑 Удалить</button>
+      <button class="btn btn-ghost" onclick="closeQuarterModal()">Отмена</button>
+      <button class="btn btn-primary" onclick="saveQuarterMark()">💾 Сохранить</button>
+    </div>
+  </div>
+</div>
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
@@ -1764,7 +1962,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-/* ВАЖНО: тот же путь, что и раньше — данные сохраняются */
 const ROOT_PATH = 'school_journal_v2';
 const PATHS = {
   meta:        ROOT_PATH + '/meta',
@@ -1772,20 +1969,15 @@ const PATHS = {
   homework:    ROOT_PATH + '/homework',
   schedule:    ROOT_PATH + '/schedule',
   subjectDays: ROOT_PATH + '/subjectDays',
-  holidays:    ROOT_PATH + '/holidays'
+  holidays:    ROOT_PATH + '/holidays',
+  quarters:    ROOT_PATH + '/quarters'
 };
 
-/* ============================================================
-   ЛОГИНЫ И ПАРОЛИ
-   ============================================================ */
 const TEACHER_LOGIN = '2347';
 const TEACHER_PASSWORD = '2203';
 const STUDENT_PASSWORD = '1';
 const AUTH_STORAGE_KEY = 'school_journal_auth';
 
-/* ============================================================
-   ДАННЫЕ
-   ============================================================ */
 const STUDENTS = [
   "Абрамов Артём", "Белова Мария", "Волков Дмитрий", "Григорьева Анна",
   "Дмитриев Иван", "Егорова София", "Жуков Максим", "Зайцева Елизавета",
@@ -1825,8 +2017,14 @@ const WEEKDAYS = [
   { id: 0, name: 'Воскресенье', short: 'Вс' }
 ];
 
-/* Дни недели, доступные для предметов — Пн-Сб */
 const WEEKDAYS_FOR_SUBJECTS = WEEKDAYS.filter(w => w.id !== 0);
+
+const QUARTER_PERIODS = {
+  1: { start: '09-01', end: '10-27', name: 'I четверть' },
+  2: { start: '11-05', end: '12-28', name: 'II четверть' },
+  3: { start: '01-10', end: '03-21', name: 'III четверть' },
+  4: { start: '04-01', end: '05-30', name: 'IV четверть' }
+};
 
 function studentKey(name) {
   return name.replace(/[.#$/\[\]]/g, '_');
@@ -1838,7 +2036,8 @@ let state = {
   hwTab: 'common',
   currentDate: todayStr(),
   currentStudent: STUDENTS[0],
-  currentSubject: 'rus'
+  currentSubject: 'rus',
+  currentQuarter: 1
 };
 
 let fb = {
@@ -1847,7 +2046,8 @@ let fb = {
   schedule: {},
   subjectDays: {},
   holidays: {},
-  meta: {}
+  meta: {},
+  quarters: {}
 };
 
 const ready = {
@@ -1856,12 +2056,10 @@ const ready = {
   schedule: false,
   subjectDays: false,
   holidays: false,
-  meta: false
+  meta: false,
+  quarters: false
 };
 
-/* ============================================================
-   УТИЛИТЫ
-   ============================================================ */
 function todayStr() {
   const d = new Date();
   return d.getFullYear() + '-' +
@@ -1922,33 +2120,87 @@ function getMarks(subjectId, studentName, date) {
   return Object.keys(byDate).map(id => ({ id, ...byDate[id] }));
 }
 
-/* ============================================================
-   ДНИ НЕДЕЛИ ДЛЯ ПРЕДМЕТОВ
-   ============================================================ */
+/* Дни недели для предметов */
 function getSubjectDays(subjectId) {
   const raw = fb.subjectDays && fb.subjectDays[subjectId];
   if (!raw) return [];
   return Object.keys(raw).map(Number).filter(d => raw[d]).sort((a, b) => a - b);
 }
-
 function getSubjectsForWeekday(wd) {
   if (wd === 0) return [];
   return BASE_SUBJECTS.filter(s => getSubjectDays(s.id).includes(wd));
 }
-
 function getSubjectsForDate(iso) {
   return getSubjectsForWeekday(getWeekday(iso));
 }
-
 function getSubjectDaysText(subjectId) {
   const days = getSubjectDays(subjectId);
   if (days.length === 0) return 'не задано';
   return days.map(d => getWeekdayShort(d)).join(', ');
 }
 
-/* ============================================================
-   АВТОРИЗАЦИЯ
-   ============================================================ */
+/* Четверти */
+function getQuarterDateRange(quarter, baseDate = null) {
+  const d = baseDate ? new Date(baseDate) : new Date();
+  const year = d.getFullYear();
+  const month = d.getMonth() + 1;
+  const p = QUARTER_PERIODS[quarter];
+  let startYear, endYear;
+  if (month >= 9) {
+    startYear = year;
+    endYear = year + 1;
+  } else {
+    startYear = year - 1;
+    endYear = year;
+  }
+  let s, e;
+  if (quarter === 1 || quarter === 2) {
+    s = startYear + '-' + p.start;
+    e = startYear + '-' + p.end;
+  } else {
+    s = endYear + '-' + p.start;
+    e = endYear + '-' + p.end;
+  }
+  return { start: s, end: e };
+}
+function isDateInQuarter(iso, quarter) {
+  const range = getQuarterDateRange(quarter);
+  return iso >= range.start && iso <= range.end;
+}
+function getMarksForQuarter(studentName, subjectId, quarter) {
+  const bySubj = fb.marks && fb.marks[subjectId];
+  if (!bySubj) return [];
+  const byStudent = bySubj[studentKey(studentName)];
+  if (!byStudent) return [];
+  const result = [];
+  Object.keys(byStudent).forEach(date => {
+    if (!isDateInQuarter(date, quarter)) return;
+    Object.keys(byStudent[date]).forEach(id => {
+      result.push({ id, date, ...byStudent[date][id] });
+    });
+  });
+  return result;
+}
+function calcAverage(marks) {
+  const nums = marks
+    .filter(m => ['2','3','4','5'].includes(String(m.mark)))
+    .map(m => Number(m.mark));
+  if (nums.length === 0) return null;
+  const sum = nums.reduce((a, b) => a + b, 0);
+  return Math.round((sum / nums.length) * 100) / 100;
+}
+function getAvgClass(avg) {
+  if (avg === null || avg === undefined) return 'empty';
+  if (avg >= 4.5) return 'good';
+  if (avg >= 3.5) return 'mid';
+  return 'low';
+}
+function getQuarterMark(studentName, subjectId, quarter) {
+  const key = studentKey(studentName) + '|' + subjectId + '|' + quarter;
+  return (fb.quarters && fb.quarters[key]) || null;
+}
+
+/* Авторизация */
 function saveAuth(data) {
   try { localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(data)); } catch (e) {}
 }
@@ -2023,9 +2275,7 @@ function logout() {
   location.reload();
 }
 
-/* ============================================================
-   FIREBASE ЗАПИСЬ
-   ============================================================ */
+/* Firebase запись */
 async function fbSetMark(subjectId, studentName, date, markObj) {
   const path = `${PATHS.marks}/${subjectId}/${studentKey(studentName)}/${date}/${markObj.id}`;
   await set(ref(db, path), {
@@ -2073,9 +2323,6 @@ async function fbSetSubjectDay(subjectId, weekday, value) {
   if (value) await set(ref(db, path), true);
   else await remove(ref(db, path));
 }
-async function fbClearSubjectDays(subjectId) {
-  await remove(ref(db, `${PATHS.subjectDays}/${subjectId}`));
-}
 async function fbAddHoliday(h) {
   await set(ref(db, `${PATHS.holidays}/${h.id}`), {
     id: h.id, title: h.title, start: h.start, end: h.end
@@ -2087,10 +2334,23 @@ async function fbDeleteHoliday(id) {
 async function fbSaveProfile(profile) {
   await set(ref(db, `${PATHS.meta}/teacherProfile`), profile);
 }
+async function fbSetQuarterMark(studentName, subjectId, quarter, data) {
+  const key = studentKey(studentName) + '|' + subjectId + '|' + quarter;
+  await set(ref(db, `${PATHS.quarters}/${key}`), {
+    student: studentName,
+    subjectId: subjectId,
+    quarter: quarter,
+    mark: data.mark,
+    comment: data.comment || '',
+    updatedAt: Date.now()
+  });
+}
+async function fbDeleteQuarterMark(studentName, subjectId, quarter) {
+  const key = studentKey(studentName) + '|' + subjectId + '|' + quarter;
+  await remove(ref(db, `${PATHS.quarters}/${key}`));
+}
 
-/* ============================================================
-   СТАТУС
-   ============================================================ */
+/* Статус */
 let syncTimer = null;
 function setSync(status, text) {
   const el = document.getElementById('syncStatus');
@@ -2104,9 +2364,7 @@ function pulseSync(text = 'Сохранение...') {
   syncTimer = setTimeout(() => setSync('online', 'Синхронизировано'), 1500);
 }
 
-/* ============================================================
-   ПОДПИСКИ
-   ============================================================ */
+/* Подписки */
 let allDataReady = false;
 let connected = false;
 
@@ -2116,9 +2374,8 @@ function checkReady() {
     setSync('online', 'Синхронизировано');
   }
 }
-
 function updateLoaderDetail() {
-  const items = ['marks', 'subjectDays', 'homework', 'holidays', 'meta'];
+  const items = ['marks', 'subjectDays', 'homework', 'holidays', 'meta', 'quarters'];
   const done = items.filter(k => ready[k]).length;
   const el = document.getElementById('loaderDetail');
   if (el) el.textContent = `Загружено ${done} из ${items.length}`;
@@ -2127,7 +2384,6 @@ function updateLoaderDetail() {
     checkReady();
   }
 }
-
 function hideLoader() {
   const loader = document.getElementById('loader');
   if (!loader || loader.classList.contains('hidden')) return;
@@ -2141,7 +2397,7 @@ let statusInterval = setInterval(() => {
     clearInterval(statusInterval);
     return;
   }
-  const items = ['marks', 'subjectDays', 'homework', 'holidays', 'meta'];
+  const items = ['marks', 'subjectDays', 'homework', 'holidays', 'meta', 'quarters'];
   const done = items.filter(k => ready[k]).length;
   if (!connected) setSync('syncing', 'Подключение к серверу...');
   else if (done < items.length) setSync('syncing', `Загрузка ${done}/${items.length}...`);
@@ -2198,6 +2454,13 @@ function subscribeAll() {
     renderProfileButton();
   }, err => { ready.meta = true; updateLoaderDetail(); console.error(err); });
 
+  onValue(ref(db, PATHS.quarters), snap => {
+    fb.quarters = snap.val() || {};
+    ready.quarters = true;
+    updateLoaderDetail();
+    renderAll();
+  }, err => { ready.quarters = true; updateLoaderDetail(); console.error(err); });
+
   onValue(ref(db, '.info/connected'), snap => {
     connected = snap.val() === true;
     if (connected) {
@@ -2209,9 +2472,7 @@ function subscribeAll() {
   });
 }
 
-/* ============================================================
-   АНИМАЦИЯ
-   ============================================================ */
+/* Анимация */
 let lastTabIndex = 0;
 
 function animatePanel(panelId, visible, direction) {
@@ -2230,17 +2491,20 @@ function animatePanel(panelId, visible, direction) {
 }
 
 function setTab(tab) {
-  const idx = tab === 'journal' ? 0 : tab === 'homework' ? 1 : 2;
+  const order = ['journal', 'homework', 'schedule', 'quarters'];
+  const idx = Math.max(0, order.indexOf(tab));
   const direction = idx > lastTabIndex ? 'right' : idx < lastTabIndex ? 'left' : null;
   lastTabIndex = idx;
   state.tab = tab;
   const tabsNav = document.getElementById('tabsNav');
-  tabsNav.classList.remove('tab-homework', 'tab-schedule');
+  tabsNav.classList.remove('tab-homework', 'tab-schedule', 'tab-quarters');
   if (tab === 'homework') tabsNav.classList.add('tab-homework');
   else if (tab === 'schedule') tabsNav.classList.add('tab-schedule');
+  else if (tab === 'quarters') tabsNav.classList.add('tab-quarters');
   document.getElementById('tabJournal').classList.toggle('active', tab === 'journal');
   document.getElementById('tabHomework').classList.toggle('active', tab === 'homework');
   document.getElementById('tabSchedule').classList.toggle('active', tab === 'schedule');
+  document.getElementById('tabQuarters').classList.toggle('active', tab === 'quarters');
   renderAll(direction);
 }
 
@@ -2253,15 +2517,33 @@ function setHwTab(tab) {
   renderAll();
 }
 
+function setQuarter(q) {
+  state.currentQuarter = q;
+  const nav = document.getElementById('quarterTabsNav');
+  nav.classList.remove('q2', 'q3', 'q4');
+  if (q === 2) nav.classList.add('q2');
+  else if (q === 3) nav.classList.add('q3');
+  else if (q === 4) nav.classList.add('q4');
+  document.getElementById('quarterTab1').classList.toggle('active', q === 1);
+  document.getElementById('quarterTab2').classList.toggle('active', q === 2);
+  document.getElementById('quarterTab3').classList.toggle('active', q === 3);
+  document.getElementById('quarterTab4').classList.toggle('active', q === 4);
+  renderQuartersTeacher();
+}
+
 function renderAll(direction = null) {
   const isTeacher = state.role === 'teacher';
   const isJournal = state.tab === 'journal';
   const isHw = state.tab === 'homework';
   const isSched = state.tab === 'schedule';
+  const isQuarters = state.tab === 'quarters';
+
+  document.getElementById('tabQuarters').classList.toggle('hidden', !isTeacher);
 
   animatePanel('teacherJournalView',  isTeacher && isJournal,   direction);
   animatePanel('teacherHomeworkView', isTeacher && isHw,        direction);
   animatePanel('teacherScheduleView', isTeacher && isSched,     direction);
+  animatePanel('teacherQuartersView', isTeacher && isQuarters,  direction);
   animatePanel('studentJournalView',  !isTeacher && isJournal,  direction);
   animatePanel('studentHomeworkView', !isTeacher && isHw,       direction);
   animatePanel('studentScheduleView', !isTeacher && isSched,    direction);
@@ -2277,17 +2559,16 @@ function renderAll(direction = null) {
   if (isTeacher) {
     if (isJournal) renderJournal();
     else if (isHw) renderHomeworkTeacher();
-    else renderScheduleTeacher();
+    else if (isSched) renderScheduleTeacher();
+    else if (isQuarters) renderQuartersTeacher();
   } else {
     if (isJournal) renderStudentView();
     else if (isHw) renderHomeworkStudent();
-    else renderScheduleStudent();
+    else if (isSched) renderScheduleStudent();
   }
 }
 
-/* ============================================================
-   ПРОФИЛЬ
-   ============================================================ */
+/* Профиль */
 function renderProfileButton() {
   const p = (fb.meta && fb.meta.teacherProfile) || { name: '', className: '' };
   const nameEl = document.getElementById('profileBtnName');
@@ -2315,7 +2596,6 @@ function renderProfileButton() {
     document.getElementById('studentBadgeBtn').classList.remove('hidden');
   }
 }
-
 function openProfileModal() {
   const p = (fb.meta && fb.meta.teacherProfile) || { name: '', className: '' };
   document.getElementById('profileNameInput').value = p.name || '';
@@ -2339,9 +2619,7 @@ async function saveProfile() {
   closeProfileModal();
 }
 
-/* ============================================================
-   ПРЕДМЕТНЫЕ ПИЛЮЛИ
-   ============================================================ */
+/* Пилюли предметов */
 function renderSubjectPills() {
   const container = document.getElementById('subjectPills');
   container.innerHTML = '';
@@ -2372,7 +2650,6 @@ function renderSubjectPills() {
     container.innerHTML = '<div style="font-size:13px;color:var(--text-muted);font-weight:600;padding:8px 0;">Предметы не заданы. Настройте дни недели во вкладке «Расписание».</div>';
   }
 
-  // Подпись с днями недели текущего предмета
   const info = document.getElementById('subjectDaysInfo');
   if (info) {
     const days = getSubjectDays(state.currentSubject);
@@ -2386,9 +2663,7 @@ function renderSubjectPills() {
   }
 }
 
-/* ============================================================
-   ЖУРНАЛ
-   ============================================================ */
+/* Журнал */
 function onDateChange() {
   state.currentDate = document.getElementById('datePicker').value || todayStr();
   renderAll();
@@ -2475,9 +2750,7 @@ function renderJournal() {
   });
 }
 
-/* ============================================================
-   МОДАЛЬНОЕ ОКНО ОЦЕНКИ
-   ============================================================ */
+/* Модальное окно оценки */
 let editing = { subject: null, student: null, date: null, markId: null, selectedMark: null };
 
 function openMarkModal(student, date, markId) {
@@ -2585,9 +2858,7 @@ async function deleteMark() {
   closeMarkModal();
 }
 
-/* ============================================================
-   Д/З
-   ============================================================ */
+/* Д/З */
 async function addHomework() {
   const text = document.getElementById('hwInput').value.trim();
   if (!text) { alert('Введите текст задания'); return; }
@@ -2645,13 +2916,12 @@ function renderHomeworkTeacher() {
     const h = getHolidayForDate(iso);
     info.innerHTML = '<span class="badge" style="background:var(--orange);">🏖 ' + escapeHtml(h.title || 'Каникулы') + '</span> Сейчас каникулы, но Д/З всё равно можно задать.';
   } else if (subjectsForDate.length === 0) {
-    info.innerHTML = '<span class="badge" style="background:var(--gray);">🗓 ' + getWeekdayName(wd) + '</span> В этот день уроков нет, но Д/З можно задать на любой другой день.';
+    info.innerHTML = '<span class="badge" style="background:var(--gray);">🗓 ' + getWeekdayName(wd) + '</span> В этот день уроков нет, но Д/З можно задать на любой день.';
   } else {
     info.innerHTML = '<span class="badge">' + getWeekdayName(wd) + '</span> Предметы этого дня: ' +
       subjectsForDate.map(s => s.icon + ' ' + s.name).join(', ');
   }
 
-  // ВАЖНО: для Д/З показываем ВСЕ предметы, а не только текущего дня
   const subjSel = document.getElementById('hwSubjectSelect');
   const prevVal = subjSel.value;
   subjSel.innerHTML = '';
@@ -2663,16 +2933,12 @@ function renderHomeworkTeacher() {
     subjSel.appendChild(opt);
   });
   subjSel.disabled = false;
-  if (prevVal && BASE_SUBJECTS.find(s => s.id === prevVal)) {
-    subjSel.value = prevVal;
-  } else {
-    subjSel.value = state.currentSubject || BASE_SUBJECTS[0].id;
-  }
+  if (prevVal && BASE_SUBJECTS.find(s => s.id === prevVal)) subjSel.value = prevVal;
+  else subjSel.value = state.currentSubject || BASE_SUBJECTS[0].id;
 
   const dueInput = document.getElementById('hwDueDate');
   if (!dueInput.value) dueInput.value = state.currentDate;
 
-  // Показываем ВСЕ Д/З, не только заданные в этот день
   const list = document.getElementById('hwListTeacher');
   list.innerHTML = '';
 
@@ -2683,7 +2949,6 @@ function renderHomeworkTeacher() {
     return;
   }
 
-  // Группируем по предметам
   const bySubject = {};
   allHw.forEach(hw => {
     if (!bySubject[hw.subjectId]) bySubject[hw.subjectId] = [];
@@ -2893,9 +3158,7 @@ function renderHwItemStudent(hw, student) {
   return div;
 }
 
-/* ============================================================
-   РАСПИСАНИЕ (учитель) — сетка предметов × дни недели
-   ============================================================ */
+/* Расписание (учитель) */
 function renderScheduleTeacher() {
   const iso = state.currentDate;
   document.getElementById('schedCurrentDate').textContent = formatDate(iso);
@@ -2966,9 +3229,7 @@ async function clearAllSubjectDays() {
   }
 }
 
-/* ============================================================
-   КАНИКУЛЫ
-   ============================================================ */
+/* Каникулы */
 async function addHoliday() {
   const title = document.getElementById('holidayTitle').value.trim() || 'Каникулы';
   const start = document.getElementById('holidayStart').value;
@@ -3024,11 +3285,238 @@ function renderHolidayList() {
   });
 }
 
-/* ============================================================
-   УЧЕНИК
-   ============================================================ */
+/* Четверти — учитель */
+function renderQuartersTeacher() {
+  const q = state.currentQuarter;
+  const range = getQuarterDateRange(q);
+  document.getElementById('quarterCurrentLabel').textContent = QUARTER_PERIODS[q].name;
+  document.getElementById('quarterPeriodLabel').textContent = formatDate(range.start) + ' — ' + formatDate(range.end);
+
+  let totalMarks = 0;
+  Object.keys(fb.marks || {}).forEach(subjId => {
+    STUDENTS.forEach(student => {
+      totalMarks += getMarksForQuarter(student, subjId, q).length;
+    });
+  });
+  document.getElementById('quarterMarksCount').textContent = String(totalMarks);
+
+  const head = document.getElementById('quartersHead');
+  head.innerHTML = '';
+  const trh = document.createElement('tr');
+  const thName = document.createElement('th');
+  thName.className = 'name-col';
+  thName.textContent = 'Ученик';
+  trh.appendChild(thName);
+
+  BASE_SUBJECTS.forEach(s => {
+    const th = document.createElement('th');
+    th.className = 'subject-th';
+    th.innerHTML = '<span class="subj-ico">' + s.icon + '</span><span class="subj-nm">' + escapeHtml(s.name) + '</span>';
+    th.title = s.name;
+    trh.appendChild(th);
+  });
+  head.appendChild(trh);
+
+  const body = document.getElementById('quartersBody');
+  body.innerHTML = '';
+
+  STUDENTS.forEach(student => {
+    const tr = document.createElement('tr');
+    const tdName = document.createElement('td');
+    tdName.className = 'name-col';
+    tdName.textContent = student;
+    tr.appendChild(tdName);
+
+    BASE_SUBJECTS.forEach(subj => {
+      const td = document.createElement('td');
+      const cell = document.createElement('div');
+      cell.className = 'quarter-cell';
+
+      const marks = getMarksForQuarter(student, subj.id, q);
+      const avg = calcAverage(marks);
+      const quarterMark = getQuarterMark(student, subj.id, q);
+
+      const avgEl = document.createElement('div');
+      avgEl.className = 'quarter-avg ' + getAvgClass(avg);
+      if (avg !== null) {
+        avgEl.textContent = avg.toFixed(2);
+        avgEl.title = 'Средний балл: ' + avg.toFixed(2) + ' (по ' + marks.filter(m => ['2','3','4','5'].includes(String(m.mark))).length + ' оценкам)';
+      } else {
+        avgEl.textContent = '—';
+        avgEl.title = 'Нет оценок за четверть';
+      }
+      cell.appendChild(avgEl);
+
+      if (quarterMark && quarterMark.mark) {
+        const qEl = document.createElement('span');
+        qEl.className = 'mark-badge mark-' + quarterMark.mark;
+        qEl.style.minWidth = '24px';
+        qEl.style.height = '24px';
+        qEl.style.fontSize = '12px';
+        qEl.textContent = quarterMark.mark;
+        cell.appendChild(qEl);
+      }
+
+      cell.onclick = () => openQuarterModal(student, subj.id, q);
+      td.appendChild(cell);
+      tr.appendChild(td);
+    });
+    body.appendChild(tr);
+  });
+}
+
+let quarterEditing = { student: null, subject: null, quarter: null, selectedMark: null };
+
+function openQuarterModal(student, subjectId, quarter) {
+  quarterEditing = { student, subject: subjectId, quarter, selectedMark: null };
+
+  const marks = getMarksForQuarter(student, subjectId, quarter);
+  const avg = calcAverage(marks);
+  const numericCount = marks.filter(m => ['2','3','4','5'].includes(String(m.mark))).length;
+  const existing = getQuarterMark(student, subjectId, quarter);
+
+  document.getElementById('quarterModalTitle').textContent = 'Четвертная оценка';
+  document.getElementById('quarterModalSub').textContent =
+    student + ' · ' + getSubjectName(subjectId) + ' · ' + QUARTER_PERIODS[quarter].name;
+
+  document.getElementById('quarterAvgValue').textContent = avg !== null ? avg.toFixed(2) : '—';
+  document.getElementById('quarterAvgCount').textContent =
+    numericCount > 0 ? 'На основе ' + numericCount + ' оценок за период' : 'Нет числовых оценок за период';
+
+  document.querySelectorAll('#quarterMarkChoice button').forEach(b => b.classList.remove('selected'));
+  if (existing && existing.mark) {
+    quarterEditing.selectedMark = existing.mark;
+    const btn = document.querySelector('#quarterMarkChoice button[data-mark="' + existing.mark + '"]');
+    if (btn) btn.classList.add('selected');
+    document.getElementById('quarterComment').value = existing.comment || '';
+    document.getElementById('deleteQuarterBtn').classList.remove('hidden');
+  } else {
+    document.getElementById('quarterComment').value = '';
+    document.getElementById('deleteQuarterBtn').classList.add('hidden');
+  }
+
+  document.getElementById('quarterModal').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeQuarterModal() {
+  document.getElementById('quarterModal').classList.add('hidden');
+  document.body.style.overflow = '';
+  quarterEditing = { student: null, subject: null, quarter: null, selectedMark: null };
+}
+
+document.getElementById('quarterMarkChoice').addEventListener('click', e => {
+  const btn = e.target.closest('button[data-mark]');
+  if (!btn) return;
+  document.querySelectorAll('#quarterMarkChoice button').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  quarterEditing.selectedMark = btn.dataset.mark;
+});
+
+async function saveQuarterMark() {
+  if (!quarterEditing.selectedMark) { alert('Выберите оценку'); return; }
+  const comment = document.getElementById('quarterComment').value.trim();
+  pulseSync('Сохранение...');
+  try {
+    await fbSetQuarterMark(quarterEditing.student, quarterEditing.subject, quarterEditing.quarter, {
+      mark: quarterEditing.selectedMark,
+      comment: comment
+    });
+  } catch (e) {
+    console.error(e);
+    setSync('offline', 'Ошибка');
+  }
+  closeQuarterModal();
+}
+
+async function deleteQuarterMark() {
+  if (!quarterEditing.student) return;
+  pulseSync('Удаление...');
+  try {
+    await fbDeleteQuarterMark(quarterEditing.student, quarterEditing.subject, quarterEditing.quarter);
+  } catch (e) {
+    console.error(e);
+    setSync('offline', 'Ошибка');
+  }
+  closeQuarterModal();
+}
+
+/* Ученик — журнал */
 function renderStudentView() {
   document.getElementById('studentNameTitle').textContent = '🎓 ' + state.currentStudent;
+
+  // Средний балл по всем предметам
+  const avgBlock = document.getElementById('studentAveragesBlock');
+  avgBlock.innerHTML = '';
+  const grid = document.createElement('div');
+  grid.className = 'student-avg-grid';
+
+  BASE_SUBJECTS.forEach(subj => {
+    // Все оценки по предмету (за всё время)
+    const bySubj = fb.marks && fb.marks[subj.id];
+    const byStudent = bySubj ? bySubj[studentKey(state.currentStudent)] : null;
+    const allMarks = [];
+    if (byStudent) {
+      Object.keys(byStudent).forEach(date => {
+        Object.keys(byStudent[date]).forEach(id => {
+          allMarks.push({ id, date, ...byStudent[date][id] });
+        });
+      });
+    }
+    const avg = calcAverage(allMarks);
+    const numericCount = allMarks.filter(m => ['2','3','4','5'].includes(String(m.mark))).length;
+
+    const card = document.createElement('div');
+    card.className = 'student-avg-card' + (numericCount > 0 ? ' has-marks' : '');
+
+    const icon = document.createElement('div');
+    icon.className = 'sa-icon';
+    icon.textContent = subj.icon;
+
+    const body = document.createElement('div');
+    body.className = 'sa-body';
+
+    const name = document.createElement('div');
+    name.className = 'sa-name';
+    name.textContent = subj.name;
+
+    const meta = document.createElement('div');
+    meta.className = 'sa-meta';
+
+    const avgEl = document.createElement('div');
+    avgEl.className = 'sa-avg';
+    avgEl.textContent = avg !== null ? avg.toFixed(2) : '—';
+
+    const countEl = document.createElement('div');
+    countEl.className = 'sa-count';
+    countEl.textContent = numericCount > 0 ? '(' + numericCount + ' оц.)' : 'нет оценок';
+
+    meta.appendChild(avgEl);
+    meta.appendChild(countEl);
+
+    // Четвертные оценки, если есть
+    for (let q = 1; q <= 4; q++) {
+      const qm = getQuarterMark(state.currentStudent, subj.id, q);
+      if (qm && qm.mark) {
+        const span = document.createElement('span');
+        span.className = 'sa-quarter Q' + q;
+        span.textContent = qm.mark;
+        span.title = QUARTER_PERIODS[q].name + ': ' + qm.mark;
+        meta.appendChild(span);
+      }
+    }
+
+    body.appendChild(name);
+    body.appendChild(meta);
+
+    card.appendChild(icon);
+    card.appendChild(body);
+    grid.appendChild(card);
+  });
+
+  avgBlock.appendChild(grid);
+
+  // Все оценки ученика
   const allMarks = [];
   Object.keys(fb.marks || {}).forEach(subjectId => {
     const byStudent = fb.marks[subjectId][studentKey(state.currentStudent)];
@@ -3074,6 +3562,7 @@ function renderStudentView() {
     list.appendChild(item);
   });
 }
+
 function openViewModal(m) {
   const content = document.getElementById('viewMarkContent');
   content.innerHTML = `
@@ -3107,9 +3596,7 @@ function closeViewModal() {
   document.body.style.overflow = '';
 }
 
-/* ============================================================
-   РАСПИСАНИЕ (ученик)
-   ============================================================ */
+/* Расписание — ученик */
 function renderScheduleStudent() {
   const iso = state.currentDate;
   const wd = getWeekday(iso);
@@ -3182,9 +3669,7 @@ function renderScheduleStudent() {
   }
 }
 
-/* ============================================================
-   ИНИЦИАЛИЗАЦИЯ
-   ============================================================ */
+/* Инициализация */
 function initLogin() {
   const sel = document.getElementById('loginStudentSelect');
   sel.innerHTML = '';
@@ -3259,6 +3744,7 @@ window.doTeacherLogin = doTeacherLogin;
 window.logout = logout;
 window.setTab = setTab;
 window.setHwTab = setHwTab;
+window.setQuarter = setQuarter;
 window.onDateChange = onDateChange;
 window.openMarkModal = openMarkModal;
 window.closeMarkModal = closeMarkModal;
@@ -3274,6 +3760,10 @@ window.closeViewModal = closeViewModal;
 window.openProfileModal = openProfileModal;
 window.closeProfileModal = closeProfileModal;
 window.saveProfile = saveProfile;
+window.openQuarterModal = openQuarterModal;
+window.closeQuarterModal = closeQuarterModal;
+window.saveQuarterMark = saveQuarterMark;
+window.deleteQuarterMark = deleteQuarterMark;
 
 initLogin();
 autoLogin();
@@ -3283,6 +3773,7 @@ document.querySelectorAll('.modal-overlay').forEach(overlay => {
     if (overlay.id === 'markModal') closeMarkModal();
     else if (overlay.id === 'viewMarkModal') closeViewModal();
     else if (overlay.id === 'profileModal') closeProfileModal();
+    else if (overlay.id === 'quarterModal') closeQuarterModal();
   });
 });
 document.addEventListener('keydown', e => {
@@ -3290,6 +3781,7 @@ document.addEventListener('keydown', e => {
     if (!document.getElementById('markModal').classList.contains('hidden')) closeMarkModal();
     if (!document.getElementById('viewMarkModal').classList.contains('hidden')) closeViewModal();
     if (!document.getElementById('profileModal').classList.contains('hidden')) closeProfileModal();
+    if (!document.getElementById('quarterModal').classList.contains('hidden')) closeQuarterModal();
   }
 });
 </script>
