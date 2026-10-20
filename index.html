@@ -781,6 +781,72 @@
   .schedule-info-card.holiday-card { border-left-color: var(--orange); }
   .schedule-info-card.holiday-card .value { color: var(--orange); }
 
+  .weekday-tabs {
+    display: flex;
+    gap: 4px;
+    background: var(--bg);
+    border-radius: 12px;
+    padding: 4px;
+    margin-bottom: 18px;
+    overflow-x: auto;
+  }
+  .weekday-tab {
+    flex: 1;
+    min-width: 60px;
+    padding: 10px 8px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-muted);
+    border-radius: 9px;
+    transition: all 0.25s;
+    font-family: inherit;
+    white-space: nowrap;
+  }
+  .weekday-tab.active {
+    background: var(--card);
+    color: var(--primary);
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.1);
+  }
+  .weekday-tab .subj-count {
+    display: block;
+    font-size: 10px;
+    font-weight: 600;
+    opacity: 0.7;
+    margin-top: 2px;
+  }
+
+  .schedule-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .schedule-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    background: var(--bg);
+    border-radius: var(--radius-sm);
+  }
+  .schedule-row .row-num {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+  .schedule-row .row-content { flex: 1; min-width: 0; }
+  .schedule-row select { width: 100%; }
+
   .subject-days-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -1284,7 +1350,6 @@
     word-break: break-word;
   }
 
-  /* Четверти: таблица */
   .quarters-table { min-width: 900px; }
   .quarters-table th.subject-th {
     text-align: center;
@@ -1344,7 +1409,6 @@
   .quarter-avg.low { background: #fee2e2; color: #b91c1c; }
   .quarter-avg.empty { background: var(--bg); color: var(--text-muted); opacity: 0.5; }
 
-  /* Средний балл ученика */
   .student-avg-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -1493,6 +1557,8 @@
     .quarters-table th.subject-th { min-width: 64px; font-size: 9px; padding: 8px 3px; }
     .quarters-table th.subject-th .subj-nm { font-size: 8px; max-width: 60px; }
     .student-avg-grid { grid-template-columns: 1fr; }
+
+    .weekday-tab { font-size: 12px; padding: 8px 6px; min-width: 50px; }
   }
 
   @media (max-width: 380px) {
@@ -1674,8 +1740,8 @@
   <!-- УЧИТЕЛЬ: РАСПИСАНИЕ -->
   <div id="teacherScheduleView" class="view-panel hidden">
     <div class="card">
-      <div class="card-title">🗓 Дни недели для предметов</div>
-      <div class="card-subtitle">Отметьте дни недели, в которые идёт каждый предмет.</div>
+      <div class="card-title">🗓 Расписание уроков</div>
+      <div class="card-subtitle">Для каждого дня недели выберите предметы по порядку: 1-й урок, 2-й урок и т.д. Также отмечайте, в какие дни идёт предмет (для отображения ученику).</div>
 
       <div class="schedule-info">
         <div class="schedule-info-card">
@@ -1692,12 +1758,26 @@
         </div>
       </div>
 
+      <div class="weekday-tabs" id="weekdayTabs"></div>
+
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:10px;">
-        <div style="font-size:15px;font-weight:700;color:var(--text);">📖 Предметы и их дни недели</div>
-        <button class="btn btn-ghost btn-sm" onclick="clearAllSubjectDays()">🗑 Очистить все дни</button>
+        <div style="font-size:14px;font-weight:700;color:var(--text);" id="schedDayTitle">—</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn btn-ghost btn-sm" onclick="clearScheduleDay()">🗑 Очистить день</button>
+          <button class="btn btn-primary btn-sm" onclick="addScheduleSlot()">➕ Добавить урок</button>
+        </div>
       </div>
 
-      <div class="subject-days-grid" id="subjectDaysGrid"></div>
+      <div class="schedule-rows" id="scheduleRows"></div>
+
+      <div style="margin-top:24px;padding-top:20px;border-top:1px solid var(--border);">
+        <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:12px;">📅 Дни недели для каждого предмета</div>
+        <div class="card-subtitle" style="margin-bottom:12px;">Отметьте дни недели, в которые идёт предмет — это используется для отображения расписания ученику и подсказок в Д/З.</div>
+        <div class="subject-days-grid" id="subjectDaysGrid"></div>
+        <div style="margin-top:12px;">
+          <button class="btn btn-ghost btn-sm" onclick="clearAllSubjectDays()">🗑 Очистить все дни у всех предметов</button>
+        </div>
+      </div>
     </div>
 
     <div class="card">
@@ -1862,7 +1942,7 @@
 
     <div class="form-group">
       <label>Тип работы</label>
-      <select id="markType">
+      <select id="markType" onchange="onMarkTypeChange()">
         <option value="Классная работа">Классная работа</option>
         <option value="Контрольная работа">Контрольная работа</option>
         <option value="Самостоятельная работа">Самостоятельная работа</option>
@@ -1871,8 +1951,13 @@
         <option value="Диктант">Диктант</option>
         <option value="Ответ на уроке">Ответ на уроке</option>
         <option value="Проект">Проект</option>
-        <option value="Другое">Другое</option>
+        <option value="__other__">Другое</option>
       </select>
+    </div>
+
+    <div class="form-group hidden" id="markTypeCustomGroup">
+      <label>Свой тип работы</label>
+      <input type="text" id="markTypeCustom" placeholder="Напишите, за что оценка (например: сочинение, изложение...)" maxlength="120">
     </div>
 
     <div class="form-group">
@@ -2037,7 +2122,8 @@ let state = {
   currentDate: todayStr(),
   currentStudent: STUDENTS[0],
   currentSubject: 'rus',
-  currentQuarter: 1
+  currentQuarter: 1,
+  schedSelectedWeekday: 1
 };
 
 let fb = {
@@ -2130,13 +2216,30 @@ function getSubjectsForWeekday(wd) {
   if (wd === 0) return [];
   return BASE_SUBJECTS.filter(s => getSubjectDays(s.id).includes(wd));
 }
-function getSubjectsForDate(iso) {
-  return getSubjectsForWeekday(getWeekday(iso));
-}
 function getSubjectDaysText(subjectId) {
   const days = getSubjectDays(subjectId);
   if (days.length === 0) return 'не задано';
   return days.map(d => getWeekdayShort(d)).join(', ');
+}
+
+/* Расписание по позициям */
+function getScheduleForWeekday(wd) {
+  const raw = fb.schedule && fb.schedule[wd];
+  if (!raw) return [];
+  return Object.keys(raw).sort((a, b) => Number(a) - Number(b)).map(k => raw[k]).filter(Boolean);
+}
+function getScheduleForDate(iso) {
+  return getScheduleForWeekday(getWeekday(iso));
+}
+
+/* Предметы на дату: сначала пробуем по порядку из расписания,
+   если расписание пустое — берём по дням недели */
+function getSubjectsForDate(iso) {
+  const sched = getScheduleForDate(iso);
+  if (sched.length > 0) {
+    return sched.map(id => getSubjectById(id)).filter(Boolean);
+  }
+  return getSubjectsForWeekday(getWeekday(iso));
 }
 
 /* Четверти */
@@ -2323,6 +2426,21 @@ async function fbSetSubjectDay(subjectId, weekday, value) {
   if (value) await set(ref(db, path), true);
   else await remove(ref(db, path));
 }
+async function fbSetSchedule(weekday, arr) {
+  const path = `${PATHS.schedule}/${weekday}`;
+  if (arr.length === 0) {
+    await remove(ref(db, path));
+  } else {
+    const obj = {};
+    arr.forEach((v, i) => { obj[i] = v; });
+    await set(ref(db, path), obj);
+  }
+}
+async function fbSetScheduleSlot(weekday, index, subjectId) {
+  const path = `${PATHS.schedule}/${weekday}/${index}`;
+  if (subjectId) await set(ref(db, path), subjectId);
+  else await remove(ref(db, path));
+}
 async function fbAddHoliday(h) {
   await set(ref(db, `${PATHS.holidays}/${h.id}`), {
     id: h.id, title: h.title, start: h.start, end: h.end
@@ -2375,7 +2493,7 @@ function checkReady() {
   }
 }
 function updateLoaderDetail() {
-  const items = ['marks', 'subjectDays', 'homework', 'holidays', 'meta', 'quarters'];
+  const items = ['marks', 'subjectDays', 'schedule', 'homework', 'holidays', 'meta', 'quarters'];
   const done = items.filter(k => ready[k]).length;
   const el = document.getElementById('loaderDetail');
   if (el) el.textContent = `Загружено ${done} из ${items.length}`;
@@ -2397,7 +2515,7 @@ let statusInterval = setInterval(() => {
     clearInterval(statusInterval);
     return;
   }
-  const items = ['marks', 'subjectDays', 'homework', 'holidays', 'meta', 'quarters'];
+  const items = ['marks', 'subjectDays', 'schedule', 'homework', 'holidays', 'meta', 'quarters'];
   const done = items.filter(k => ready[k]).length;
   if (!connected) setSync('syncing', 'Подключение к серверу...');
   else if (done < items.length) setSync('syncing', `Загрузка ${done}/${items.length}...`);
@@ -2647,7 +2765,7 @@ function renderSubjectPills() {
   });
 
   if (subjectsToShow.length === 0) {
-    container.innerHTML = '<div style="font-size:13px;color:var(--text-muted);font-weight:600;padding:8px 0;">Предметы не заданы. Настройте дни недели во вкладке «Расписание».</div>';
+    container.innerHTML = '<div style="font-size:13px;color:var(--text-muted);font-weight:600;padding:8px 0;">Предметы не заданы. Настройте расписание во вкладке «Расписание».</div>';
   }
 
   const info = document.getElementById('subjectDaysInfo');
@@ -2701,7 +2819,7 @@ function renderJournal() {
   }
 
   if (subjectsForDate.length === 0) {
-    document.getElementById('journalSubtitle').textContent = 'В этот день нет предметов по расписанию. Настройте дни недели во вкладке «Расписание».';
+    document.getElementById('journalSubtitle').textContent = 'В этот день нет предметов по расписанию. Настройте расписание во вкладке «Расписание».';
     document.getElementById('journalBody').innerHTML =
       '<tr><td colspan="2"><div class="empty-msg"><span class="emoji">🗓</span>Нет предметов на этот день</div></td></tr>';
     return;
@@ -2753,6 +2871,19 @@ function renderJournal() {
 /* Модальное окно оценки */
 let editing = { subject: null, student: null, date: null, markId: null, selectedMark: null };
 
+function onMarkTypeChange() {
+  const val = document.getElementById('markType').value;
+  const customGroup = document.getElementById('markTypeCustomGroup');
+  const customInput = document.getElementById('markTypeCustom');
+  if (val === '__other__') {
+    customGroup.classList.remove('hidden');
+    setTimeout(() => customInput.focus(), 100);
+  } else {
+    customGroup.classList.add('hidden');
+    customInput.value = '';
+  }
+}
+
 function openMarkModal(student, date, markId) {
   editing.subject = state.currentSubject;
   editing.student = student;
@@ -2769,6 +2900,17 @@ function openMarkModal(student, date, markId) {
   editing.selectedMark = null;
   const subjectName = getSubjectName(state.currentSubject);
   const daysText = getSubjectDaysText(state.currentSubject);
+
+  const customGroup = document.getElementById('markTypeCustomGroup');
+  const customInput = document.getElementById('markTypeCustom');
+  customGroup.classList.add('hidden');
+  customInput.value = '';
+
+  const KNOWN_TYPES = [
+    'Классная работа', 'Контрольная работа', 'Самостоятельная работа',
+    'Домашняя работа', 'Тест', 'Диктант', 'Ответ на уроке', 'Проект'
+  ];
+
   if (markId) {
     const marks = getMarks(state.currentSubject, student, date);
     const m = marks.find(x => x.id === markId);
@@ -2779,7 +2921,15 @@ function openMarkModal(student, date, markId) {
     editing.selectedMark = m.mark;
     const btn = markChoice.querySelector('button[data-mark="' + m.mark + '"]');
     if (btn) btn.classList.add('selected');
-    typeSelect.value = m.type;
+    if (KNOWN_TYPES.includes(m.type)) {
+      typeSelect.value = m.type;
+    } else if (m.type) {
+      typeSelect.value = '__other__';
+      customGroup.classList.remove('hidden');
+      customInput.value = m.type;
+    } else {
+      typeSelect.value = 'Классная работа';
+    }
     commentInput.value = m.comment || '';
   } else {
     title.textContent = 'Новая оценка';
@@ -2805,7 +2955,15 @@ document.getElementById('markChoice').addEventListener('click', e => {
 });
 async function saveMark() {
   if (!editing.selectedMark) { alert('Выберите оценку!'); return; }
-  const type = document.getElementById('markType').value;
+  let type = document.getElementById('markType').value;
+  if (type === '__other__') {
+    type = document.getElementById('markTypeCustom').value.trim();
+    if (!type) {
+      alert('Введите свой тип работы');
+      document.getElementById('markTypeCustom').focus();
+      return;
+    }
+  }
   const comment = document.getElementById('markComment').value.trim();
   pulseSync('Сохранение...');
   try {
@@ -3177,9 +3335,71 @@ function renderScheduleTeacher() {
     statusValue.textContent = '✅ Учебный день';
   }
 
+  const tabsEl = document.getElementById('weekdayTabs');
+  tabsEl.innerHTML = '';
+  WEEKDAYS.forEach(wd => {
+    if (wd.id === 0) return;
+    const btn = document.createElement('button');
+    btn.className = 'weekday-tab' + (wd.id === state.schedSelectedWeekday ? ' active' : '');
+    const count = getScheduleForWeekday(wd.id).length;
+    btn.innerHTML = wd.short + '<span class="subj-count">' + count + ' ур.</span>';
+    btn.onclick = () => { state.schedSelectedWeekday = wd.id; renderScheduleTeacher(); };
+    tabsEl.appendChild(btn);
+  });
+
+  const wdInfo = WEEKDAYS.find(x => x.id === state.schedSelectedWeekday);
+  document.getElementById('schedDayTitle').textContent = wdInfo ? wdInfo.name : '—';
+
+  const rowsEl = document.getElementById('scheduleRows');
+  rowsEl.innerHTML = '';
+  const daySchedule = getScheduleForWeekday(state.schedSelectedWeekday);
+
+  if (daySchedule.length === 0) {
+    rowsEl.innerHTML = '<div class="empty-msg"><span class="emoji">🗓</span>В этот день нет уроков. Нажмите «Добавить урок».</div>';
+  } else {
+    daySchedule.forEach((subjId, idx) => {
+      const row = document.createElement('div');
+      row.className = 'schedule-row';
+
+      const num = document.createElement('div');
+      num.className = 'row-num';
+      num.textContent = idx + 1;
+
+      const content = document.createElement('div');
+      content.className = 'row-content';
+
+      const sel = document.createElement('select');
+      sel.innerHTML = '<option value="">— Выберите предмет —</option>';
+      BASE_SUBJECTS.forEach(s => {
+        const opt = document.createElement('option');
+        opt.value = s.id;
+        opt.textContent = s.icon + ' ' + s.name;
+        if (s.id === subjId) opt.selected = true;
+        sel.appendChild(opt);
+      });
+      sel.onchange = async () => {
+        const newVal = sel.value;
+        if (!newVal) { await removeScheduleSlot(idx); return; }
+        pulseSync('Сохранение...');
+        try { await fbSetScheduleSlot(state.schedSelectedWeekday, idx, newVal); }
+        catch (e) { console.error(e); setSync('offline', 'Ошибка'); }
+      };
+
+      const delBtn = document.createElement('button');
+      delBtn.className = 'btn btn-danger btn-sm';
+      delBtn.textContent = '🗑';
+      delBtn.onclick = () => removeScheduleSlot(idx);
+
+      content.appendChild(sel);
+      row.appendChild(num);
+      row.appendChild(content);
+      row.appendChild(delBtn);
+      rowsEl.appendChild(row);
+    });
+  }
+
   const grid = document.getElementById('subjectDaysGrid');
   grid.innerHTML = '';
-
   BASE_SUBJECTS.forEach(subj => {
     const days = getSubjectDays(subj.id);
     const card = document.createElement('div');
@@ -3192,7 +3412,6 @@ function renderScheduleTeacher() {
 
     const chips = document.createElement('div');
     chips.className = 'subject-days-chips';
-
     WEEKDAYS_FOR_SUBJECTS.forEach(wd => {
       const chip = document.createElement('button');
       chip.className = 'day-chip' + (days.includes(wd.id) ? ' active' : '');
@@ -3201,21 +3420,40 @@ function renderScheduleTeacher() {
       chip.onclick = async () => {
         const isActive = days.includes(wd.id);
         pulseSync('Сохранение...');
-        try {
-          await fbSetSubjectDay(subj.id, wd.id, !isActive);
-        } catch (e) {
-          console.error(e);
-          setSync('offline', 'Ошибка');
-        }
+        try { await fbSetSubjectDay(subj.id, wd.id, !isActive); }
+        catch (e) { console.error(e); setSync('offline', 'Ошибка'); }
       };
       chips.appendChild(chip);
     });
-
     card.appendChild(chips);
     grid.appendChild(card);
   });
 
   renderHolidayList();
+}
+
+async function addScheduleSlot() {
+  const daySchedule = getScheduleForWeekday(state.schedSelectedWeekday);
+  const available = BASE_SUBJECTS.find(s => !daySchedule.includes(s.id));
+  const newArr = [...daySchedule, available ? available.id : BASE_SUBJECTS[0].id];
+  pulseSync('Сохранение...');
+  try { await fbSetSchedule(state.schedSelectedWeekday, newArr); }
+  catch (e) { console.error(e); setSync('offline', 'Ошибка'); }
+}
+
+async function removeScheduleSlot(idx) {
+  const daySchedule = getScheduleForWeekday(state.schedSelectedWeekday);
+  daySchedule.splice(idx, 1);
+  pulseSync('Сохранение...');
+  try { await fbSetSchedule(state.schedSelectedWeekday, daySchedule); }
+  catch (e) { console.error(e); setSync('offline', 'Ошибка'); }
+}
+
+async function clearScheduleDay() {
+  if (!confirm('Очистить расписание на этот день?')) return;
+  pulseSync('Сохранение...');
+  try { await fbSetSchedule(state.schedSelectedWeekday, []); }
+  catch (e) { console.error(e); setSync('offline', 'Ошибка'); }
 }
 
 async function clearAllSubjectDays() {
@@ -3445,14 +3683,12 @@ async function deleteQuarterMark() {
 function renderStudentView() {
   document.getElementById('studentNameTitle').textContent = '🎓 ' + state.currentStudent;
 
-  // Средний балл по всем предметам
   const avgBlock = document.getElementById('studentAveragesBlock');
   avgBlock.innerHTML = '';
   const grid = document.createElement('div');
   grid.className = 'student-avg-grid';
 
   BASE_SUBJECTS.forEach(subj => {
-    // Все оценки по предмету (за всё время)
     const bySubj = fb.marks && fb.marks[subj.id];
     const byStudent = bySubj ? bySubj[studentKey(state.currentStudent)] : null;
     const allMarks = [];
@@ -3494,7 +3730,6 @@ function renderStudentView() {
     meta.appendChild(avgEl);
     meta.appendChild(countEl);
 
-    // Четвертные оценки, если есть
     for (let q = 1; q <= 4; q++) {
       const qm = getQuarterMark(state.currentStudent, subj.id, q);
       if (qm && qm.mark) {
@@ -3516,7 +3751,6 @@ function renderStudentView() {
 
   avgBlock.appendChild(grid);
 
-  // Все оценки ученика
   const allMarks = [];
   Object.keys(fb.marks || {}).forEach(subjectId => {
     const byStudent = fb.marks[subjectId][studentKey(state.currentStudent)];
@@ -3636,8 +3870,8 @@ function renderScheduleStudent() {
   let hasAny = false;
   WEEKDAYS.forEach(wdInfo => {
     if (wdInfo.id === 0) return;
-    const subs = getSubjectsForWeekday(wdInfo.id);
-    if (subs.length === 0) return;
+    const sched = getScheduleForWeekday(wdInfo.id);
+    if (sched.length === 0) return;
     hasAny = true;
     const block = document.createElement('div');
     block.style.marginBottom = '16px';
@@ -3648,7 +3882,9 @@ function renderScheduleStudent() {
     title.style.marginBottom = '8px';
     title.textContent = wdInfo.name;
     block.appendChild(title);
-    subs.forEach((s, idx) => {
+    sched.forEach((subjId, idx) => {
+      const subj = getSubjectById(subjId);
+      if (!subj) return;
       const row = document.createElement('div');
       row.className = 'sched-today-row';
       row.style.marginBottom = '6px';
@@ -3657,7 +3893,7 @@ function renderScheduleStudent() {
       num.textContent = idx + 1;
       const name = document.createElement('div');
       name.className = 'subj-name';
-      name.textContent = s.icon + ' ' + s.name;
+      name.textContent = subj.icon + ' ' + subj.name;
       row.appendChild(num);
       row.appendChild(name);
       block.appendChild(row);
@@ -3684,6 +3920,8 @@ function initLogin() {
 function initUI() {
   const dp = document.getElementById('datePicker');
   dp.value = state.currentDate || todayStr();
+  state.schedSelectedWeekday = getWeekday(state.currentDate) || 1;
+  if (state.schedSelectedWeekday === 0) state.schedSelectedWeekday = 1;
 
   const hwSel = document.getElementById('hwStudentSelect');
   hwSel.innerHTML = '';
@@ -3750,8 +3988,12 @@ window.openMarkModal = openMarkModal;
 window.closeMarkModal = closeMarkModal;
 window.saveMark = saveMark;
 window.deleteMark = deleteMark;
+window.onMarkTypeChange = onMarkTypeChange;
 window.addHomework = addHomework;
 window.deleteHomework = deleteHomework;
+window.addScheduleSlot = addScheduleSlot;
+window.removeScheduleSlot = removeScheduleSlot;
+window.clearScheduleDay = clearScheduleDay;
 window.clearAllSubjectDays = clearAllSubjectDays;
 window.addHoliday = addHoliday;
 window.deleteHoliday = deleteHoliday;
